@@ -4,15 +4,18 @@ on:
   push:
     branches:
       - development
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # 2. Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -20,21 +23,29 @@ jobs:
           extensions: mbstring, intl, pdo, pdo_mysql
           coverage: none
 
+      # 3. Install Composer
       - name: Install Composer Dependencies
         run: composer install --no-dev --optimize-autoloader --no-progress
 
+      # 4. Setup Node
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
+      # 5. Install NPM
       - name: Install NPM Dependencies
         run: npm install
 
+      # 6. Build Asset
       - name: Build Assets
         run: npm run build
 
-      - name: Deploy to Server via SSH
+      # =========================
+      # 🚧 DEPLOY KE DEV
+      # =========================
+      - name: Deploy to DEV Server
+        if: github.ref == 'refs/heads/development'
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -43,9 +54,10 @@ jobs:
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "./"
           TARGET: "/www/wwwroot/dev.dreamile/dreamile_crm"
-          EXCLUDE: "node_modules/, .git/, vendor/"
+          EXCLUDE: "node_modules/, .git/, vendor/, .env"
 
-      - name: Run Remote Artisan Commands
+      - name: Run Artisan on DEV
+        if: github.ref == 'refs/heads/development'
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -59,6 +71,38 @@ jobs:
             php artisan migrate --force
             php artisan optimize
 
-            # FIX PERMISSION (WAJIB)
+            chown -R www:www storage bootstrap/cache
+            chmod -R 775 storage bootstrap/cache
+
+      # =========================
+      # 🚀 DEPLOY KE PRODUCTION
+      # =========================
+      - name: Deploy to PROD Server
+        if: github.ref == 'refs/heads/master'
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          SOURCE: "./"
+          TARGET: "/www/wwwroot/crm.dreamile.com/dreamile_crm"
+          EXCLUDE: "node_modules/, .git/, vendor/, .env"
+
+      - name: Run Artisan on PROD
+        if: github.ref == 'refs/heads/master'
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /www/wwwroot/crm.dreamile.com/dreamile_crm
+
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan optimize
+
             chown -R www:www storage bootstrap/cache
             chmod -R 775 storage bootstrap/cache
