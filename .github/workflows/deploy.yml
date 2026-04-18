@@ -48,10 +48,10 @@ jobs:
         if: github.ref == 'refs/heads/development'
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST_DEV }}
-          REMOTE_USER: ${{ secrets.SSH_USER_DEV }}
-          REMOTE_PORT: ${{ secrets.SSH_PORT_DEV }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "./"
           TARGET: "/www/wwwroot/dev.dreamile/dreamile_crm"
           EXCLUDE: "node_modules/, .git/, vendor/, .env"
@@ -60,10 +60,10 @@ jobs:
         if: github.ref == 'refs/heads/development'
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_HOST_DEV }}
-          port: ${{ secrets.SSH_PORT_DEV }}
-          username: ${{ secrets.SSH_USER_DEV }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/dev.dreamile/dreamile_crm
 
@@ -81,10 +81,10 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST_PROD }}
-          REMOTE_USER: ${{ secrets.SSH_USER_PROD }}
-          REMOTE_PORT: ${{ secrets.SSH_PORT_PROD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "./"
           TARGET: "/www/wwwroot/crm.dreamile.com/dreamile_crm"
           EXCLUDE: "node_modules/, .git/, vendor/, .env"
@@ -93,10 +93,10 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_HOST_PROD }}
-          port: ${{ secrets.SSH_PORT_PROD }}
-          username: ${{ secrets.SSH_USER_PROD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/crm.dreamile.com/dreamile_crm
 
