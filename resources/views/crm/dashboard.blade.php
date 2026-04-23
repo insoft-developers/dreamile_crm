@@ -4,15 +4,8 @@
         <div class="container-fluid">
 
             <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">
-                <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">E-Commerce</h2>
-                <div class="flex-shrink-0">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-end mb-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">E-Commerce</li>
-                        </ol>
-                    </nav>
-                </div>
+                <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">Dreamile International CRM Dashboard</h2>
+                
             </div>
             <div class="row">
                 <div class="col-xxl-8">
