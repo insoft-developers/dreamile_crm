@@ -13,7 +13,7 @@
     <script type="module" src="{{ asset('template/crm') }}/assets/js/layout-setup.js"></script>
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('images') }}/dlogo.png">
+    <link rel="shortcut icon" href="{{ asset('images') }}/logo_trans.png">
     <link rel="stylesheet" href="{{ asset('template/crm') }}/assets/libs/gridjs/theme/mermaid.min.css">
     <!-- Simplebar Css -->
     <link rel="stylesheet" href="{{ asset('template/crm') }}/assets/libs/simplebar/simplebar.min.css">
@@ -54,7 +54,7 @@
                             <i class="ri-menu-2-line header-icon"></i>
                         </button>
                         <!-- Search Bar -->
-                       
+
                     </div>
                     <div class="flex-shrink-0 d-flex align-items-center gap-4">
                         <div class="d-flex gap-2 align-items-center">
@@ -188,8 +188,8 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                           
+
+
                         </div>
                         <div class="dropdown pe-dropdown-mega d-none d-md-block">
                             <button class="header-profile-btn btn gap-1 text-start" type="button"
@@ -231,8 +231,17 @@
                                                 class="bi bi-headset me-2"></i> Support</a></li>
                                 </ul>
                                 <ul class="list-unstyled mb-0">
-                                    <li><a class="dropdown-item" href="auth-signout.html"><i
-                                                class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                                        </a>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

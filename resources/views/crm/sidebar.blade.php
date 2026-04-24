@@ -2,11 +2,12 @@
      <div class="pe-app-sidebar-logo px-6 d-flex align-items-center position-relative">
          <!--begin::Brand Image-->
          <a href="index.html" class="d-flex align-items-end logo-main">
-             <img height="35" width="34" class="logo-dark" alt="Dark Logo" src="{{ asset('images/dlogo.png') }}">
-             <img height="35" width="34" class="logo-light" alt="Light Logo"
-                 src="{{ asset('images/dlogo.png') }}">
-             <h3 class="text-body-emphasis fw-bolder mb-0 ms-1">CRM</h3>
+             <img height="45" width="45" class="logo-dark" alt="Dark Logo" src="{{ asset('images/logo_trans.png') }}">
+             <img height="45" width="45" class="logo-light" alt="Light Logo"
+                 src="{{ asset('images/logo_trans.png') }}">
+             
          </a>
+         <h3 class="text-body-emphasis fw-bolder mb-0 ms-1">CRM</h3>
          <button type="button" id="sidebarDefaultArrow"
              class="btn btn-sm p-0 fs-16 text-body-emphasis ms-auto float-end d-none icon-hover-btn d-none"><i
                  class="ri-arrow-right-line fs-5"></i></button>
@@ -21,11 +22,11 @@
                      <a href="{{ url('/') }}" class="pe-nav-link">
                          <i class="ri-dashboard-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Dashboards</span>
-                         
+
                      </a>
-                     
+
                  </li>
-                 
+
                  <!-- Pages -->
                  <li class="pe-menu-title">Main Menu</li>
                  <li class="pe-slide pe-has-sub">
@@ -176,7 +177,7 @@
                          </li>
                      </ul>
                  </li>
-                
+
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseBaseUI" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseBaseUI">
@@ -459,22 +460,24 @@
                  </li>
                  <!-- Icons & Maps -->
                  <li class="pe-menu-title">Sign Out</li>
-                
+
                  <li class="pe-slide pe-has-sub">
-                     <a href="{{ url('/') }}" class="pe-nav-link" >
+                     <a href="{{ route('logout') }}" class="pe-nav-link"
+                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                          <i class="ri-compass-3-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Sign out</span>
-                         
                      </a>
-                    
+
+                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                         @csrf
+                     </form>
                  </li>
-                
-                 
+
+
              </ul>
              <!-- Widgets -->
              <div style="margin-bottom: 50px;"></div>
-             
+
          </div>
      </nav>
  </aside>
- 
