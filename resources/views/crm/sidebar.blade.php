@@ -32,17 +32,17 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseAuth" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseAuth">
-                         <i class="ri-user-line pe-nav-icon"></i>
-                         <span class="pe-nav-content">Inbox</span>
+                         <i class="ri-whatsapp-line pe-nav-icon"></i>
+                         <span class="pe-nav-content">Whatsapp</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
                      <ul class="pe-slide-menu collapse" id="collapseAuth">
                          <li class="slide pe-nav-content1">
-                             <a href="javascript:void(0)">Authentication</a>
+                             <a href="javascript:void(0)">whatsapp</a>
                          </li>
                          <li class="pe-slide-item">
                              <a href="auth-signin.html" class="pe-nav-link">
-                                 Sign in
+                                 Inbox
                              </a>
                          </li>
                          <li class="pe-slide-item">
@@ -50,37 +50,13 @@
                                  Register
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-forgot-password.html" class="pe-nav-link">
-                                 Forgot Password
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-two-step-verify.html" class="pe-nav-link">
-                                 Two Step Verification
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-reset-password.html" class="pe-nav-link">
-                                 Reset Password
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-email-verify.html" class="pe-nav-link">
-                                 Email Verification
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-signout.html" class="pe-nav-link">
-                                 Sign out
-                             </a>
-                         </li>
+                         
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapsePages" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapsePages">
-                         <i class="ri-pages-line pe-nav-icon"></i>
+                         <i class="ri-customer-service-2-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Customers</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -181,7 +157,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseBaseUI" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseBaseUI">
-                         <i class="ri-pencil-ruler-2-line pe-nav-icon"></i>
+                         <i class="ri-file-chart-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Reports</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -275,7 +251,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseAdvancedUI" class="pe-nav-link" data-bs-toggle="collapse"
                          aria-expanded="false" aria-controls="collapseAdvancedUI">
-                         <i class="ri-color-filter-ai-line pe-nav-icon"></i>
+                         <i class="ri-broadcast-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Broadcast</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -324,7 +300,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseFroms" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseFroms">
-                         <i class="ri-information-line pe-nav-icon"></i>
+                         <i class="ri-user-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Users</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -400,7 +376,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseTables" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseTables">
-                         <i class="ri-table-line pe-nav-icon"></i>
+                         <i class="ri-coupon-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Ticketing</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -433,7 +409,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="#collapseCharts" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
                          aria-controls="collapseCharts">
-                         <i class="ri-line-chart-line pe-nav-icon"></i>
+                         <i class="ri-settings-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Settings</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                      </a>
@@ -464,7 +440,7 @@
                  <li class="pe-slide pe-has-sub">
                      <a href="{{ route('logout') }}" class="pe-nav-link"
                          onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                         <i class="ri-compass-3-line pe-nav-icon"></i>
+                         <i class="ri-logout-circle-r-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Sign out</span>
                      </a>
 
