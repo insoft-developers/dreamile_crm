@@ -21,7 +21,7 @@
                  <li class="pe-slide">
                      <a href="{{ url('/') }}" class="pe-nav-link">
                          <i class="ri-dashboard-line pe-nav-icon"></i>
-                         <span class="pe-nav-content">Dashboards</span>
+                         <span class="slide pe-nav-content1">Dashboards</span>
 
                      </a>
 

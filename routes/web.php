@@ -21,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     ->name('dashboard');
     Route::get('/', [DashboardController::class, 'index']);
     Route::resource('/company', CompanyController::class);
+    Route::get('/company_table', [CompanyController::class, 'table'])->name('company.table');
 });
 
 Route::middleware('auth')->group(function () {

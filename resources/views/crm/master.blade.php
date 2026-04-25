@@ -6,6 +6,7 @@
     <meta charset="utf-8" />
     <title>CRM | Dreamile International </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="Admin & Dashboards Template" name="description" />
     <meta content="Pixeleyez" name="author" />
 
@@ -15,6 +16,7 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('images') }}/logo_trans.png">
     <link rel="stylesheet" href="{{ asset('template/crm') }}/assets/libs/gridjs/theme/mermaid.min.css">
+
     <!-- Simplebar Css -->
     <link rel="stylesheet" href="{{ asset('template/crm') }}/assets/libs/simplebar/simplebar.min.css">
     <!-- Swiper Css -->
@@ -26,8 +28,24 @@
         type="text/css">
     <!--icons css-->
     <link href="{{ asset('template/crm') }}/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <!-- App Css-->
     <link href="{{ asset('template/crm') }}/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
+    <style>
+        .table-responsive {
+            overflow-y: clip !important;
+
+        }
+
+        .btn-insoft {
+            font-size: 10px;
+            padding: 5px 8px;
+            border-radius: 17px;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -219,9 +237,9 @@
                                                 class="bi bi-person me-2"></i> View Profile</a></li>
                                     <li><a class="dropdown-item" href="pages-profile.html"><i
                                                 class="bi bi-gear me-2"></i> Settings</a></li>
-                        
+
                                 </ul>
-                                
+
                                 <ul class="list-unstyled mb-0">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
@@ -792,7 +810,7 @@
                         document.write(new Date().getFullYear())
                     </script> © Dreamile International.
                     <div class="text-sm-end d-none d-sm-block">
-                        
+
                     </div>
                 </div>
             </div>
@@ -802,17 +820,94 @@
     <!-- END page -->
 
     <!-- JAVASCRIPT -->
+
     <script src="{{ asset('template/crm') }}/assets/libs/swiper/swiper-bundle.min.js"></script>
     <script src="{{ asset('template/crm') }}/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('template/crm') }}/assets/libs/simplebar/simplebar.min.js"></script>
     <script src="{{ asset('template/crm') }}/assets/js/scroll-top.init.js"></script>
     <script src="{{ asset('template/crm') }}/assets/libs/gridjs/gridjs.umd.js" type="text/javascript"></script>
+    @if ($view == 'dashboard')
+        <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
+        <!-- File js -->
+        <script src="{{ asset('template/crm') }}/assets/js/dashboard/e-commerce.init.js"></script>
+        <!-- App js -->
+    @else
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-    <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
-    <!-- File js -->
-    <script src="{{ asset('template/crm') }}/assets/js/dashboard/e-commerce.init.js"></script>
-    <!-- App js -->
+        <!--datatable js-->
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @endif
     <script type="module" src="{{ asset('template/crm') }}/assets/js/app.js"></script>
+    <script>
+        function formatRupiah(angka) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        function loading(id) {
+            $("#" + id).text("Processing.....");
+            $("#" + id).attr("disabled", true);
+        }
+
+        function unloading(id, text) {
+            $("#" + id).text(text);
+            $("#" + id).removeAttr("disabled");
+        }
+
+        function generateCode(prefix) {
+            const randomNumber = Math.floor(10000000 + Math.random() * 90000000); // 8 digit random
+            return prefix + randomNumber;
+        }
+
+        function formatTanggal(tanggal) {
+            const [tahun, bulan, hari] = tanggal.split("-");
+            return `${hari}-${bulan}-${tahun}`;
+        }
+
+        function formatTanggalWaktu(tanggalWaktu) {
+            const [tanggal, waktu] = tanggalWaktu.split(" ");
+            const [tahun, bulan, hari] = tanggal.split("-");
+            return `${hari}-${bulan}-${tahun} ${waktu}`;
+        }
+
+        function formatTgl(tgl) {
+            const d = new Date(tgl);
+
+            const hari = String(d.getDate()).padStart(2, '0');
+            const bulan = String(d.getMonth() + 1).padStart(2, '0'); // bulan mulai 0
+            const tahun = d.getFullYear();
+
+            const jam = String(d.getHours()).padStart(2, '0');
+            const menit = String(d.getMinutes()).padStart(2, '0');
+
+            return `${hari}-${bulan}-${tahun} ${jam}:${menit}`;
+        }
+
+
+        function formatWaktu(tgl) {
+            const d = new Date(tgl);
+
+            const hari = String(d.getDate()).padStart(2, '0');
+            const bulan = String(d.getMonth() + 1).padStart(2, '0'); // bulan mulai 0
+            const tahun = d.getFullYear();
+
+            const jam = String(d.getHours()).padStart(2, '0');
+            const menit = String(d.getMinutes()).padStart(2, '0');
+            const detik = String(d.getSeconds()).padStart(2, '0');
+
+            return `${jam}:${menit}:${detik}`;
+        }
+    </script>
+    @stack('scripts')
 
 </body>
 
