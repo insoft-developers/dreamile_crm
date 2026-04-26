@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
     Route::resource('/company', CompanyController::class);
     Route::get('/company_table', [CompanyController::class, 'table'])->name('company.table');
+    Route::resource('/branch', BranchController::class);
+    Route::get('/branch_table', [BranchController::class, 'table'])->name('branch.table');
 });
 
 Route::middleware('auth')->group(function () {

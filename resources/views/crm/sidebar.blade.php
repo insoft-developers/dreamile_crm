@@ -69,88 +69,8 @@
                                  Starter Page
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-profile.html" class="pe-nav-link">
-                                 Profile
-                             </a>
-                         </li>
-                         <li class="pe-slide-item pe-has-sub">
-                             <a href="#collapseBlogs" class="pe-nav-link" data-bs-toggle="collapse"
-                                 aria-expanded="false" aria-controls="collapseBlogs">
-                                 <span class="pe-nav-sub-content">Blogs</span>
-                                 <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
-                             </a>
-                             <ul class="pe-slide-menu collapse" id="collapseBlogs">
-                                 <li class="slide pe-nav-content1">
-                                     <a href="javascript:void(0)">Blog</a>
-                                 </li>
-                                 <li class="pe-slide-item">
-                                     <a href="pages-blog-list.html" class="pe-nav-link">
-                                         Blog List
-                                     </a>
-                                 </li>
-                                 <li class="pe-slide-item">
-                                     <a href="pages-blog-details.html" class="pe-nav-link">
-                                         Blog Details
-                                     </a>
-                                 </li>
-                                 <li class="pe-slide-item">
-                                     <a href="pages-blog-create.html" class="pe-nav-link">
-                                         Create Blog
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-pricing.html" class="pe-nav-link">
-                                 Pricing
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-privacy-policy.html" class="pe-nav-link">
-                                 Privacy Policy
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-terms-conditions.html" class="pe-nav-link">
-                                 Terms & Conditions
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-timeline.html" class="pe-nav-link">
-                                 Timeline
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-faqs.html" class="pe-nav-link">
-                                 FAQs
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="pages-billing-subscription.html" class="pe-nav-link">
-                                 Billing & Subscription
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="not-authorize.html" class="pe-nav-link">
-                                 Not Authorized
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="coming-soon.html" class="pe-nav-link">
-                                 Comming Soon
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="under-maintenance.html" class="pe-nav-link">
-                                 Maintenance
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="error.html" class="pe-nav-link">
-                                 Error
-                             </a>
-                         </li>
+                         
+                         
                      </ul>
                  </li>
 
@@ -168,84 +88,7 @@
                          <li class="pe-slide-item">
                              <a href="ui-accordions.html" class="pe-nav-link">Accordions</a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-alerts.html" class="pe-nav-link">Alert</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-avatars.html" class="pe-nav-link">Avatar</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-badges.html" class="pe-nav-link">Badge</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-breadcrumbs.html" class="pe-nav-link">Breadcrumb</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-buttons.html" class="pe-nav-link">Buttons</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-button-group.html" class="pe-nav-link">Button Group</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-card.html" class="pe-nav-link">Cards</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-cookie.html" class="pe-nav-link">Cookie</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-carousel.html" class="pe-nav-link">Carousel</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-dropdowns.html" class="pe-nav-link">Dropdown</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-images-figures.html" class="pe-nav-link">Images & Figures</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-links.html" class="pe-nav-link">Links</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-list.html" class="pe-nav-link">List Group</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tabs.html" class="pe-nav-link">Nav & Tabs</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-pagination.html" class="pe-nav-link">Pagination</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-popover.html" class="pe-nav-link">Popovers</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-progress.html" class="pe-nav-link">Progress</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-spinner.html" class="pe-nav-link">Spinners</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-separator.html" class="pe-nav-link">Separator</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-modal.html" class="pe-nav-link">Modal</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-offcanvas.html" class="pe-nav-link">Offcanvas</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-placeholders.html" class="pe-nav-link">Placeholders</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-toast.html" class="pe-nav-link">Toasts</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tooltips.html" class="pe-nav-link">Tooltips</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-typography.html" class="pe-nav-link">Typography</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-utilities.html" class="pe-nav-link">Utilities</a>
-                         </li>
+                         
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -262,39 +105,7 @@
                          <li class="pe-slide-item">
                              <a href="ui-block.html" class="pe-nav-link">Block</a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-countup.html" class="pe-nav-link">Count Up</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-draggable-cards.html" class="pe-nav-link">Draggable Cards</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-media-player.html" class="pe-nav-link">Media Player</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-ratings.html" class="pe-nav-link">Rating</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-ribbons.html" class="pe-nav-link">Ribbons</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-scrollspy.html" class="pe-nav-link">Scroll Spy</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-sortable-js.html" class="pe-nav-link">Sortable JS</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-sweetalert2.html" class="pe-nav-link">Sweet Alert</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-advance-swiper.html" class="pe-nav-link">Swiper JS</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tour.html" class="pe-nav-link">Tour</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-treeview.html" class="pe-nav-link">Tree View</a>
-                         </li>
+                         
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -313,64 +124,8 @@
                                  Input
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-checkboxs-radios.html" class="pe-nav-link">
-                                 Checkbox & Radios
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-input-group.html" class="pe-nav-link">
-                                 Inout Group
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-select.html" class="pe-nav-link">
-                                 Form Select
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-range.html" class="pe-nav-link">
-                                 Range Slider
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-input-spin.html" class="pe-nav-link">
-                                 Input Spin
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-input-masks.html" class="pe-nav-link">
-                                 Input Masks
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-file-uploads.html" class="pe-nav-link">
-                                 File Uploads
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-date-picker.html" class="pe-nav-link">
-                                 Date,Time Picker
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-floating-labels.html" class="pe-nav-link">Floating Label</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-layout.html" class="pe-nav-link">Form Layout</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-editor.html" class="pe-nav-link">Editor</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-validation.html" class="pe-nav-link">Form Validation</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-wizards.html" class="pe-nav-link">Form Wizards</a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-form-advanced.html" class="pe-nav-link">Form Advanced</a>
-                         </li>
+                        
+                         
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -389,21 +144,7 @@
                                  Basic Tables
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tables-listjs.html" class="pe-nav-link">
-                                 List JS Table
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tables-gridjs.html" class="pe-nav-link">
-                                 Grid JS Table
-                             </a>
-                         </li>
-                         <li class="pe-slide-item">
-                             <a href="ui-tables-datatables.html" class="pe-nav-link">
-                                 Datatables
-                             </a>
-                         </li>
+                         
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -423,15 +164,11 @@
                              </a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="chart-js-chart.html" class="pe-nav-link">
-                                 Chartjs Charts
+                             <a href="{{ url('branch') }}" class="pe-nav-link">
+                                 Branch
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="echart-chart.html" class="pe-nav-link">
-                                 Echart Charts
-                             </a>
-                         </li>
+                         
                      </ul>
                  </li>
                  <!-- Icons & Maps -->
