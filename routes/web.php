@@ -3,7 +3,11 @@
 use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\DashboardController;
+use App\Http\Controllers\CRM\LevelController;
+use App\Http\Controllers\CRM\PositionController;
+use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Position;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
@@ -25,6 +31,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/company_table', [CompanyController::class, 'table'])->name('company.table');
     Route::resource('/branch', BranchController::class);
     Route::get('/branch_table', [BranchController::class, 'table'])->name('branch.table');
+    Route::resource('/user', UserController::class);
+    Route::get('/user_table', [UserController::class, 'table'])->name('user.table');
+
+    Route::resource('/position', PositionController::class);
+    Route::get('/position_table', [PositionController::class, 'table'])->name('position.table');
+    Route::resource('/level', LevelController::class);
+    Route::get('/level_table', [LevelController::class, 'table'])->name('level.table');
 });
 
 Route::middleware('auth')->group(function () {

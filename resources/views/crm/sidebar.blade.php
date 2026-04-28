@@ -117,11 +117,11 @@
                      </a>
                      <ul class="pe-slide-menu collapse" id="collapseFroms">
                          <li class="slide pe-nav-content1">
-                             <a href="javascript:void(0)">Forms</a>
+                             <a href="javascript:void(0)">Users</a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="ui-form-elements.html" class="pe-nav-link">
-                                 Input
+                             <a href="{{ url('user') }}" class="pe-nav-link">
+                                 Users Data
                              </a>
                          </li>
                         
@@ -166,6 +166,16 @@
                          <li class="pe-slide-item">
                              <a href="{{ url('branch') }}" class="pe-nav-link">
                                  Branch
+                             </a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="{{ url('position') }}" class="pe-nav-link">
+                                 Positions
+                             </a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="{{ url('level') }}" class="pe-nav-link">
+                                 Levels
                              </a>
                          </li>
                          
