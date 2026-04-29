@@ -8,7 +8,9 @@ use App\Models\Level;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -23,17 +25,24 @@ class UserController extends Controller
             $data = User::query();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('updated_at', function($row){
+                ->addColumn('photo_profile', function ($row) {
+                    if (!empty($row->photo_profile)) {
+                        return '<img class="user-image" src="'.asset('/storage/'.$row->photo_profile).'">';
+                    } else {
+                        return '<center> -</center>';
+                    }
+                })
+                ->addColumn('updated_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
                 })
-                ->addColumn('branch_id', function($row){
-                    return $row->branch->branch_name ?? '';
+                ->addColumn('branch_id', function ($row) {
+                    return $row->branch_id == null ? 'All Branch' : $row->branch->branch_name ?? '';
                 })
-                ->addColumn('level', function($row){
+                ->addColumn('level', function ($row) {
                     return $row->levels->level_name ?? '';
                 })
 
-                ->addColumn('position', function($row){
+                ->addColumn('position', function ($row) {
                     return $row->positions->position_name ?? '';
                 })
                 ->addColumn('action', function ($row) {
@@ -46,7 +55,7 @@ class UserController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','photo_profile'])
                 ->make(true);
         }
     }
@@ -58,7 +67,7 @@ class UserController extends Controller
         $branches = Branch::all();
         $levels = Level::all();
         $positions = Position::all();
-        return view('crm.user.user.index', compact('view','branches','levels','positions'));
+        return view('crm.user.user.index', compact('view', 'branches', 'levels', 'positions'));
     }
 
     /**
@@ -79,15 +88,26 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users,email',
-            'branch_id' => 'required',
+            'branch_id' => 'nullable',
             'level' => 'required',
             'position' => 'required',
-            'password' => 'required|min:6'
-            
+            'password' => 'required|min:6',
+            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+
         ]);
-        
+
         $input['password'] = bcrypt($request->password);
+
+
+        $path = null;
+
+        if ($request->hasFile('photo_profile')) {
+            $path = $request->file('photo_profile')->store('users', 'public');
+        }
+
+        $input['photo_profile'] = $path;
         User::create($input);
+
 
         return response()->json([
             'success' => true,
@@ -108,7 +128,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = User::find($id);
+        return $data;
     }
 
     /**
@@ -116,7 +137,46 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $input = $request->all();
+        $user = User::find($id);
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'email' => 'required|email|'.Rule::unique('users')->ignore($user->id),
+            'branch_id' => 'nullable',
+            'level' => 'required',
+            'position' => 'required',
+            'password' => 'nullable|string|min:6',
+            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+
+        ]);
+
+        $path = $user->photo_profile;
+
+        if ($request->hasFile('photo_profile')) {
+
+            // hapus foto lama (kalau ada)
+            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+                Storage::disk('public')->delete($user->photo_profile);
+            }
+
+            // upload foto baru
+            $path = $request->file('photo_profile')->store('users', 'public');
+        }
+
+
+        if (!empty($request->password)) {
+            $input['password'] = bcrypt($request->password);
+        } else {
+            $input['password'] = $user->password;
+        }
+
+        $input['photo_profile'] = $path;
+        $user->update($input);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan.',
+        ]);
     }
 
     /**
@@ -124,6 +184,14 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+
+
+        if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+            Storage::disk('public')->delete($user->photo_profile);
+        }
+
+        // hapus data user
+        $user->delete();
     }
 }

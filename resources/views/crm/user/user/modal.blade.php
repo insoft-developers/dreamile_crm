@@ -26,12 +26,12 @@
                     <div class="form-group mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Password" required>
+                            placeholder="Password">
                     </div>
                     
                     <div class="form-group mb-3">
                         <label for="branch_id" class="form-label">Branch</label>
-                        <select class="form-control" id="branch_id" name="branch_id" required>
+                        <select class="form-control" id="branch_id" name="branch_id">
                             <option value="">- Semua Cabang -</option>
                             @foreach ($branches as $branch )
                                 <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
@@ -57,6 +57,10 @@
                                 <option value="{{ $position->id }}">{{ $position->position_name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="photo_profile" class="form-label">Profile Photo</label>
+                        <input accept=".jpg,.jpeg,.png" type="file" class="form-control" id="photo_profile" name="photo_profile">
                     </div>
                    
                 </div>

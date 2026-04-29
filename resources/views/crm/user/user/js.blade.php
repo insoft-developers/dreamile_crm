@@ -25,6 +25,10 @@
                 searchable: false
             },
             {
+                data: 'photo_profile',
+                name: 'photo_profile'
+            },
+            {
                 data: 'name',
                 name: 'name'
             },
@@ -71,13 +75,14 @@
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Branch Data");
+                $('.modal-title').text("Edit User Data");
                 $('#id').val(data.id);
-                $("#branch_name").val(data.branch_name);
-                $("#address").val(data.address);
-                $("#phone_number").val(data.phone_number);
+                $("#name").val(data.name);
                 $("#email").val(data.email);
-                $("#pic").val(data.pic);
+                $("#password").val("");
+                $("#branch_id").val(data.branch_id);
+                $("#level").val(data.level);
+                $("#position").val(data.position);
                 
             }
         })

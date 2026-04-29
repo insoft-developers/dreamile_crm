@@ -24,7 +24,8 @@ class User extends Authenticatable
         'password',
         'position',
         'level',
-        'branch_id'
+        'branch_id',
+        'photo_profile'
 
     ];
 

@@ -33,18 +33,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <!-- App Css-->
     <link href="{{ asset('template/crm') }}/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    <style>
-        .table-responsive {
-            overflow-y: clip !important;
-
-        }
-
-        .btn-insoft {
-            font-size: 10px;
-            padding: 5px 8px;
-            border-radius: 17px;
-        }
-    </style>
+    @include('crm.css')
 
 </head>
 

@@ -32,6 +32,7 @@
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
+                                            <th>Photo</th>
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Branch</th>
