@@ -22,11 +22,13 @@
                         <!--start::card-->
                         <div class="card-header">
                             <h5 class="card-title mb-0"> Users Data </h5>
-                            <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i class="bi bi-plus"></i></button>
+                            <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
+                                    class="bi bi-plus"></i></button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table width="100%" id="list-table" class="table table-nowrap table-striped table-bordered">
+                                <table width="100%" id="list-table"
+                                    class="table table-nowrap table-striped table-bordered">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -34,6 +36,7 @@
                                             <th class="text-center">Aksi</th>
                                             <th>Photo</th>
                                             <th>Name</th>
+                                            <th>Status</th>
                                             <th>Email</th>
                                             <th>Branch</th>
                                             <th>Level</th>

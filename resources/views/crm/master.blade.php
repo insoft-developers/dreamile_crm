@@ -61,6 +61,9 @@
                             <i class="ri-menu-2-line header-icon"></i>
                         </button>
                         <!-- Search Bar -->
+                        <div class="branch-title">
+                            {{ Auth::user()->branch === null ? 'All Branch' : Auth::user()->branch->branch_name }}
+                        </div>
 
                     </div>
                     <div class="flex-shrink-0 d-flex align-items-center gap-4">
@@ -165,6 +168,7 @@
                                                     class="bi bi-x"></i></a>
                                         </div>
                                         <div class="noti-item">
+
                                             <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-1.jpg"
                                                 alt="Avatar Image" class="avatar-md">
                                             <div>
@@ -204,21 +208,38 @@
                                 <div class="d-none d-xl-block pe-2">
                                     <span class="d-block mb-0 fs-12 fw-semibold">{{ Auth::user()->name }}</span>
                                     <span class="d-block mb-0 fs-10 text-muted">{{ Auth::user()->email }}</span>
+
                                 </div>
                                 <span class="header-btn btn position-relative">
-                                    <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-3.jpg"
-                                        alt="Avatar Image" class="img-fluid rounded-circle">
+                                    @php
+                                        $user = \App\Models\User::find(Auth::user()->id);
+                                    @endphp
+                                    @if ($user->photo_profile === null)
+                                        <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-3.jpg"
+                                            alt="Avatar Image" class="img-fluid rounded-circle">
+                                    @else
+                                        <img src="{{ asset('storage/' . $user->photo_profile) }}" alt="Avatar Image"
+                                            class="img-fluid rounded-circle">
+                                    @endif
                                 </span>
                             </button>
                             <div class="dropdown-menu dropdown-mega-sm header-dropdown-menu p-3">
                                 <div class="border-bottom pb-2 mb-2 d-flex align-items-center gap-2">
-                                    <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-3.jpg"
-                                        alt="Avatar Image" class="avatar-md">
+                                    @if ($user->photo_profile === null)
+                                        <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-3.jpg"
+                                            alt="Avatar Image" class="avatar-md">
+                                    @else
+                                        <img src="{{ asset('storage/' . $user->photo_profile) }}" alt="Avatar Image"
+                                            class="avatar-md">
+                                    @endif
                                     <div>
                                         <a href="javascript:void(0)">
                                             <h6 class="mb-0 lh-base">{{ Auth::user()->name }}</h6>
                                         </a>
                                         <p class="mb-0 fs-13 text-muted">{{ Auth::user()->email }}</p>
+                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->levels->level_name }}</p>
+                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->positions->position_name }}
+                                        </p>
                                     </div>
                                 </div>
                                 <ul class="list-unstyled mb-1 border-bottom pb-1">
@@ -834,7 +855,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @endif
     <script type="module" src="{{ asset('template/crm') }}/assets/js/app.js"></script>
     <script>

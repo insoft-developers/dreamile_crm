@@ -5,7 +5,7 @@
              <img height="45" width="45" class="logo-dark" alt="Dark Logo" src="{{ asset('images/logo_trans.png') }}">
              <img height="45" width="45" class="logo-light" alt="Light Logo"
                  src="{{ asset('images/logo_trans.png') }}">
-             
+
          </a>
          <h3 class="text-body-emphasis fw-bolder mb-0 ms-1">CRM</h3>
          <button type="button" id="sidebarDefaultArrow"
@@ -50,7 +50,7 @@
                                  Register
                              </a>
                          </li>
-                         
+
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -62,15 +62,30 @@
                      </a>
                      <ul class="pe-slide-menu collapse" id="collapsePages">
                          <li class="slide pe-nav-content1">
-                             <a href="javascript:void(0)">Pages</a>
+                             <a href="javascript:void(0)">Customers</a>
                          </li>
                          <li class="pe-slide-item">
                              <a href="pages-starter.html" class="pe-nav-link">
-                                 Starter Page
+                                 Leads Data
                              </a>
                          </li>
-                         
-                         
+                         <li class="pe-slide-item">
+                             <a href="pages-starter.html" class="pe-nav-link">
+                                 Customer Data
+                             </a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="pages-starter.html" class="pe-nav-link">
+                                 Lead Source
+                             </a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="pages-starter.html" class="pe-nav-link">
+                                 Event Data
+                             </a>
+                         </li>
+
+
                      </ul>
                  </li>
 
@@ -88,12 +103,12 @@
                          <li class="pe-slide-item">
                              <a href="ui-accordions.html" class="pe-nav-link">Accordions</a>
                          </li>
-                         
+
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
-                     <a href="#collapseAdvancedUI" class="pe-nav-link" data-bs-toggle="collapse"
-                         aria-expanded="false" aria-controls="collapseAdvancedUI">
+                     <a href="#collapseAdvancedUI" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                         aria-controls="collapseAdvancedUI">
                          <i class="ri-broadcast-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Broadcast</span>
                          <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
@@ -105,7 +120,7 @@
                          <li class="pe-slide-item">
                              <a href="ui-block.html" class="pe-nav-link">Block</a>
                          </li>
-                         
+
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -124,8 +139,8 @@
                                  Users Data
                              </a>
                          </li>
-                        
-                         
+
+
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -144,7 +159,7 @@
                                  Basic Tables
                              </a>
                          </li>
-                         
+
                      </ul>
                  </li>
                  <li class="pe-slide pe-has-sub">
@@ -178,7 +193,7 @@
                                  Levels
                              </a>
                          </li>
-                         
+
                      </ul>
                  </li>
                  <!-- Icons & Maps -->

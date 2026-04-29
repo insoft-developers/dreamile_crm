@@ -10,11 +10,17 @@
         border-radius: 17px;
     }
 
-    .user-image{
+    .user-image {
         width: 60px;
         height: 63px;
         border-radius: 10px;
         padding: 3px;
         background: cadetblue;
+    }
+
+    .branch-title {
+        font-size: 17px;
+        font-weight: bold;
+        color: red;
     }
 </style>

@@ -45,17 +45,26 @@ class UserController extends Controller
                 ->addColumn('position', function ($row) {
                     return $row->positions->position_name ?? '';
                 })
+                ->addColumn('is_active', function ($row) {
+                    return $row->is_active == 1 ? '<span class="badge bg-success rounded-pill">active</span>' : '<span class="badge bg-danger rounded-pill">not active</span>';
+                })
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
+                    if ($row->is_active == 1) {
+                        $button .= '<button onclick="activate('.$row->id.', 0)" title="Disactivate User" class="me-0 btn btn-insoft btn-secondary"><i class="bi bi-ban"></i></button>';
+                    } else {
+                        $button .= '<button onclick="activate('.$row->id.', 1)" title="Activate User" class="me-0 btn btn-insoft btn-success"><i class="bi bi-check-lg"></i></button>';
+                    }
 
-                    $button .= '<button onclick="editData('.$row->id.')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
+
+                    $button .= '<button style="margin-left:3px;" onclick="editData('.$row->id.')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData('.$row->id.')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','photo_profile'])
+                ->rawColumns(['action','photo_profile','is_active'])
                 ->make(true);
         }
     }
@@ -193,5 +202,20 @@ class UserController extends Controller
 
         // hapus data user
         $user->delete();
+    }
+
+    public function activate(Request $request)
+    {
+        $input = $request->all();
+        $id = $input['id'];
+
+        $user = User::find($id);
+        $user->is_active = $input['stat'];
+        $user->save();
+
+        return response()->json([
+            "success" => true,
+            "message" => "success"
+        ]);
     }
 }

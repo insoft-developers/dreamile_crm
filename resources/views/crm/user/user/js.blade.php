@@ -33,6 +33,10 @@
                 name: 'name'
             },
             {
+                data: 'is_active',
+                name: 'is_active'
+            },
+            {
                 data: 'email',
                 name: 'email'
             },
@@ -48,12 +52,12 @@
                 data: 'position',
                 name: 'position'
             },
-            
+
             {
                 data: 'updated_at',
                 name: 'updated_at'
             },
-            
+
 
         ]
     });
@@ -83,7 +87,7 @@
                 $("#branch_id").val(data.branch_id);
                 $("#level").val(data.level);
                 $("#position").val(data.position);
-                
+
             }
         })
     }
@@ -169,6 +173,40 @@
         });
     }
 
+
+    function activate(id, stat) {
+        Swal.fire({
+            title: 'Are sure?',
+            text: stat == 1 ? "This account will be activated..?" : "This account will be disactivated..?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: stat == 1 ? 'Yes, Activate!' : 'Yes, Disactivate!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('user_activate') }}",
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        stat: stat,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        reloadTable();
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
+                            'error');
+                    }
+                });
+            }
+        });
+    }
+
     function reloadTable() {
         table.ajax.reload(null, false);
     }
@@ -176,6 +214,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-    
 </script>
