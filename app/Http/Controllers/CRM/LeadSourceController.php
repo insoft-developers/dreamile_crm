@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
-use App\Models\Position;
+use App\Models\Branch;
+use App\Models\LeadSource;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
-class PositionController extends Controller
+class LeadSourceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +18,10 @@ class PositionController extends Controller
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            $data = Position::query();
+            $data = LeadSource::query();
             return DataTables::of($data)
                 ->addIndexColumn()
+
                 ->addColumn('updated_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
                 })
@@ -41,8 +43,8 @@ class PositionController extends Controller
 
     public function index()
     {
-        $view = 'position';
-        return view('crm.settings.position.index', compact('view'));
+        $view = 'lead-source';
+        return view('crm.customers.lead_source.index', compact('view'));
     }
 
     /**
@@ -62,13 +64,13 @@ class PositionController extends Controller
         $input = $request->all();
 
         $validated = $request->validate([
-            'position_name' => 'required|string|max:100',
-            'slug' => 'required|unique:positions,slug',
+            'source_name' => 'required|string|max:100',
+            'slug' => 'required|unique:lead_sources,slug',
 
         ]);
 
 
-        Position::create($input);
+        LeadSource::create($input);
 
         return response()->json([
             'success' => true,
@@ -89,7 +91,7 @@ class PositionController extends Controller
      */
     public function edit(string $id)
     {
-        $data = Position::find($id);
+        $data = LeadSource::find($id);
         return $data;
     }
 
@@ -99,10 +101,10 @@ class PositionController extends Controller
     public function update(Request $request, string $id)
     {
         $input = $request->all();
-        $data = Position::find($id);
+        $data = LeadSource::find($id);
         $validated = $request->validate([
-            'position_name' => 'required|string|max:100',
-            'slug' => 'required|'.Rule::unique('positions')->ignore($data->id),
+            'source_name' => 'required|string|max:100',
+            'slug' => 'required|'.Rule::unique('lead_sources')->ignore($data->id),
 
         ]);
 
@@ -120,6 +122,6 @@ class PositionController extends Controller
      */
     public function destroy(string $id)
     {
-        return Position::destroy($id);
+        return LeadSource::destroy($id);
     }
 }

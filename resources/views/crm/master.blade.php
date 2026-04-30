@@ -237,8 +237,8 @@
                                             <h6 class="mb-0 lh-base">{{ Auth::user()->name }}</h6>
                                         </a>
                                         <p class="mb-0 fs-13 text-muted">{{ Auth::user()->email }}</p>
-                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->levels->level_name }}</p>
-                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->positions->position_name }}
+                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->levels?->level_name }}</p>
+                                        <p class="mb-0 fs-13 text-muted">{{ Auth::user()->positions?->position_name }}
                                         </p>
                                     </div>
                                 </div>

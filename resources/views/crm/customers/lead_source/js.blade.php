@@ -2,7 +2,7 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('position.table') }}',
+        ajax: '{{ route('lead.source.table') }}',
         order: [
             [0, 'desc']
         ],
@@ -25,8 +25,8 @@
                 searchable: false
             },
             {
-                data: 'position_name',
-                name: 'position_name'
+                data: 'source_name',
+                name: 'source_name'
             },
             {
                 data: 'slug',
@@ -45,7 +45,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Position Data");
+        $(".modal-title").text("Add Lead Source Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -54,14 +54,14 @@
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
-            url: "{{ url('/position') }}" + "/" + id + "/edit",
+            url: "{{ url('/lead_source') }}" + "/" + id + "/edit",
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Position Data");
+                $('.modal-title').text("Edit Lead Source Data");
                 $('#id').val(data.id);
-                $("#position_name").val(data.position_name);
+                $("#source_name").val(data.source_name);
                 $("#slug").val(data.slug);
 
             }
@@ -73,8 +73,8 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('position') }}";
-        else url = "{{ url('position') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('lead_source') }}";
+        else url = "{{ url('lead_source') . '/' }}" + id;
         $.ajax({
             url: url,
             type: "POST",
@@ -131,7 +131,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('position') }}" + "/" + id,
+                    url: "{{ url('lead_source') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -157,7 +157,8 @@
         $('#form-add')[0].reset();
     }
 
-    $('#position_name').on('keyup', function() {
+
+    $('#source_name').on('keyup', function() {
         let text = $(this).val();
 
         let slug = text

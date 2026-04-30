@@ -2,7 +2,7 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('position.table') }}',
+        ajax: '{{ route('user.table') }}',
         order: [
             [0, 'desc']
         ],
@@ -25,12 +25,32 @@
                 searchable: false
             },
             {
-                data: 'position_name',
-                name: 'position_name'
+                data: 'photo_profile',
+                name: 'photo_profile'
             },
             {
-                data: 'slug',
-                name: 'slug'
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'is_active',
+                name: 'is_active'
+            },
+            {
+                data: 'email',
+                name: 'email'
+            },
+            {
+                data: 'branch_id',
+                name: 'branch_id'
+            },
+            {
+                data: 'level',
+                name: 'level'
+            },
+            {
+                data: 'position',
+                name: 'position'
             },
 
             {
@@ -45,7 +65,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Position Data");
+        $(".modal-title").text("Add User Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -54,15 +74,19 @@
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
-            url: "{{ url('/position') }}" + "/" + id + "/edit",
+            url: "{{ url('/user') }}" + "/" + id + "/edit",
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Position Data");
+                $('.modal-title').text("Edit User Data");
                 $('#id').val(data.id);
-                $("#position_name").val(data.position_name);
-                $("#slug").val(data.slug);
+                $("#name").val(data.name);
+                $("#email").val(data.email);
+                $("#password").val("");
+                $("#branch_id").val(data.branch_id);
+                $("#level").val(data.level);
+                $("#position").val(data.position);
 
             }
         })
@@ -73,8 +97,8 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('position') }}";
-        else url = "{{ url('position') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('user') }}";
+        else url = "{{ url('user') . '/' }}" + id;
         $.ajax({
             url: url,
             type: "POST",
@@ -131,9 +155,43 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('position') }}" + "/" + id,
+                    url: "{{ url('user') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        reloadTable();
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
+                            'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+    function activate(id, stat) {
+        Swal.fire({
+            title: 'Are sure?',
+            text: stat == 1 ? "This account will be activated..?" : "This account will be disactivated..?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: stat == 1 ? 'Yes, Activate!' : 'Yes, Disactivate!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('user_activate') }}",
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        stat: stat,
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
@@ -156,17 +214,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-    $('#position_name').on('keyup', function() {
-        let text = $(this).val();
-
-        let slug = text
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9\s-]/g, '') // hapus karakter aneh
-            .replace(/\s+/g, '-') // spasi jadi -
-            .replace(/-+/g, '-'); // hindari --
-
-        $('#slug').val(slug);
-    });
 </script>

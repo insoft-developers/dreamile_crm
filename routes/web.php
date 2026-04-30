@@ -3,10 +3,13 @@
 use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\DashboardController;
+use App\Http\Controllers\CRM\EventController;
+use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
 use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Models\LeadSource;
 use App\Models\Position;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +42,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/position_table', [PositionController::class, 'table'])->name('position.table');
     Route::resource('/level', LevelController::class);
     Route::get('/level_table', [LevelController::class, 'table'])->name('level.table');
+
+    Route::resource('/lead_source', LeadSourceController::class);
+    Route::get('/lead_source_table', [LeadSourceController::class, 'table'])->name('lead.source.table');
+
+    Route::resource('/event', EventController::class);
+    Route::get('/event_table', [EventController::class, 'table'])->name('event.table');
 
 });
 

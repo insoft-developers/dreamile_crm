@@ -65,22 +65,22 @@
                              <a href="javascript:void(0)">Customers</a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="pages-starter.html" class="pe-nav-link">
+                             <a href="{{ url('lead') }}" class="pe-nav-link">
                                  Leads Data
                              </a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="pages-starter.html" class="pe-nav-link">
+                             <a href="{{ url('customer') }}" class="pe-nav-link">
                                  Customer Data
                              </a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="pages-starter.html" class="pe-nav-link">
+                             <a href="{{ url('lead_source') }}" class="pe-nav-link">
                                  Lead Source
                              </a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="pages-starter.html" class="pe-nav-link">
+                             <a href="{{ url('event') }}" class="pe-nav-link">
                                  Event Data
                              </a>
                          </li>

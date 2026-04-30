@@ -9,8 +9,8 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Settings</li>
-                            <li class="breadcrumb-item active" aria-current="page">Positions</li>
+                            <li class="breadcrumb-item active" aria-current="page">Customers</li>
+                            <li class="breadcrumb-item active" aria-current="page">Lead Sources</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> Position Data </h5>
+                            <h5 class="card-title mb-0"> Lead Source Data </h5>
                             <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
                                     class="bi bi-plus"></i></button>
                         </div>
@@ -34,7 +34,7 @@
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
-                                            <th>Position Name</th>
+                                            <th>Source Name</th>
                                             <th>Slug</th>
                                             <th>Updated At</th>
                                         </tr>
@@ -52,9 +52,9 @@
             </div><!--End row-->
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
-    @include('crm.settings.position.modal')
+    @include('crm.customers.lead_source.modal')
 @endsection
 
 @push('scripts')
-    @include('crm.settings.position.js')
+    @include('crm.customers.lead_source.js')
 @endpush

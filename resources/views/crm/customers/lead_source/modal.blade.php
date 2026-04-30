@@ -14,13 +14,13 @@
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id">
                     <div class="form-group mb-3">
-                        <label for="position_name" class="form-label">Position Name</label>
-                        <input type="text" class="form-control" id="position_name" name="position_name"
-                            placeholder="Position Name" required>
+                        <label for="source_name" class="form-label">Source Name</label>
+                        <input type="text" class="form-control" id="source_name" name="source_name"
+                            placeholder="Ex: google, facebook, instagram, etc" required>
                     </div>
                     <div class="form-group mb-3">
                         <label for="slug" class="form-label">Slug</label>
-                        <input readonly type="text" class="form-control" id="slug" name="slug" required>
+                        <input type="text" class="form-control" id="slug" name="slug" readonly required>
                     </div>
 
                 </div>
