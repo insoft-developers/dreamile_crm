@@ -4,9 +4,11 @@ namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Event;
 use App\Models\Level;
 use App\Models\Position;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
@@ -22,12 +24,12 @@ class EventController extends Controller
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::query();
+            $data = Event::query();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('photo_profile', function ($row) {
-                    if (!empty($row->photo_profile)) {
-                        return '<img class="user-image" src="'.asset('/storage/'.$row->photo_profile).'">';
+                ->addColumn('image', function ($row) {
+                    if (!empty($row->image)) {
+                        return '<a href="'.asset('/storage/'.$row->image).'" target="_blank"><img class="user-image" src="'.asset('/storage/'.$row->image).'"></a>';
                     } else {
                         return '<center> -</center>';
                     }
@@ -35,28 +37,16 @@ class EventController extends Controller
                 ->addColumn('updated_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
                 })
-                ->addColumn('branch_id', function ($row) {
-                    return $row->branch_id == null ? 'All Branch' : $row->branch->branch_name ?? '';
+                ->addColumn('event_date', function ($row) {
+                    return date('d-m-Y', strtotime($row->event_date));
                 })
-                ->addColumn('level', function ($row) {
-                    return $row->levels->level_name ?? '';
+                ->addColumn('event_location', function ($row) {
+                    return '<div style="white-space:normal;width:330px;">'.$row->event_location.'</div>';
                 })
 
-                ->addColumn('position', function ($row) {
-                    return $row->positions->position_name ?? '';
-                })
-                ->addColumn('is_active', function ($row) {
-                    return $row->is_active == 1 ? '<span class="badge bg-success rounded-pill">active</span>' : '<span class="badge bg-danger rounded-pill">not active</span>';
-                })
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    if ($row->is_active == 1) {
-                        $button .= '<button onclick="activate('.$row->id.', 0)" title="Disactivate User" class="me-0 btn btn-insoft btn-secondary"><i class="bi bi-ban"></i></button>';
-                    } else {
-                        $button .= '<button onclick="activate('.$row->id.', 1)" title="Activate User" class="me-0 btn btn-insoft btn-success"><i class="bi bi-check-lg"></i></button>';
-                    }
-
 
                     $button .= '<button style="margin-left:3px;" onclick="editData('.$row->id.')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData('.$row->id.')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
@@ -64,7 +54,7 @@ class EventController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','photo_profile','is_active'])
+                ->rawColumns(['action','image','event_location'])
                 ->make(true);
         }
     }
@@ -72,11 +62,9 @@ class EventController extends Controller
 
     public function index()
     {
-        $view = 'user';
-        $branches = Branch::all();
-        $levels = Level::all();
-        $positions = Position::all();
-        return view('crm.user.user.index', compact('view', 'branches', 'levels', 'positions'));
+        $view = 'event';
+
+        return view('crm.customers.event.index', compact('view'));
     }
 
     /**
@@ -95,27 +83,21 @@ class EventController extends Controller
         $input = $request->all();
 
         $validated = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:users,email',
-            'branch_id' => 'nullable',
-            'level' => 'required',
-            'position' => 'required',
-            'password' => 'required|min:6',
-            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'event_name' => 'required|string|max:150',
+            'event_date' => 'required',
+            'event_location' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
         ]);
 
-        $input['password'] = bcrypt($request->password);
-
-
         $path = null;
 
-        if ($request->hasFile('photo_profile')) {
-            $path = $request->file('photo_profile')->store('users', 'public');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('events', 'public');
         }
 
-        $input['photo_profile'] = $path;
-        User::create($input);
+        $input['image'] = $path;
+        Event::create($input);
 
 
         return response()->json([
@@ -137,7 +119,7 @@ class EventController extends Controller
      */
     public function edit(string $id)
     {
-        $data = User::find($id);
+        $data = Event::find($id);
         return $data;
     }
 
@@ -147,40 +129,31 @@ class EventController extends Controller
     public function update(Request $request, string $id)
     {
         $input = $request->all();
-        $user = User::find($id);
+        $event = Event::find($id);
         $validated = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|'.Rule::unique('users')->ignore($user->id),
-            'branch_id' => 'nullable',
-            'level' => 'required',
-            'position' => 'required',
-            'password' => 'nullable|string|min:6',
-            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'event_name' => 'required|string|max:150',
+            'event_date' => 'required',
+            'event_location' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
         ]);
 
-        $path = $user->photo_profile;
+        $path = $event->image;
 
-        if ($request->hasFile('photo_profile')) {
+        if ($request->hasFile('image')) {
 
             // hapus foto lama (kalau ada)
-            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
-                Storage::disk('public')->delete($user->photo_profile);
+            if ($event->image && Storage::disk('public')->exists($event->image)) {
+                Storage::disk('public')->delete($event->image);
             }
 
             // upload foto baru
-            $path = $request->file('photo_profile')->store('users', 'public');
+            $path = $request->file('image')->store('events', 'public');
         }
 
-
-        if (!empty($request->password)) {
-            $input['password'] = bcrypt($request->password);
-        } else {
-            $input['password'] = $user->password;
-        }
-
-        $input['photo_profile'] = $path;
-        $user->update($input);
+        $input['image'] = $path;
+        $input['updated_at'] = Carbon::now();
+        $event->update($input);
 
         return response()->json([
             'success' => true,
@@ -193,29 +166,16 @@ class EventController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::find($id);
+        $event = Event::find($id);
 
 
-        if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
-            Storage::disk('public')->delete($user->photo_profile);
+        if ($event->image && Storage::disk('public')->exists($event->image)) {
+            Storage::disk('public')->delete($event->image);
         }
 
         // hapus data user
-        $user->delete();
+        $event->delete();
     }
 
-    public function activate(Request $request)
-    {
-        $input = $request->all();
-        $id = $input['id'];
 
-        $user = User::find($id);
-        $user->is_active = $input['stat'];
-        $user->save();
-
-        return response()->json([
-            "success" => true,
-            "message" => "success"
-        ]);
-    }
 }

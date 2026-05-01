@@ -10,7 +10,7 @@
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Customers</li>
-                            <li class="breadcrumb-item active" aria-current="page">Event Data</li>
+                            <li class="breadcrumb-item active" aria-current="page">Lead Data</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> Event Data </h5>
+                            <h5 class="card-title mb-0"> Lead Data </h5>
                             <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
                                     class="bi bi-plus"></i></button>
                         </div>
@@ -35,10 +35,14 @@
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
                                             <th>Photo</th>
-                                            <th>Event Name</th>
-                                            <th>Date</th>
-                                            <th>Location</th>
-                                            <th>Updated At</th>
+                                            <th>Full Name</th>
+                                            <th>School</th>
+                                            <th>Class/Major</th>
+                                            <th>Phone Number</th>
+                                            <th>Status</th>
+                                            <th>Consultant</th>
+                                            <th>Branch</th>
+                                            <th>Created At</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -54,9 +58,9 @@
             </div><!--End row-->
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
-    @include('crm.customers.event.modal')
+    @include('crm.customers.lead.modal')
 @endsection
 
 @push('scripts')
-    @include('crm.customers.event.js')
+    @include('crm.customers.lead.js')
 @endpush

@@ -14,54 +14,25 @@
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id">
                     <div class="form-group mb-3">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
+                        <label for="event_name" class="form-label">Event Name</label>
+                        <input type="text" class="form-control" id="event_name" name="event_name"
+                            placeholder="Event Name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for=event_date class="form-label">Event Date</label>
+                        <input type=date class="form-control" id=event_date name=event_date placeholder="Event Date"
                             required>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Email"
-                            required>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password"
-                            placeholder="Password">
+                        <label for="event_location" class="form-label">Event Location</label>
+                        <textarea class="form-control" id="event_location" name="event_location" placeholder="Event_Location"></textarea>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label for="branch_id" class="form-label">Branch</label>
-                        <select class="form-control" id="branch_id" name="branch_id">
-                            <option value="">- Semua Cabang -</option>
-                            @foreach ($branches as $branch)
-                                <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
 
                     <div class="form-group mb-3">
-                        <label for="level" class="form-label">Level</label>
-                        <select class="form-control" id="level" name="level" required>
-                            <option value="">- Select -</option>
-                            @foreach ($levels as $level)
-                                <option value="{{ $level->id }}">{{ $level->level_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="position" class="form-label">Position</label>
-                        <select class="form-control" id="position" name="position" required>
-                            <option value="">- Select -</option>
-                            @foreach ($positions as $position)
-                                <option value="{{ $position->id }}">{{ $position->position_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="photo_profile" class="form-label">Profile Photo</label>
-                        <input accept=".jpg,.jpeg,.png" type="file" class="form-control" id="photo_profile"
-                            name="photo_profile">
+                        <label for="image" class="form-label">Event Image</label>
+                        <input accept=".jpg,.jpeg,.png" type="file" class="form-control" id="image"
+                            name="image">
                     </div>
 
                 </div>

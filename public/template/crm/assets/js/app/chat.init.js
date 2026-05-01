@@ -25,7 +25,7 @@ let chatMessages = [
         id: 1,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "Good morning 😊",
         time: "02:08 am"
     },
@@ -33,7 +33,7 @@ let chatMessages = [
         id: 2,
         side: "right",
         sender: "Frank Thomas",
-        avatar: "assets/images/avatar/avatar-10.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-10.jpg`,
         message: "Hi, I'm having trouble with my recent order. I received the wrong item.",
         time: "02:09 am"
     },
@@ -41,7 +41,7 @@ let chatMessages = [
         id: 3,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "I'm really sorry to hear that! Could you please provide me with your order number and describe the item you received?",
         time: "02:10 am"
     },
@@ -49,7 +49,7 @@ let chatMessages = [
         id: 4,
         side: "right",
         sender: "Frank Thomas",
-        avatar: "assets/images/avatar/avatar-10.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-10.jpg`,
         message: "Sure, my order number is #123456. I ordered a red jacket, but I received a blue shirt instead.",
         time: "02:11 am"
     },
@@ -57,7 +57,7 @@ let chatMessages = [
         id: 5,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "Thank you for providing the order number. Let me double-check that for you. One moment, please.",
         time: "02:30 am"
     },
@@ -65,11 +65,11 @@ let chatMessages = [
         id: 6,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "Here are the images of the items you received:",
         images: [
-            "assets/images/small/img-13.jpg",
-            "assets/images/small/img-12.jpg"
+            `${window.config.baseUrl}/assets/images/small/img-13.jpg`,
+            `${window.config.baseUrl}/assets/images/small/img-12.jpg`
         ],
         time: "03:15 am"
     },
@@ -77,7 +77,7 @@ let chatMessages = [
         id: 7,
         side: "right",
         sender: "Frank Thomas",
-        avatar: "assets/images/avatar/avatar-10.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-10.jpg`,
         message: "Yes, please send the red jacket and arrange for the return. How do I return the shirt?",
         time: "03:50 am"
     },
@@ -85,7 +85,7 @@ let chatMessages = [
         id: 8,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "I’ve initiated the replacement order for your red jacket. You should receive it within 3-5 business days.",
         time: "04:00 am"
     },
@@ -93,7 +93,7 @@ let chatMessages = [
         id: 9,
         side: "left",
         sender: "Lisa Parker",
-        avatar: "assets/images/avatar/avatar-12.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-12.jpg`,
         message: "As for the return, I’ll send you a prepaid return label via email. Just print it and drop off the package at your nearest shipping center.",
         time: "04:05 am"
     },
@@ -108,8 +108,7 @@ function initApp() {
 
 // Set up all event listeners
 function setupEventListeners() {
-    // Search functionality
-    searchInput.addEventListener("input", handleSearch);
+   
 
     // Clear chat functionality
     clearChatButton.addEventListener("click", handleClearChat);
@@ -453,7 +452,7 @@ function sendMessage() {
         // Set default values if no chat user is selected
         currentChatUser = {
             name: "Default User",
-            avatar: "assets/images/avatar/avatar-1.jpg"
+            avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-1.jpg`
         };
     }
 
@@ -461,7 +460,7 @@ function sendMessage() {
         id: chatMessages.length + 1,
         side: "right",
         sender: "You",
-        avatar: "assets/images/avatar/avatar-10.jpg",
+        avatar: `${window.config.baseUrl}/assets/images/avatar/avatar-10.jpg`,
         message: messageText,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
     };

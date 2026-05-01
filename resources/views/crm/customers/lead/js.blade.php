@@ -2,7 +2,7 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('event.table') }}',
+        ajax: '{{ route('lead.table') }}',
         order: [
             [0, 'desc']
         ],
@@ -25,21 +25,38 @@
                 searchable: false
             },
             {
-                data: 'image',
-                name: 'image'
+                data: 'photo',
+                name: 'photo'
             },
             {
-                data: 'event_name',
-                name: 'event_name'
+                data: 'fullname',
+                name: 'fullname'
             },
             {
-                data: 'event_date',
-                name: 'event_date'
+                data: 'school_from',
+                name: 'school_from'
             },
             {
-                data: 'event_location',
-                name: 'event_location'
+                data: 'class',
+                name: 'class'
             },
+            {
+                data: 'phone_number',
+                name: 'phone_number'
+            },
+            {
+                data: 'status',
+                name: 'status'
+            },
+            {
+                data: 'consultant_id',
+                name: 'consultant_id'
+            },
+            {
+                data: 'branch_id',
+                name: 'branch_id'
+            },
+
             {
                 data: 'updated_at',
                 name: 'updated_at'
@@ -52,7 +69,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Event Data");
+        $(".modal-title").text("Add User Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -61,17 +78,19 @@
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
-            url: "{{ url('/event') }}" + "/" + id + "/edit",
+            url: "{{ url('/user') }}" + "/" + id + "/edit",
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Event Data");
+                $('.modal-title').text("Edit User Data");
                 $('#id').val(data.id);
-                $("#event_name").val(data.event_name);
-                $("#event_date").val(data.event_date);
-                $("#image").val(null);
-                $("#event_location").val(data.event_location);
+                $("#name").val(data.name);
+                $("#email").val(data.email);
+                $("#password").val("");
+                $("#branch_id").val(data.branch_id);
+                $("#level").val(data.level);
+                $("#position").val(data.position);
 
             }
         })
@@ -82,8 +101,8 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('event') }}";
-        else url = "{{ url('event') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('user') }}";
+        else url = "{{ url('user') . '/' }}" + id;
         $.ajax({
             url: url,
             type: "POST",
@@ -140,7 +159,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('event') }}" + "/" + id,
+                    url: "{{ url('user') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'

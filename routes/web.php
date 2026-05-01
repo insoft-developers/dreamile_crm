@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CRM\BranchController;
+use App\Http\Controllers\CRM\ChatController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
+use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
@@ -48,6 +50,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/event', EventController::class);
     Route::get('/event_table', [EventController::class, 'table'])->name('event.table');
+
+    Route::resource('/chat', ChatController::class);
+
+    Route::resource('/lead', LeadController::class);
+    Route::get('/lead_table', [LeadController::class, 'table'])->name('lead.table');
 
 });
 

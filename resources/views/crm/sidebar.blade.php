@@ -1,7 +1,7 @@
  <aside class="pe-app-sidebar" id="sidebar">
      <div class="pe-app-sidebar-logo px-6 d-flex align-items-center position-relative">
          <!--begin::Brand Image-->
-         <a href="index.html" class="d-flex align-items-end logo-main">
+         <a href="{{ url('/') }}" class="d-flex align-items-end logo-main">
              <img height="45" width="45" class="logo-dark" alt="Dark Logo" src="{{ asset('images/logo_trans.png') }}">
              <img height="45" width="45" class="logo-light" alt="Light Logo"
                  src="{{ asset('images/logo_trans.png') }}">
@@ -41,15 +41,12 @@
                              <a href="javascript:void(0)">whatsapp</a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="auth-signin.html" class="pe-nav-link">
+                             <a href="{{ url('chat') }}" class="pe-nav-link">
                                  Inbox
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="auth-signup.html" class="pe-nav-link">
-                                 Register
-                             </a>
-                         </li>
+
+
 
                      </ul>
                  </li>
