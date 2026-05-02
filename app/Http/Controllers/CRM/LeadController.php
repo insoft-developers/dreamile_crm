@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CRM;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\LeadSource;
 use App\Models\Level;
 use App\Models\Position;
 use App\Models\User;
@@ -63,10 +64,9 @@ class LeadController extends Controller
     public function index()
     {
         $view = 'lead';
-        $branches = Branch::all();
-        $levels = Level::all();
-        $positions = Position::all();
-        return view('crm.customers.lead.index', compact('view', 'branches', 'levels', 'positions'));
+        $sources = LeadSource::all();
+        $consultants = User::where('position', 'consultant')->get();
+        return view('crm.customers.lead.index', compact('view','sources','consultants'));
     }
 
     /**

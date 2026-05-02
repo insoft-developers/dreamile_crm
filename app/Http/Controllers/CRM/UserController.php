@@ -43,7 +43,12 @@ class UserController extends Controller
                 })
 
                 ->addColumn('position', function ($row) {
-                    return $row->positions->position_name ?? '';
+                    if($row->position === 'consultant') {
+                        return 'Education Consultant';
+                    } else {
+                        return $row->positions->position_name ?? '';
+                    }
+                    
                 })
                 ->addColumn('is_active', function ($row) {
                     return $row->is_active == 1 ? '<span class="badge bg-success rounded-pill">active</span>' : '<span class="badge bg-danger rounded-pill">not active</span>';

@@ -23,4 +23,30 @@
         font-weight: bold;
         color: red;
     }
+
+    .required::after {
+        content: " *";
+        color: red;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: 40px;
+        /* sesuaikan */
+        padding: 7px 14px;
+        border: 1px solid #ebebeb !important;
+
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 24px;
+        /* biar text center */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 34px;
+    }
+
+    .card-color {
+        background: #ecf3eb !important;
+    }
 </style>

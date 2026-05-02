@@ -1,4 +1,32 @@
 <script>
+    getProvince();
+
+
+    $('#modal-add').on('shown.bs.modal', function() {
+        $(this).find('.select2').select2({
+            dropdownParent: $('#modal-add'),
+            width: '100%'
+        });
+    });
+
+    $("#province_code").change(function() {
+        var provinceCode = $(this).val();
+        getRegency(provinceCode);
+        $("#district_code").val(null).trigger('change');
+        $("#village_code").val(null).trigger('change');
+    })
+
+    $("#regency_code").change(function() {
+        var regencyCode = $(this).val();
+        getDisctrict(regencyCode);
+        $("#village_code").val(null).trigger('change');
+    })
+
+    $("#district_code").change(function() {
+        var districtCode = $(this).val();
+        getVillage(districtCode);
+    })
+
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
@@ -217,5 +245,100 @@
 
     function resetForm() {
         $('#form-add')[0].reset();
+    }
+
+
+    function getProvince() {
+        fetch("{{ url('/api/province') }}")
+            .then(res => res.json())
+            .then(data => {
+                const provinces = data.data;
+                let select = document.getElementById('province_code');
+
+                provinces.forEach(item => {
+                    let option = `<option value="${item.code}">${item.name}</option>`;
+                    select.innerHTML += option;
+                });
+
+                // console.log(data.data);
+            });
+    }
+
+
+    function getProvince() {
+        fetch("{{ url('/api/province') }}")
+            .then(res => res.json())
+            .then(data => {
+                const provinces = data.data;
+                let select = document.getElementById('province_code');
+
+                let option = '';
+                provinces.forEach(item => {
+
+                    option = `<option value="${item.code}">${item.name}</option>`;
+                    select.innerHTML += option;
+                });
+
+                // console.log(data.data);
+            });
+    }
+
+    function getRegency(provinceCode) {
+        fetch("{{ url('/api/regency') }}" + '/' + provinceCode)
+            .then(res => res.json())
+            .then(data => {
+                const regencies = data.data;
+                let select = document.getElementById('regency_code');
+
+                // 🔥 RESET DULU
+                select.innerHTML = '<option value="">- Select Regency-</option>';
+
+                regencies.forEach(item => {
+                    let option = `<option value="${item.code}">${item.name}</option>`;
+                    select.innerHTML += option;
+                });
+
+                // console.log(data.data);
+            });
+    }
+
+
+    function getDisctrict(regencyCode) {
+        fetch("{{ url('/api/district') }}" + '/' + regencyCode)
+            .then(res => res.json())
+            .then(data => {
+                const districts = data.data;
+                let select = document.getElementById('district_code');
+
+                // 🔥 RESET DULU
+                select.innerHTML = '<option value="">- Select District-</option>';
+
+                districts.forEach(item => {
+                    let option = `<option value="${item.code}">${item.name}</option>`;
+                    select.innerHTML += option;
+                });
+
+                // console.log(data.data);
+            });
+    }
+
+
+    function getVillage(districtCode) {
+        fetch("{{ url('/api/village') }}" + '/' + districtCode)
+            .then(res => res.json())
+            .then(data => {
+                const villages = data.data;
+                let select = document.getElementById('village_code');
+
+                // 🔥 RESET DULU
+                select.innerHTML = '<option value="">- Select Village-</option>';
+
+                villages.forEach(item => {
+                    let option = `<option value="${item.code}">${item.name}</option>`;
+                    select.innerHTML += option;
+                });
+
+                // console.log(data.data);
+            });
     }
 </script>
