@@ -86,8 +86,12 @@
             },
 
             {
-                data: 'updated_at',
-                name: 'updated_at'
+                data: 'created_by',
+                name: 'created_by'
+            },
+            {
+                data: 'created_at',
+                name: 'created_at'
             },
 
 
@@ -97,7 +101,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add User Data");
+        $(".modal-title").text("Add Leads Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -129,12 +133,23 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('user') }}";
-        else url = "{{ url('user') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('lead') }}";
+        else url = "{{ url('lead') . '/' }}" + id;
+        var formData = new FormData($('#modal-add form')[0]);
+        var provinceName = $('#province_code option:selected').text();
+        var regencyName = $('#regency_code option:selected').text();
+        var districtName = $('#district_code option:selected').text();
+        var villageName = $('#village_code option:selected').text();
+
+        formData.append('province_name', provinceName);
+        formData.append('regency_name', regencyName);
+        formData.append('district_name', districtName);
+        formData.append('village_name', villageName);
+
         $.ajax({
             url: url,
             type: "POST",
-            data: new FormData($('#modal-add form')[0]),
+            data: formData,
             contentType: false,
             processData: false,
             success: function(data) {
@@ -341,4 +356,38 @@
                 // console.log(data.data);
             });
     }
+
+    $("#lead_source_id").change(function() {
+        const eventId = $(this).val();
+        if (eventId === 'event') {
+            fetch("{{ url('/api/event') }}")
+                .then(res => res.json())
+                .then(data => {
+                    let optionData = '';
+                    optionData += `<option value="">- Select -</option>`;
+                    data.forEach(item => {
+                        optionData += `<option value="${item.id}">${item.event_name} ( ${item.event_location} )</option>`; 
+                    });
+
+                    let selectEvent = '';
+                    selectEvent += `
+                    <div class="card">
+                        <div class="card-body">    
+                            <div class="form-group mb-3">
+                                <label for="event_id" class="form-label required">Select Event</label>
+                                <select class="form-control" id="event_id" name="event_id">
+                                    ${optionData}
+                                </select>
+                        </div>                        
+
+                    </div>`;
+                    $("#event-container").html(selectEvent);
+
+                });
+
+
+        } else {
+            $("#event-container").html('');
+        }
+    })
 </script>

@@ -20,8 +20,8 @@
                                     <input type="hidden" id="id" name="id">
 
                                     <div class="form-group mb-3">
-                                        <label for="name" class="form-label required">Full Name</label>
-                                        <input type="text" class="form-control" id="name" name="name"
+                                        <label for="fullname" class="form-label required">Full Name</label>
+                                        <input type="text" class="form-control" id="fullname" name="fullname"
                                             placeholder="Full Name" required>
                                     </div>
                                     <div class="form-group mb-3">
@@ -86,8 +86,8 @@
                                             placeholder="Ex: user@mail.com" required>
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="lead_source" class="form-label required">Lead Source</label>
-                                        <select class="form-control" id="lead_source" name="lead_source">
+                                        <label for="lead_source_id" class="form-label required">Lead Source</label>
+                                        <select class="form-control" id="lead_source_id" name="lead_source_id">
 
                                             <option value="">- Select -</option>
                                             @foreach ($sources as $source)
@@ -97,8 +97,8 @@
                                             <option value="event">Event</option>
 
                                         </select>
-
                                     </div>
+                                    <div id="event-container"></div>
                                     <div class="form-group mb-3">
                                         <label for="status" class="form-label required">Status</label>
                                         <select class="form-control" id="status" name="status">
@@ -134,6 +134,15 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body card-color">
+                                    <div class="form-group mb-3">
+                                        <label for="branch_id" class="form-label">Branch</label>
+                                        <select class="form-control" id="branch_id" name="branch_id">
+                                            <option value="">- Select - </option>
+                                            @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="form-group mb-3">
                                         <label for="province_code" class="form-label">Province (Optional)</label>
                                         <select style="width:100px;" class="form-control select2" id="province_code" name="province_code">

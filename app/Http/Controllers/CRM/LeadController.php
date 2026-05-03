@@ -5,11 +5,12 @@ namespace App\Http\Controllers\CRM;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\Event;
 use App\Models\LeadSource;
-use App\Models\Level;
-use App\Models\Position;
+
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
@@ -27,35 +28,61 @@ class LeadController extends Controller
             $data = Customer::query();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('photo_profile', function ($row) {
-                    if (!empty($row->photo_profile)) {
-                        return '<img class="user-image" src="'.asset('/storage/'.$row->photo_profile).'">';
+                ->addColumn('photo', function ($row) {
+                    if (!empty($row->photo)) {
+                        return '<img class="lead-image" src="'.asset('/storage/'.$row->photo).'">';
                     } else {
                         return '<center> -</center>';
                     }
                 })
                 ->addColumn('created_at', function ($row) {
-                    return date('d-m-Y H:i', strtotime($row->updated_at));
+                    return date('d-m-Y H:i', strtotime($row->created_at));
                 })
-              
-               
+                ->addColumn('school_from', function($row){
+                    return '<div style="white-space:normal;width:120px;">'.$row->school_from.'</div>';
+                })
+                ->addColumn('status', function($row){
+                    $status = null;
+                    if($row->status === 'new-lead') {
+                        $status = '<span class="badge rounded-pill bg-success">New</span>';
+                    }
+                    else if($row->status === 'visit') {
+                        $status = '<span class="badge rounded-pill bg-warning">Visit</span>';
+                    }
+                    else if($row->status === 'deal') {
+                        $status = '<span class="badge rounded-pill bg-info">Deal</span>';
+                    }
+                    else if($row->status === 'nok') {
+                        $status = '<span class="badge rounded-pill bg-danger">NOK</span>';
+                    }
+                    else if($row->status === 'confirmation') {
+                        $status = '<span class="badge rounded-pill bg-primary">Confirm</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('consultant_id', function($row){
+                    return $row->consultant?->name ?? '';
+                })
+                 ->addColumn('branch_id', function($row){
+                    return $row->branch?->branch_name ?? '';
+                })
+                ->addColumn('class', function($row){
+                    return $row->class.'/'.$row->major;
+                })
+                ->addColumn('created_by', function($row){
+                    return $row->createdBy?->name ?? '';
+                })
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    if ($row->is_active == 1) {
-                        $button .= '<button onclick="activate('.$row->id.', 0)" title="Disactivate User" class="me-0 btn btn-insoft btn-secondary"><i class="bi bi-ban"></i></button>';
-                    } else {
-                        $button .= '<button onclick="activate('.$row->id.', 1)" title="Activate User" class="me-0 btn btn-insoft btn-success"><i class="bi bi-check-lg"></i></button>';
-                    }
-
-
+                   
                     $button .= '<button style="margin-left:3px;" onclick="editData('.$row->id.')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData('.$row->id.')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','photo_profile','is_active'])
+                ->rawColumns(['action','photo','school_from','status'])
                 ->make(true);
         }
     }
@@ -66,7 +93,14 @@ class LeadController extends Controller
         $view = 'lead';
         $sources = LeadSource::all();
         $consultants = User::where('position', 'consultant')->get();
-        return view('crm.customers.lead.index', compact('view','sources','consultants'));
+        $user = User::find(Auth::user()->id);
+        $branches = null;
+        if($user->branch_id === null) {
+            $branches = Branch::all();
+        } else {
+            $branches = Branch::where('id', $user->branch_id)->get();
+        }
+        return view('crm.customers.lead.index', compact('view','sources','consultants','branches'));
     }
 
     /**
@@ -84,28 +118,34 @@ class LeadController extends Controller
     {
         $input = $request->all();
 
+
         $validated = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|unique:users,email',
-            'branch_id' => 'nullable',
-            'level' => 'required',
-            'position' => 'required',
-            'password' => 'required|min:6',
-            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'fullname' => 'required|string|max:150',
+            'full_address' => 'required',
+            'school_from' => 'required',
+            'class' => 'required',
+            'major' => 'required',
+            'phone_number' => 'required|regex:/^62[0-9]{9,11}$/|unique:customers,phone_number',
+            'gender' => 'required',
+            'email' => 'nullable|unique:customers,email',
+            'lead_source_id' => 'required',
+            'status' => 'required',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'event_id' => 'required_if:lead_source,event',
+            'branch_id' => 'required'
+
 
         ]);
 
-        $input['password'] = bcrypt($request->password);
-
-
         $path = null;
 
-        if ($request->hasFile('photo_profile')) {
-            $path = $request->file('photo_profile')->store('users', 'public');
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('leads', 'public');
         }
 
-        $input['photo_profile'] = $path;
-        User::create($input);
+        $input['created_by'] = Auth::user()->id;
+        $input['photo'] = $path;
+        Customer::create($input);
 
 
         return response()->json([
@@ -145,21 +185,21 @@ class LeadController extends Controller
             'level' => 'required',
             'position' => 'required',
             'password' => 'nullable|string|min:6',
-            'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
         ]);
 
-        $path = $user->photo_profile;
+        $path = $user->photo;
 
-        if ($request->hasFile('photo_profile')) {
+        if ($request->hasFile('photo')) {
 
             // hapus foto lama (kalau ada)
-            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
-                Storage::disk('public')->delete($user->photo_profile);
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
             }
 
             // upload foto baru
-            $path = $request->file('photo_profile')->store('users', 'public');
+            $path = $request->file('photo')->store('users', 'public');
         }
 
 
@@ -169,7 +209,7 @@ class LeadController extends Controller
             $input['password'] = $user->password;
         }
 
-        $input['photo_profile'] = $path;
+        $input['photo'] = $path;
         $user->update($input);
 
         return response()->json([
@@ -186,26 +226,16 @@ class LeadController extends Controller
         $user = User::find($id);
 
 
-        if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
-            Storage::disk('public')->delete($user->photo_profile);
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
         }
 
         // hapus data user
         $user->delete();
     }
 
-    public function activate(Request $request)
-    {
-        $input = $request->all();
-        $id = $input['id'];
-
-        $user = User::find($id);
-        $user->is_active = $input['stat'];
-        $user->save();
-
-        return response()->json([
-            "success" => true,
-            "message" => "success"
-        ]);
+    public function event() {
+        $events = Event::all();
+        return response()->json($events);
     }
 }

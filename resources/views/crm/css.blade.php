@@ -18,6 +18,14 @@
         background: cadetblue;
     }
 
+    .lead-image {
+        width: 40px;
+        height: 43px;
+        border-radius: 6px;
+        padding: 3px;
+        background: rgb(113, 175, 177);
+    }
+
     .branch-title {
         font-size: 17px;
         font-weight: bold;
@@ -48,5 +56,15 @@
 
     .card-color {
         background: #ecf3eb !important;
+    }
+
+
+    .table {
+        font-size: 12px;
+    }
+
+    .table th,
+    .table td {
+        padding: 4px 8px;
     }
 </style>

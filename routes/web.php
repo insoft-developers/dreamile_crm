@@ -56,10 +56,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/lead', LeadController::class);
     Route::get('/lead_table', [LeadController::class, 'table'])->name('lead.table');
+    Route::get('/api/event', [LeadController::class, 'event']);
+
+
+
     Route::get('/api/province', [AdministrativeController::class, 'province']);
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
     Route::get('/api/district/{regencyCode}', [AdministrativeController::class, 'district']);
     Route::get('/api/village/{districtCode}', [AdministrativeController::class, 'village']);
+
 
 });
 
