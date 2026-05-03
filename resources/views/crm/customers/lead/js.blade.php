@@ -110,19 +110,32 @@
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
-            url: "{{ url('/user') }}" + "/" + id + "/edit",
+            url: "{{ url('/lead') }}" + "/" + id + "/edit",
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit User Data");
+                $('.modal-title').text("Edit Leads Data");
                 $('#id').val(data.id);
-                $("#name").val(data.name);
+                $("#fullname").val(data.fullname);
+                $("#full_address").val(data.full_address);
+                $("#school_from").val(data.school_from);
+                $("#class").val(data.class);
+                $("#major").val(data.major);
+                $("#phone_number").val(data.phone_number);
+                $("#gender").val(data.gender);
+                $("#photo").val(null);
                 $("#email").val(data.email);
-                $("#password").val("");
+                $("#lead_source_id").val(data.lead_source_id);
+                showEventChoice(data.lead_source_id, data.event_id);
+                $("#status").val(data.status);
+                $("#consultant_id").val(data.consultant_id);
+                $("#note").val(data.note);
                 $("#branch_id").val(data.branch_id);
-                $("#level").val(data.level);
-                $("#position").val(data.position);
+                $("#province_code").val(data.province_code);
+                getRegency(data.province_code, data.regency_code, data.district_code, data.village_code);
+
+
 
             }
         })
@@ -221,38 +234,7 @@
     }
 
 
-    function activate(id, stat) {
-        Swal.fire({
-            title: 'Are sure?',
-            text: stat == 1 ? "This account will be activated..?" : "This account will be disactivated..?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: stat == 1 ? 'Yes, Activate!' : 'Yes, Disactivate!',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{ url('user_activate') }}",
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        stat: stat,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire('Berhasil!', response.message, 'success');
-                        reloadTable();
-                    },
-                    error: function(xhr) {
-                        Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
-                            'error');
-                    }
-                });
-            }
-        });
-    }
+
 
     function reloadTable() {
         table.ajax.reload(null, false);
@@ -261,24 +243,6 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-
-    function getProvince() {
-        fetch("{{ url('/api/province') }}")
-            .then(res => res.json())
-            .then(data => {
-                const provinces = data.data;
-                let select = document.getElementById('province_code');
-
-                provinces.forEach(item => {
-                    let option = `<option value="${item.code}">${item.name}</option>`;
-                    select.innerHTML += option;
-                });
-
-                // console.log(data.data);
-            });
-    }
-
 
     function getProvince() {
         fetch("{{ url('/api/province') }}")
@@ -298,7 +262,7 @@
             });
     }
 
-    function getRegency(provinceCode) {
+    function getRegency(provinceCode, selectedRegency = null, selectedDistrict = null, selectedVillage = null) {
         fetch("{{ url('/api/regency') }}" + '/' + provinceCode)
             .then(res => res.json())
             .then(data => {
@@ -313,12 +277,28 @@
                     select.innerHTML += option;
                 });
 
-                // console.log(data.data);
+                if (selectedRegency) {
+                    $('#regency_code').val(selectedRegency).trigger('change');
+                    getDisctrict(selectedRegency, function() {
+                        if (selectedDistrict) {
+                            $('#district_code').val(selectedDistrict).trigger('change');
+
+                            getVillage(selectedDistrict, function(){
+                                if(selectedVillage) {
+                                    $('#village_code').val(selectedVillage).trigger('change');
+                                }
+                            })
+                        }
+                    });
+
+
+                }
+
             });
     }
 
 
-    function getDisctrict(regencyCode) {
+    function getDisctrict(regencyCode, callback = null) {
         fetch("{{ url('/api/district') }}" + '/' + regencyCode)
             .then(res => res.json())
             .then(data => {
@@ -333,12 +313,13 @@
                     select.innerHTML += option;
                 });
 
-                // console.log(data.data);
+                if (callback) callback();
+
             });
     }
 
 
-    function getVillage(districtCode) {
+    function getVillage(districtCode, callback=null) {
         fetch("{{ url('/api/village') }}" + '/' + districtCode)
             .then(res => res.json())
             .then(data => {
@@ -353,7 +334,9 @@
                     select.innerHTML += option;
                 });
 
-                // console.log(data.data);
+                 if (callback) callback();
+
+
             });
     }
 
@@ -366,7 +349,8 @@
                     let optionData = '';
                     optionData += `<option value="">- Select -</option>`;
                     data.forEach(item => {
-                        optionData += `<option value="${item.id}">${item.event_name} ( ${item.event_location} )</option>`; 
+                        optionData +=
+                            `<option value="${item.id}">${item.event_name} ( ${item.event_location} )</option>`;
                     });
 
                     let selectEvent = '';
@@ -390,4 +374,45 @@
             $("#event-container").html('');
         }
     })
+
+    function showEventChoice(eventType, selectedEventId = null) {
+        if (eventType === 'event') {
+            fetch("{{ url('/api/event') }}")
+                .then(res => res.json())
+                .then(data => {
+
+                    let optionData = `<option value="">- Select -</option>`;
+
+                    data.forEach(item => {
+                        optionData += `
+                        <option value="${item.id}">
+                            ${item.event_name} (${item.event_location})
+                        </option>`;
+                    });
+
+                    let selectEvent = `
+                <div class="card">
+                    <div class="card-body">    
+                        <div class="form-group mb-3">
+                            <label for="event_id" class="form-label required">Select Event</label>
+                            <select class="form-control" id="event_id" name="event_id">
+                                ${optionData}
+                            </select>
+                        </div>                        
+                    </div>
+                </div>`;
+
+                    // inject ke DOM
+                    $("#event-container").html(selectEvent);
+
+                    // 🔥 SET VALUE SETELAH RENDER
+                    if (selectedEventId) {
+                        $('#event_id').val(selectedEventId).trigger('change');
+                    }
+
+                });
+        } else {
+            $("#event-container").html('');
+        }
+    }
 </script>

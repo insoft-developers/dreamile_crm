@@ -55,7 +55,7 @@ class LeadController extends Controller
                     else if($row->status === 'nok') {
                         $status = '<span class="badge rounded-pill bg-danger">NOK</span>';
                     }
-                    else if($row->status === 'confirmation') {
+                    else if($row->status === 'confirm') {
                         $status = '<span class="badge rounded-pill bg-primary">Confirm</span>';
                     }
                     return $status;
@@ -167,7 +167,7 @@ class LeadController extends Controller
      */
     public function edit(string $id)
     {
-        $data = User::find($id);
+        $data = Customer::find($id);
         return $data;
     }
 
