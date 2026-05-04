@@ -57,6 +57,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/lead', LeadController::class);
     Route::get('/lead_table', [LeadController::class, 'table'])->name('lead.table');
     Route::get('/api/event', [LeadController::class, 'event']);
+    Route::post('/visit_add', [LeadController::class, 'visitAdd'])->name('visit.add');
+    Route::get('/get_visit_data/{id}', [LeadController::class, 'visitData']);
 
 
 

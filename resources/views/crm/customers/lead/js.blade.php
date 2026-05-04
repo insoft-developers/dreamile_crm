@@ -107,6 +107,7 @@
     }
 
     function editData(id) {
+        loading("btn-save-data");
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
@@ -263,6 +264,10 @@
     }
 
     function getRegency(provinceCode, selectedRegency = null, selectedDistrict = null, selectedVillage = null) {
+        if (!provinceCode) {
+            $('#btn-save-data').prop('disabled', false).text('Save');
+        }
+
         fetch("{{ url('/api/regency') }}" + '/' + provinceCode)
             .then(res => res.json())
             .then(data => {
@@ -278,20 +283,27 @@
                 });
 
                 if (selectedRegency) {
+
                     $('#regency_code').val(selectedRegency).trigger('change');
                     getDisctrict(selectedRegency, function() {
                         if (selectedDistrict) {
+
                             $('#district_code').val(selectedDistrict).trigger('change');
 
-                            getVillage(selectedDistrict, function(){
-                                if(selectedVillage) {
+                            getVillage(selectedDistrict, function() {
+                                if (selectedVillage) {
                                     $('#village_code').val(selectedVillage).trigger('change');
+                                    $('#btn-save-data').prop('disabled', false).text('Save');
+                                } else {
+                                    $('#btn-save-data').prop('disabled', false).text('Save');
                                 }
                             })
+                        } else {
+                            $('#btn-save-data').prop('disabled', false).text('Save');
                         }
                     });
-
-
+                } else {
+                    $('#btn-save-data').prop('disabled', false).text('Save');
                 }
 
             });
@@ -319,7 +331,7 @@
     }
 
 
-    function getVillage(districtCode, callback=null) {
+    function getVillage(districtCode, callback = null) {
         fetch("{{ url('/api/village') }}" + '/' + districtCode)
             .then(res => res.json())
             .then(data => {
@@ -334,7 +346,7 @@
                     select.innerHTML += option;
                 });
 
-                 if (callback) callback();
+                if (callback) callback();
 
 
             });
@@ -415,4 +427,115 @@
             $("#event-container").html('');
         }
     }
+
+    function visitData(id) {
+        fetch("{{ url('/get_visit_data') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+
+                $("#modal-visit").modal('show');
+                $(".modal-title").text('Visit Detail Data');
+                $("#visit_customer_id").val(id);
+                $("#visit_date").val(data.data.visit_date);
+                $("#visit_location").val(data.data.visit_location);
+                $("#visit_status").val(data.data.visit_status);
+                $("#visit_note").val(data.data.visit_note);
+
+                $("#preview").html('');
+                let prevImage = '';
+                if(data.images.length > 0) {
+                    data.images.forEach(item => {
+                        prevImage += `<img style="Object-fit:cover;" src="{{ asset('storage') }}/${item.image}" width="100" height="100" class="rounded border border-success">`;
+                    });
+
+                    $("#preview").html(prevImage);
+                }
+                
+               
+            });
+
+            
+    }
+</script>
+
+
+<script>
+    document.getElementById('photos').addEventListener('change', function(event) {
+        let preview = document.getElementById('preview');
+        preview.innerHTML = '';
+
+        Array.from(event.target.files).forEach(file => {
+            let reader = new FileReader();
+
+            reader.onload = function(e) {
+                let img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.border = '2px solid green';
+                img.classList.add('rounded');
+                img.style.marginBottom = '12px';
+
+                preview.appendChild(img);
+            }
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+    $("#form-visit").submit(function(e) {
+        e.preventDefault();
+        loading("btn-save-visit");
+        $.ajax({
+            url: "{{ route('visit.add') }}",
+            type: "POST",
+            data: new FormData($('#modal-visit form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+                   
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                $('#btn-save-visit').prop('disabled', false).text('Save');
+            }
+
+        });
+    });
+
+
+   
+    
 </script>

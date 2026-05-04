@@ -60,6 +60,7 @@
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
     @include('crm.customers.lead.modal')
+     @include('crm.customers.lead.modal_visit')
 @endsection
 
 @push('scripts')

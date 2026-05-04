@@ -55,7 +55,7 @@
     }
 
     .card-color {
-        background: #ecf3eb !important;
+        background: #edffea !important
     }
 
 
@@ -66,5 +66,14 @@
     .table th,
     .table td {
         padding: 4px 8px;
+    }
+    .tombol{
+        cursor: pointer;
+        
+    }
+    .tombol:hover{
+        border:1px solid red;
+        background: black !important;
+        color:white;
     }
 </style>

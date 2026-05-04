@@ -61,7 +61,7 @@
                                             <label for="gender" class="form-label required">Gender</label>
                                             <select class="form-control" id="gender" name="gender" required>
                                                 <option value="">- Select - </option>
-                                                <option value="male">Laki-Laki</option>
+                                                <option value="male">Male</option>
                                                 <option value="female">Female</option>
                                             </select>
 
@@ -83,7 +83,7 @@
                                     <div class="form-group mb-3">
                                         <label for="email" class="form-label">Email (Optional)</label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Ex: user@mail.com" required>
+                                            placeholder="Ex: user@mail.com">
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="lead_source_id" class="form-label required">Lead Source</label>
@@ -135,7 +135,7 @@
                             <div class="card">
                                 <div class="card-body card-color">
                                     <div class="form-group mb-3">
-                                        <label for="branch_id" class="form-label">Branch</label>
+                                        <label for="branch_id" class="form-label required">Branch</label>
                                         <select class="form-control" id="branch_id" name="branch_id">
                                             <option value="">- Select - </option>
                                             @foreach($branches as $branch)
