@@ -22,7 +22,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="followup_note" class="form-label required">Followup Note</label>
-                        <textarea class="form-control" id="followup_note" name="followup_note" placeholder="Make your note after following up"
+                        <textarea style="height: 180px;" class="form-control" id="followup_note" name="followup_note" placeholder="Make your note after following up"
                             required></textarea>
                     </div>
                    

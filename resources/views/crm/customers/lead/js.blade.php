@@ -216,7 +216,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('user') }}" + "/" + id,
+                    url: "{{ url('lead') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -374,6 +374,10 @@
                                 <select class="form-control" id="event_id" name="event_id">
                                     ${optionData}
                                 </select>
+                                <small>
+                            Event not found? 
+                            <a href="{{ url('event') }}">please add event data</a>
+                        </small>  
                         </div>                        
 
                     </div>`;
@@ -410,7 +414,11 @@
                             <select class="form-control" id="event_id" name="event_id">
                                 ${optionData}
                             </select>
-                        </div>                        
+                        </div>
+                        <small>
+                            Event not found? 
+                            <a href="{{ url('event') }}">please add event data</a>
+                        </small>                        
                     </div>
                 </div>`;
 
@@ -496,7 +504,7 @@
             processData: false,
             success: function(data) {
                 if (data.success) {
-
+                    reloadTable();
                     Swal.fire({
                         icon: 'success',
                         title: data.message,
@@ -544,7 +552,7 @@
         $(".modal-title").text(`Follow Up ${step}`);
         $("#modal-follow").modal('show');
         $("#modal-follow-list").modal('hide');
-       
+
     }
 
 
@@ -597,8 +605,9 @@
         data.forEach(item => {
 
             let gambar = '';
-            if(item.image != null) {
-                gambar += `<a href="{{ asset('storage') }}/${item.image}" target="_blank"><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></a>`;
+            if (item.image != null) {
+                gambar +=
+                    `<a href="{{ asset('storage') }}/${item.image}" target="_blank"><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></a>`;
             } else {
                 gambar += '-';
             }
@@ -635,10 +644,10 @@
         let newStep = parseInt(data[0].step) + 1;
         $("#followup-step").val(newStep);
         $("#modal-follow-list").modal('show');
-        if(newStep > 3) {
+        if (newStep > 3) {
             $("#add-followup-btn").prop("disabled", true);
         } else {
-             $("#add-followup-btn").prop("disabled", false);
+            $("#add-followup-btn").prop("disabled", false);
         }
     }
 
@@ -648,7 +657,7 @@
         loading("btn-save-follow");
         const aksi = $("#aksi").val();
         let url;
-        if(aksi == 'tambah') {
+        if (aksi == 'tambah') {
             url = "{{ route('follow.add') }}";
         } else {
             url = "{{ route('follow.update') }}";

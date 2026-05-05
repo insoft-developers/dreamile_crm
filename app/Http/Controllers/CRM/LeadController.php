@@ -255,14 +255,15 @@ class LeadController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::find($id);
+        $customer = Customer::find($id);
 
-        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-            Storage::disk('public')->delete($user->photo);
+        if ($customer->photo && Storage::disk('public')->exists($customer->photo)) {
+            Storage::disk('public')->delete($customer->photo);
         }
+        
 
         // hapus data user
-        $user->delete();
+        $customer->delete();
     }
 
     public function event()
