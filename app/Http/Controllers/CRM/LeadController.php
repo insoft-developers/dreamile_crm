@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\Event;
+use App\Models\Followup;
 use App\Models\LeadSource;
 
 use App\Models\User;
@@ -46,13 +47,30 @@ class LeadController extends Controller
                     if ($row->status === 'new-lead') {
                         $status = '<span class="badge rounded-pill bg-success">New</span>';
                     } elseif ($row->status === 'visit') {
-                        $status = '<span onclick="visitData(' . $row->id . ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
+                        if ($row->visit_status === 'scheduled') {
+                            $status =
+                                '<span title="Visit Scheduled" onclick="visitData(' .
+                                $row->id .
+                                ')" class="badge rounded-pill bg-warning tombol">Visit <i class="ri-calendar-line
+"></i></span>';
+                        } elseif ($row->visit_status === 'done') {
+                            $status =
+                                '<span title="visit done" onclick="visitData(' .
+                                $row->id .
+                                ')" class="badge rounded-pill bg-warning tombol">Visit <i class="ri-check-line
+"></i></span>';
+                        } else {
+                            $status =
+                                '<span title="visit not settled" onclick="visitData(' .
+                                $row->id .
+                                ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
+                        }
                     } elseif ($row->status === 'deal') {
                         $status = '<span class="badge rounded-pill bg-info">Deal</span>';
                     } elseif ($row->status === 'nok') {
                         $status = '<span class="badge rounded-pill bg-danger">NOK</span>';
                     } elseif ($row->status === 'confirm') {
-                        $status = '<span class="badge rounded-pill bg-primary">Confirm</span>';
+                        $status = '<span onclick="followup('.$row->id.')" class="badge rounded-pill bg-primary tombol">Confirm</span>';
                     }
                     return $status;
                 })
@@ -300,7 +318,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function visitData($id)
+    public function visitData(String $id)
     {
         $customer = Customer::find($id);
         $images = VisitImage::where('customer_id', $id)->get();
@@ -308,6 +326,46 @@ class LeadController extends Controller
         return response()->json([
             'data' => $customer,
             'images' => $images,
+        ]);
+    }
+
+    public function followupData(String $id)
+    {
+        $fol = Followup::where('customer_id', $id)->orderBy('step','desc')->get();
+        return response()->json($fol);
+
+    }
+
+    public function followAdd(Request $request)
+    {
+        $input = $request->all();
+        $id = $input['customer_follow_id'];
+
+        $validated = $request->validate([
+            'customer_follow_id' => 'required',
+            'followup_date' => 'required',
+            'followup_note' => 'required',
+            'step' => 'required',
+            'followup_image' => 'image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $path = null;
+
+        // Upload multiple photos
+        if ($request->hasFile('followup_image')) {
+            $path = $request->file('followup_image')->store('follows', 'public');
+        }
+
+        $input['image'] = $path;
+        $input['date'] = $request->followup_date;
+        $input['customer_id'] = $id;
+        $input['note'] = $request->followup_note;
+        
+        Followup::create($input);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Visit data has been added successfully...!',
         ]);
     }
 }

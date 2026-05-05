@@ -60,7 +60,9 @@
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
     @include('crm.customers.lead.modal')
-     @include('crm.customers.lead.modal_visit')
+    @include('crm.customers.lead.modal_visit')
+    @include('crm.customers.lead.modal_follow')
+     @include('crm.customers.lead.modal_follow_list')
 @endsection
 
 @push('scripts')

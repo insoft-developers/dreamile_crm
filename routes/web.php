@@ -59,13 +59,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/event', [LeadController::class, 'event']);
     Route::post('/visit_add', [LeadController::class, 'visitAdd'])->name('visit.add');
     Route::get('/get_visit_data/{id}', [LeadController::class, 'visitData']);
-
+    Route::get('/followup_data/{id}', [LeadController::class, 'followupData']);
+    Route::post('/follow_add', [LeadController::class, 'followAdd'])->name('follow.add');
 
 
     Route::get('/api/province', [AdministrativeController::class, 'province']);
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
     Route::get('/api/district/{regencyCode}', [AdministrativeController::class, 'district']);
     Route::get('/api/village/{districtCode}', [AdministrativeController::class, 'village']);
+
+    
 
 
 });

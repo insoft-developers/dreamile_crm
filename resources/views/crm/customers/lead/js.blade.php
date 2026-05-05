@@ -443,18 +443,19 @@
 
                 $("#preview").html('');
                 let prevImage = '';
-                if(data.images.length > 0) {
+                if (data.images.length > 0) {
                     data.images.forEach(item => {
-                        prevImage += `<img style="Object-fit:cover;" src="{{ asset('storage') }}/${item.image}" width="100" height="100" class="rounded border border-success">`;
+                        prevImage +=
+                            `<img style="Object-fit:cover;" src="{{ asset('storage') }}/${item.image}" width="100" height="100" class="rounded border border-success">`;
                     });
 
                     $("#preview").html(prevImage);
                 }
-                
-               
+
+
             });
 
-            
+
     }
 </script>
 
@@ -495,7 +496,7 @@
             processData: false,
             success: function(data) {
                 if (data.success) {
-                   
+
                     Swal.fire({
                         icon: 'success',
                         title: data.message,
@@ -536,6 +537,106 @@
     });
 
 
-   
-    
+    function followup(id) {
+        $("#customer_follow_id").val(id);
+        fetch("{{ url('/followup_data') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+                if(data.length == 0) {
+                    $(".modal-title").text('Follow Up 1');
+                    $("#step").val(1);
+                    $("#modal-follow").modal('show');
+                } else {
+                    $(".modal-title").text('Follow Lists');
+                    let tcontent = '';
+                    data.forEach(item => {
+                        tcontent += `
+                            <tr>
+                                <td>1</td>
+                                <td>Followup ${item.step}</td>
+                                <td>${item.date}</td>
+                                <td style="width:280px;"><span style="white-space:normal;">${item.note}</span></td>
+                                <td><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></td>
+                                <td>action</td>
+                            </tr>`;
+                    });
+
+                    let ft = '';
+                    ft += `<table class="table table-stripped table-bordered table-nowrap">
+                            <thead>
+                                <th>No</th>
+                                <th>Step</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                ${tcontent}
+                            </tbody>
+                          </table>`;
+                    
+
+                    $("#table-follow-container").html(ft);
+                    $("#followup-list-id").val(id);
+                    $("#modal-follow-list").modal('show');
+                }
+
+                
+            });
+
+
+    }
+
+
+    $("#form-follow").submit(function(e) {
+        e.preventDefault();
+        loading("btn-save-follow");
+        $.ajax({
+            url: "{{ route('follow.add') }}",
+            type: "POST",
+            data: new FormData($('#modal-follow form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                $('#btn-save-follow').prop('disabled', false).text('Save');
+            }
+
+        });
+    });
 </script>
