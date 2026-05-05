@@ -14,7 +14,8 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="followup-list-id">
-                <button style="float:right;" onclick="addFollowup()" title="Add Followup"
+                <input type="hidden" id="followup-step">
+                <button id="add-followup-btn" style="float:right;" onclick="addFollowup()" title="Add Followup"
                     class="me-0 mb-3 btn btn-success btn-sm"><i class="bi bi-plus"></i></button>
                 <div id="table-follow-container"></div>
 

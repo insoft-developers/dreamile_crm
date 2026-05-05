@@ -61,6 +61,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get_visit_data/{id}', [LeadController::class, 'visitData']);
     Route::get('/followup_data/{id}', [LeadController::class, 'followupData']);
     Route::post('/follow_add', [LeadController::class, 'followAdd'])->name('follow.add');
+    Route::get('/followup_edit/{id}', [LeadController::class, 'followEdit']);
+    Route::post('/follow_update', [LeadController::class, 'followUpdate'])->name('follow.update');
 
 
     Route::get('/api/province', [AdministrativeController::class, 'province']);

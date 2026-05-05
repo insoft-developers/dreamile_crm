@@ -31,4 +31,9 @@ class Customer extends Model
     {
         return $this->hasMany(VisitImage::class, 'customer_id', 'id');
     }
+
+    public function followup():HasMany
+    {
+        return $this->hasMany(Followup::class, 'customer_id', 'id');
+    }
 }

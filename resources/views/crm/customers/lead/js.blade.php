@@ -536,33 +536,86 @@
         });
     });
 
+    function addFollowup() {
+        $('#form-follow')[0].reset();
+        const step = $("#followup-step").val();
+        $("#step").val(step);
+        $("#aksi").val("tambah");
+        $(".modal-title").text(`Follow Up ${step}`);
+        $("#modal-follow").modal('show');
+        $("#modal-follow-list").modal('hide');
+       
+    }
+
+
+    function followup_edit(id) {
+        fetch("{{ url('/followup_edit') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+
+                $("#aksi").val("edit");
+                $("#follow_id").val(data.id);
+                $("#customer_follow_id").val(data.customer_id);
+                $("#step").val(data.step);
+                $("#followup_date").val(data.date);
+                $("#followup_note").val(data.note);
+                $("#followup_image").val(null);
+                $("#modal-follow").modal("show");
+                $("#modal-follow-list").modal('hide');
+                $(".modal-title").text(`Edit Followup ${data.step}`);
+            });
+    }
+
+    function followup_delete(id) {
+        alert(id);
+    }
 
     function followup(id) {
         $("#customer_follow_id").val(id);
         fetch("{{ url('/followup_data') }}" + "/" + id)
             .then(res => res.json())
             .then(data => {
-                if(data.length == 0) {
+
+                if (data.length == 0) {
+                    $('#form-follow')[0].reset();
                     $(".modal-title").text('Follow Up 1');
                     $("#step").val(1);
+                    $("#aksi").val("tambah");
                     $("#modal-follow").modal('show');
                 } else {
                     $(".modal-title").text('Follow Lists');
-                    let tcontent = '';
-                    data.forEach(item => {
-                        tcontent += `
+                    initFollowupData(data);
+                }
+
+            });
+    }
+
+    function initFollowupData(data) {
+        let tcontent = '';
+        let angka = 1;
+        data.forEach(item => {
+
+            let gambar = '';
+            if(item.image != null) {
+                gambar += `<a href="{{ asset('storage') }}/${item.image}" target="_blank"><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></a>`;
+            } else {
+                gambar += '-';
+            }
+
+            tcontent += `
                             <tr>
-                                <td>1</td>
+                                <td>${angka++}</td>
                                 <td>Followup ${item.step}</td>
                                 <td>${item.date}</td>
                                 <td style="width:280px;"><span style="white-space:normal;">${item.note}</span></td>
-                                <td><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></td>
-                                <td>action</td>
+                                <td>${gambar}</td>
+                                <td><span onclick="followup_edit(${item.id})" class="text-edit">Edit</span></td>
                             </tr>`;
-                    });
+        });
 
-                    let ft = '';
-                    ft += `<table class="table table-stripped table-bordered table-nowrap">
+        let ft = '';
+        ft += `<table class="table table-stripped table-bordered table-nowrap">
                             <thead>
                                 <th>No</th>
                                 <th>Step</th>
@@ -575,32 +628,43 @@
                                 ${tcontent}
                             </tbody>
                           </table>`;
-                    
-
-                    $("#table-follow-container").html(ft);
-                    $("#followup-list-id").val(id);
-                    $("#modal-follow-list").modal('show');
-                }
-
-                
-            });
 
 
+        $("#table-follow-container").html(ft);
+        $("#followup-list-id").val(id);
+        let newStep = parseInt(data[0].step) + 1;
+        $("#followup-step").val(newStep);
+        $("#modal-follow-list").modal('show');
+        if(newStep > 3) {
+            $("#add-followup-btn").prop("disabled", true);
+        } else {
+             $("#add-followup-btn").prop("disabled", false);
+        }
     }
 
 
     $("#form-follow").submit(function(e) {
         e.preventDefault();
         loading("btn-save-follow");
+        const aksi = $("#aksi").val();
+        let url;
+        if(aksi == 'tambah') {
+            url = "{{ route('follow.add') }}";
+        } else {
+            url = "{{ route('follow.update') }}";
+        }
         $.ajax({
-            url: "{{ route('follow.add') }}",
+            url: url,
             type: "POST",
             data: new FormData($('#modal-follow form')[0]),
             contentType: false,
             processData: false,
             success: function(data) {
                 if (data.success) {
-
+                    initFollowupData(data.data);
+                    reloadTable();
+                    $("#modal-follow").modal('hide');
+                    $("#modal-follow-list").modal('show');
                     Swal.fire({
                         icon: 'success',
                         title: data.message,

@@ -66,11 +66,15 @@ class LeadController extends Controller
                                 ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
                         }
                     } elseif ($row->status === 'deal') {
-                        $status = '<span class="badge rounded-pill bg-info">Deal</span>';
+                        $status = '<span class="badge rounded-pill bg-info">Deal <i class="ri-check-line
+"></i><i class="ri-check-line
+"></i></span>';
                     } elseif ($row->status === 'nok') {
                         $status = '<span class="badge rounded-pill bg-danger">NOK</span>';
                     } elseif ($row->status === 'confirm') {
-                        $status = '<span onclick="followup('.$row->id.')" class="badge rounded-pill bg-primary tombol">Confirm</span>';
+                        $followup = $row->followup->count();
+
+                        $status = '<span onclick="followup('.$row->id.')" class="badge rounded-pill bg-primary tombol">Confirm ('.$followup.')</span>';
                     }
                     return $status;
                 })
@@ -346,7 +350,7 @@ class LeadController extends Controller
             'followup_date' => 'required',
             'followup_note' => 'required',
             'step' => 'required',
-            'followup_image' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'followup_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $path = null;
@@ -363,9 +367,64 @@ class LeadController extends Controller
         
         Followup::create($input);
 
+        $followupData = Followup::where('customer_id', $id)->orderBy('step','desc')->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Visit data has been added successfully...!',
+            'data' => $followupData
+        ]);
+    }
+
+    public function followEdit(String $id) 
+    {
+        $follow = Followup::find($id);
+        return response()->json($follow);
+    }
+
+
+    public function followUpdate(Request $request)
+    {
+        $input = $request->all();
+        $id = $input['follow_id'];
+
+        $data = Followup::find($id);
+
+        $validated = $request->validate([
+            'follow_id' => 'required',
+            'customer_follow_id' => 'required',
+            'followup_date' => 'required',
+            'followup_note' => 'required',
+            'step' => 'required',
+            'followup_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $path = $data->image;
+
+        // Upload multiple photos
+        if ($request->hasFile('followup_image')) {
+           // hapus foto lama (kalau ada)
+            if ($data->image && Storage::disk('public')->exists($data->image)) {
+                Storage::disk('public')->delete($data->image);
+            }
+
+            // upload foto baru
+            $path = $request->file('followup_image')->store('follows', 'public');
+        }
+
+        $input['image'] = $path;
+        $input['date'] = $request->followup_date;
+        $input['customer_id'] = $request->customer_follow_id;
+        $input['note'] = $request->followup_note;
+        
+        $data->update($input);
+
+        $followupData = Followup::where('customer_id', $request->customer_follow_id)->orderBy('step','desc')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Visit data has been updated successfully...!',
+            'data' => $followupData
         ]);
     }
 }

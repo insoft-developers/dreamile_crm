@@ -76,4 +76,19 @@
         background: black !important;
         color:white;
     }
+
+    .text-edit {
+        cursor: pointer;
+        color: orange;
+    }
+    .text-edit:hover {
+        color:blue;
+    }
+    .text-delete {
+        cursor: pointer;
+        color: red;
+    }
+    .text-delete:hover {
+        color:blue;
+    }
 </style>

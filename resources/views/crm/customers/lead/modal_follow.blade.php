@@ -12,7 +12,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <input type="hidden" id="aksi" name="aksi">
+                    <input type="hidden" id="follow_id" name="follow_id">
                     <input type="hidden" id="customer_follow_id" name="customer_follow_id">
                     <input type="hidden" id="step" name="step">
                     <div class="mb-3">
