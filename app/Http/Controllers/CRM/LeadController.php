@@ -29,6 +29,27 @@ class LeadController extends Controller
             $data = Customer::query();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('lead_source_id', function($row){
+                    if($row->lead_source_id == 'facebook') {
+                        return '<span style="color:blue;font-weight:bold;">Facebook</span>';
+                    } else if($row->lead_source_id == 'tik-tok') {
+                        return '<span style="color:red;font-weight:bold;">TikTok</span>';
+                    }
+                    else if($row->lead_source_id == 'instagram') {
+                        return '<span style="color:black;font-weight:bold;">Instagram</span>';
+                    }
+                    else if($row->lead_source_id == 'google') {
+                        return '<span style="color:orange;font-weight:bold;">Google</span>';
+                    }
+                    else if($row->lead_source_id == 'event') {
+                        return '<span style="color:green;font-weight:bold;">Event</span>';
+                    } 
+                    else if($row->lead_source_id == 'presentation') {
+                        return '<span style="color:purple;font-weight:bold;">Presentation</span>';
+                    } else {
+                        return '<span style="color:green;font-weight:bold;">'.$row->lead_source_id.'</span>';
+                    }            
+                })
                 ->addColumn('photo', function ($row) {
                     if (!empty($row->photo)) {
                         return '<img class="lead-image" src="' . asset('/storage/' . $row->photo) . '">';
@@ -93,14 +114,14 @@ class LeadController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-
+                    $button .= '<a href="'.url('/lead/'.$row->id).'"><button title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
                     $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status','lead_source_id'])
                 ->make(true);
         }
     }
@@ -172,7 +193,9 @@ class LeadController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $view = 'lead-detail';
+        $data = Customer::find($id);
+        return view('crm.customers.lead.detail',compact('view','data'));
     }
 
     /**

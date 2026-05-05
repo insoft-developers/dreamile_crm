@@ -36,4 +36,9 @@ class Customer extends Model
     {
         return $this->hasMany(Followup::class, 'customer_id', 'id');
     }
+
+    public function leadsource():BelongsTo
+    {
+        return $this->belongsTo(LeadSource::class, 'lead_source_id','slug');
+    }
 }
