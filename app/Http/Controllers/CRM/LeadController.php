@@ -27,28 +27,48 @@ class LeadController extends Controller
     {
         if ($request->ajax()) {
             $data = Customer::query();
+            // 🔥 FILTER TANGGAL
+            if ($request->start_date && $request->end_date) {
+                $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+            }
+
+            // 🔥 FILTER STATUS
+            if ($request->filter_status) {
+                $data->where('status', $request->filter_status);
+            }
+
+            // 🔥 FILTER LEAD SOURCE
+            if ($request->filter_lead_source) {
+                $data->where('lead_source_id', $request->filter_lead_source);
+            }
+
+            // 🔥 FILTER CONSULTANT
+            if ($request->filter_consultant) {
+                $data->where('consultant_id', $request->filter_consultant);
+            }
+
+            // 🔥 FILTER BRANCH
+            if ($request->filter_branch) {
+                $data->where('branch_id', $request->filter_branch);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('lead_source_id', function($row){
-                    if($row->lead_source_id == 'facebook') {
+                ->addColumn('lead_source_id', function ($row) {
+                    if ($row->lead_source_id == 'facebook') {
                         return '<span style="color:blue;font-weight:bold;">Facebook</span>';
-                    } else if($row->lead_source_id == 'tik-tok') {
+                    } elseif ($row->lead_source_id == 'tik-tok') {
                         return '<span style="color:red;font-weight:bold;">TikTok</span>';
-                    }
-                    else if($row->lead_source_id == 'instagram') {
+                    } elseif ($row->lead_source_id == 'instagram') {
                         return '<span style="color:black;font-weight:bold;">Instagram</span>';
-                    }
-                    else if($row->lead_source_id == 'google') {
+                    } elseif ($row->lead_source_id == 'google') {
                         return '<span style="color:orange;font-weight:bold;">Google</span>';
-                    }
-                    else if($row->lead_source_id == 'event') {
+                    } elseif ($row->lead_source_id == 'event') {
                         return '<span style="color:green;font-weight:bold;">Event</span>';
-                    } 
-                    else if($row->lead_source_id == 'presentation') {
+                    } elseif ($row->lead_source_id == 'presentation') {
                         return '<span style="color:purple;font-weight:bold;">Presentation</span>';
                     } else {
-                        return '<span style="color:green;font-weight:bold;">'.$row->lead_source_id.'</span>';
-                    }            
+                        return '<span style="color:green;font-weight:bold;">' . $row->lead_source_id . '</span>';
+                    }
                 })
                 ->addColumn('photo', function ($row) {
                     if (!empty($row->photo)) {
@@ -81,10 +101,7 @@ class LeadController extends Controller
                                 ')" class="badge rounded-pill bg-warning tombol">Visit <i class="ri-check-line
 "></i></span>';
                         } else {
-                            $status =
-                                '<span title="visit not settled" onclick="visitData(' .
-                                $row->id .
-                                ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
+                            $status = '<span title="visit not settled" onclick="visitData(' . $row->id . ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
                         }
                     } elseif ($row->status === 'deal') {
                         $status = '<span class="badge rounded-pill bg-info">Deal <i class="ri-check-line
@@ -95,7 +112,7 @@ class LeadController extends Controller
                     } elseif ($row->status === 'confirm') {
                         $followup = $row->followup->count();
 
-                        $status = '<span onclick="followup('.$row->id.')" class="badge rounded-pill bg-primary tombol">Confirm ('.$followup.')</span>';
+                        $status = '<span onclick="followup(' . $row->id . ')" class="badge rounded-pill bg-primary tombol">Confirm (' . $followup . ')</span>';
                     }
                     return $status;
                 })
@@ -114,14 +131,14 @@ class LeadController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    $button .= '<a href="'.url('/lead/'.$row->id).'"><button title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
+                    $button .= '<a href="' . url('/lead/' . $row->id) . '"><button title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
                     $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status','lead_source_id'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id'])
                 ->make(true);
         }
     }
@@ -178,6 +195,11 @@ class LeadController extends Controller
             $path = $request->file('photo')->store('leads', 'public');
         }
 
+        $input['province_name'] = $request->province_code == null ? '' : $request->province_name;
+        $input['regency_name'] = $request->regency_code == null ? '' : $request->regency_name;
+        $input['district_name'] = $request->district_code == null ? '' : $request->district_name;
+        $input['village_name'] = $request->village_code == null ? '' : $request->village_name;
+
         $input['created_by'] = Auth::user()->id;
         $input['photo'] = $path;
         Customer::create($input);
@@ -195,7 +217,7 @@ class LeadController extends Controller
     {
         $view = 'lead-detail';
         $data = Customer::find($id);
-        return view('crm.customers.lead.detail',compact('view','data'));
+        return view('crm.customers.lead.detail', compact('view', 'data'));
     }
 
     /**
@@ -283,7 +305,6 @@ class LeadController extends Controller
         if ($customer->photo && Storage::disk('public')->exists($customer->photo)) {
             Storage::disk('public')->delete($customer->photo);
         }
-        
 
         // hapus data user
         $customer->delete();
@@ -346,7 +367,7 @@ class LeadController extends Controller
         ]);
     }
 
-    public function visitData(String $id)
+    public function visitData(string $id)
     {
         $customer = Customer::find($id);
         $images = VisitImage::where('customer_id', $id)->get();
@@ -357,11 +378,10 @@ class LeadController extends Controller
         ]);
     }
 
-    public function followupData(String $id)
+    public function followupData(string $id)
     {
-        $fol = Followup::where('customer_id', $id)->orderBy('step','desc')->get();
+        $fol = Followup::where('customer_id', $id)->orderBy('step', 'desc')->get();
         return response()->json($fol);
-
     }
 
     public function followAdd(Request $request)
@@ -388,24 +408,23 @@ class LeadController extends Controller
         $input['date'] = $request->followup_date;
         $input['customer_id'] = $id;
         $input['note'] = $request->followup_note;
-        
+
         Followup::create($input);
 
-        $followupData = Followup::where('customer_id', $id)->orderBy('step','desc')->get();
+        $followupData = Followup::where('customer_id', $id)->orderBy('step', 'desc')->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Visit data has been added successfully...!',
-            'data' => $followupData
+            'data' => $followupData,
         ]);
     }
 
-    public function followEdit(String $id) 
+    public function followEdit(string $id)
     {
         $follow = Followup::find($id);
         return response()->json($follow);
     }
-
 
     public function followUpdate(Request $request)
     {
@@ -427,7 +446,7 @@ class LeadController extends Controller
 
         // Upload multiple photos
         if ($request->hasFile('followup_image')) {
-           // hapus foto lama (kalau ada)
+            // hapus foto lama (kalau ada)
             if ($data->image && Storage::disk('public')->exists($data->image)) {
                 Storage::disk('public')->delete($data->image);
             }
@@ -440,15 +459,15 @@ class LeadController extends Controller
         $input['date'] = $request->followup_date;
         $input['customer_id'] = $request->customer_follow_id;
         $input['note'] = $request->followup_note;
-        
+
         $data->update($input);
 
-        $followupData = Followup::where('customer_id', $request->customer_follow_id)->orderBy('step','desc')->get();
+        $followupData = Followup::where('customer_id', $request->customer_follow_id)->orderBy('step', 'desc')->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Visit data has been updated successfully...!',
-            'data' => $followupData
+            'data' => $followupData,
         ]);
     }
 }

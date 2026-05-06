@@ -46,4 +46,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Event::class, 'event_id','id');
     }
+
+    public function visitImages():HasMany
+    {
+        return $this->hasMany(VisitImage::class, 'customer_id', 'id');
+    }
 }

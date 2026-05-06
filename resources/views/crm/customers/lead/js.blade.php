@@ -1,4 +1,18 @@
 <script>
+    function filterData() {
+        $('#list-table').DataTable().ajax.reload(null, false);
+    }
+
+    function resetFilter() {
+        // reset form
+        document.getElementById('filterForm').reset();
+
+        
+
+        // reload datatable
+        $('#list-table').DataTable().ajax.reload(null,false);
+    }
+
     getProvince();
 
 
@@ -30,7 +44,17 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('lead.table') }}',
+        ajax: {
+            url: '{{ route('lead.table') }}',
+            data: function(d) {
+                d.start_date = $('#start_date').val();
+                d.end_date = $('#end_date').val();
+                d.filter_status = $('#filter_status').val();
+                d.filter_lead_source = $('#filter_lead_source').val();
+                d.filter_consultant = $('#filter_consultant').val();
+                d.filter_branch = $('#filter_branch').val();
+            }
+        },
         order: [
             [0, 'desc']
         ],
@@ -76,7 +100,7 @@
                 data: 'status',
                 name: 'status'
             },
-             
+
             {
                 data: 'consultant_id',
                 name: 'consultant_id'
@@ -248,6 +272,8 @@
 
     function resetForm() {
         $('#form-add')[0].reset();
+        $("#note").val("");
+        $("#full_address").val("");
     }
 
     function getProvince() {
