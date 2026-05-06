@@ -31,11 +31,19 @@
                      <div class="d-flex justify-content-between flex-wrap align-items-center gap-6">
                          <div class="flex-shrink-0">
                              <div class="position-relative d-inline-block">
-                                 <img src="{{ asset('template/crm') }}/assets/images/avatar/avatar-3.jpg" alt="Avatar Image"
+
+                                @if(! empty($data->photo))
+
+                                 <img src="{{ asset('storage/' . $data->photo) }}" alt="Avatar Image"
                                      class="h-100px w-100px rounded-pill">
+                                @else {
+                                    <img src="{{ asset('template/crm/assets/images/avatar/dummy.jpg') }}" alt="Avatar Image"
+                                     class="h-100px w-100px rounded-pill">
+                                @endif
+
                                  <div
                                      class="h-30px w-30px rounded-pill bg-primary d-flex justify-content-center align-items-center text-white border border-3 border-light-subtle position-absolute fs-12 bottom-0 end-0">
-                                     <i class="bi bi-camera"></i>
+
                                  </div>
                                  <span class="position-absolute profile-dot bg-success rounded-circle">
                                      <span class="visually-hidden">unread messages</span>
@@ -51,12 +59,12 @@
 
                          </div>
                          <div class="d-flex flex-wrap gap-3">
-                            <div
+                             <div
                                  class="d-flex flex-column justify-content-center gap-1 w-256px text-center py-4 border rounded-2">
                                  <h4 class="mb-2 lh-1">School</h4>
                                  <span class="text-muted lh-sm fs-12">{{ $data->school_from }}</span>
-                             </div> 
-                            <div
+                             </div>
+                             <div
                                  class="d-flex flex-column justify-content-center gap-1 w-128px text-center py-4 border rounded-2">
                                  <h4 class="mb-2 lh-1">Class</h4>
                                  <span class="text-muted lh-sm fs-12">{{ $data->class }}</span>
@@ -97,7 +105,7 @@
                                  <i class="ri-phone-line fs-16 text-muted"></i>
                                  <p class="mb-0">{{ $data->phone_number }}</p>
                              </div>
-                             
+
                              <div class="d-flex align-items-center gap-3">
                                  <i class="ri-user-2-line fs-16 text-muted"></i>
                                  <p class="mb-0">{{ $data->gender }}</p>
@@ -117,6 +125,25 @@
                          <div class="card-body p-4 card-color">
                              @if ($data->lead_source_id == 'event')
                                  <h5>Event</h5>
+                                 <table class="table table-bordered table-stripped">
+                                     <tr>
+                                         <td><strong>{{ $data->events->event_name ?? '' }}</strong></td>
+                                     </tr>
+                                     @if (!empty($data->events->image))
+                                         <tr>
+                                             <td>
+                                                 <img class="img-fluid" src="{{ asset('storage/' . $data->events->image) }}">
+                                             </td>
+                                         </tr>
+                                     @endif
+                                     <tr>
+                                         <td>{{ $data->events->event_location ?? '' }}</td>
+                                     </tr>
+                                     <tr>
+                                         <td><strong>{{ date('d F Y', strtotime($data->events->event_date)) ?? '' }}</strong>
+                                         </td>
+                                     </tr>
+                                 </table>
                              @elseif($data->lead_source_id == 'presentation')
                                  <h5>Presentation</h5>
                              @else
@@ -130,7 +157,7 @@
                              <h5 class="card-title">Note</h5>
                          </div>
                          <div class="card-body p-6">
-                            <p>{{ $data->note }}</p>
+                             <p>{{ $data->note }}</p>
                          </div>
                      </div>
                  </div>

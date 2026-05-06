@@ -41,4 +41,9 @@ class Customer extends Model
     {
         return $this->belongsTo(LeadSource::class, 'lead_source_id','slug');
     }
+
+    public function events():BelongsTo
+    {
+        return $this->belongsTo(Event::class, 'event_id','id');
+    }
 }
