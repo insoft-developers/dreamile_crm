@@ -35,7 +35,7 @@ jobs:
 
       # 5. Install NPM
       - name: Install NPM Dependencies
-        run: npm ci
+        run: npm install
 
       # 6. Build Asset
       - name: Build Assets
@@ -54,13 +54,7 @@ jobs:
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "./"
           TARGET: "/www/wwwroot/dev.dreamile/dreamile_crm"
-          EXCLUDE: |
-            node_modules/
-            .git/
-            vendor/
-            .env
-            storage/logs/*
-          ARGS: "-avz --delete --partial --progress --timeout=60 -e 'ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=5'"
+          EXCLUDE: "node_modules/, .git/, vendor/, .env"
 
       - name: Run Artisan on DEV
         if: github.ref == 'refs/heads/development'
@@ -93,13 +87,7 @@ jobs:
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "./"
           TARGET: "/www/wwwroot/crm.dreamile.com/dreamile_crm"
-          EXCLUDE: |
-            node_modules/
-            .git/
-            vendor/
-            .env
-            storage/logs/*
-          ARGS: "-avz --delete --partial --progress --timeout=60 -e 'ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=5'"
+          EXCLUDE: "node_modules/, .git/, vendor/, .env"
 
       - name: Run Artisan on PROD
         if: github.ref == 'refs/heads/master'
