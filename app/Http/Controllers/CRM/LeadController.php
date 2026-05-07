@@ -13,6 +13,7 @@ use App\Models\LeadSource;
 
 use App\Models\User;
 use App\Models\VisitImage;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -478,5 +479,46 @@ class LeadController extends Controller
     {
         $company = Company::find(1);
         return Excel::download(new LeadExport($request, $company), 'Lead_data_report.xlsx');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $company = Company::first();
+
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy']);
+
+        // FILTER TANGGAL
+        if ($request->start_date && $request->end_date) {
+            $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        }
+
+        // FILTER STATUS
+        if ($request->filter_status) {
+            $data->where('status', $request->filter_status);
+        }
+
+        // FILTER LEAD SOURCE
+        if ($request->filter_lead_source) {
+            $data->where('lead_source_id', $request->filter_lead_source);
+        }
+
+        // FILTER CONSULTANT
+        if ($request->filter_consultant) {
+            $data->where('consultant_id', $request->filter_consultant);
+        }
+
+        // FILTER BRANCH
+        if ($request->filter_branch) {
+            $data->where('branch_id', $request->filter_branch);
+        }
+
+        $customers = $data->orderBy('id', 'desc')->get();
+
+        $pdf = Pdf::loadView('crm.customers.lead.pdf', compact('customers', 'company'));
+
+        // LANDSCAPE
+        $pdf->setPaper('legal', 'landscape');
+
+        return $pdf->stream('Lead_Report.pdf');
     }
 }

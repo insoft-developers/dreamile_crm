@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+
 class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents, WithCustomStartCell,WithColumnWidths
 {
     protected $request;
@@ -233,7 +234,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 */
 
                 $sheet
-                    ->getStyle('A5:J' . $lastRow)
+                    ->getStyle('A5:S' . $lastRow)
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER);
 
@@ -244,7 +245,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 */
 
                 $sheet
-                    ->getStyle('A5:J' . $lastRow)
+                    ->getStyle('A5:S' . $lastRow)
                     ->getAlignment()
 
                     ->setWrapText(true);
