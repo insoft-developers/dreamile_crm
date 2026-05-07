@@ -1,4 +1,14 @@
 <script>
+    function exportExcel() {
+        let params = $('#filterForm').serialize();
+        window.open('/lead/export/excel?' + params, '_blank');
+    }
+
+    function exportPDF() {
+        let params = $('#filterForm').serialize();
+        window.open('/lead/export/pdf?' + params, '_blank');
+    }
+
     function filterData() {
         $('#list-table').DataTable().ajax.reload(null, false);
     }
@@ -7,10 +17,10 @@
         // reset form
         document.getElementById('filterForm').reset();
 
-        
+
 
         // reload datatable
-        $('#list-table').DataTable().ajax.reload(null,false);
+        $('#list-table').DataTable().ajax.reload(null, false);
     }
 
     getProvince();

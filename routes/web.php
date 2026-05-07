@@ -63,6 +63,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/follow_add', [LeadController::class, 'followAdd'])->name('follow.add');
     Route::get('/followup_edit/{id}', [LeadController::class, 'followEdit']);
     Route::post('/follow_update', [LeadController::class, 'followUpdate'])->name('follow.update');
+    Route::get('/lead/export/excel', [LeadController::class, 'exportExcel']);
+    Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
 
 
     Route::get('/api/province', [AdministrativeController::class, 'province']);

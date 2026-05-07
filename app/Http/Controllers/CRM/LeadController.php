@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Exports\LeadExport;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Event;
 use App\Models\Followup;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeadController extends Controller
 {
@@ -469,5 +472,11 @@ class LeadController extends Controller
             'message' => 'Visit data has been updated successfully...!',
             'data' => $followupData,
         ]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $company = Company::find(1);
+        return Excel::download(new LeadExport($request, $company), 'Lead_data_report.xlsx');
     }
 }
