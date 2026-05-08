@@ -54,6 +54,18 @@
 
                 </div>
 
+                <div class="d-flex border-bottom">
+                    <button class="flex-fill btn btn-sm {{ $activeTab == 'chat' ? 'btn-success text-white' : '' }}"
+                        wire:click="$set('activeTab','chat')">
+                        Chat
+                    </button>
+
+                    <button class="flex-fill btn btn-sm {{ $activeTab == 'contact' ? 'btn-success text-white' : '' }}"
+                        wire:click="$set('activeTab','contact')">
+                        Contacts
+                    </button>
+                </div>
+
                 {{-- SEARCH --}}
                 <div class="p-2 border-bottom bg-white">
 
@@ -80,101 +92,85 @@
                 </div>
 
                 {{-- CHAT LIST --}}
-                <div
-                    style="
-                        height:75vh;
-                        overflow-y:auto;
-                        background:white;
-                    ">
+                <div style="height:75vh; overflow-y:auto; background:white;">
 
-                    @foreach ($conversations as $conversation)
-                        <div wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
-                            style="
-                                cursor:pointer;
-                                transition:0.2s;
-                                background:
-                                {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};
-                            ">
-                            @php
-                                $customer = $conversation->customer;
-                            @endphp
-                            <div class="p-3">
+                    {{-- ================= CHAT LIST ================= --}}
+                    @if ($activeTab == 'chat')
 
-                                <div class="d-flex align-items-center">
+                        @foreach ($conversations as $conversation)
+                            <div wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
+                                style="cursor:pointer;
+                background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
 
-                                    {{-- AVATAR --}}
+                                <div class="p-3 d-flex align-items-center">
+
                                     <div class="me-3">
-                                      
-                                        @if (!empty($customer->photo))
-                                            <img src="{{ asset('storage/'.$customer->photo) }}"
-                                                width="50" height="50" class="rounded-circle">
-                                        @else
-                                            <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($conversation->customer_name) }}"
-                                                width="50" height="50" class="rounded-circle">
+                                        @if(empty($conversation->customer)|| empty($conversation->customer->photo) )
+                                        <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($conversation->customer_name) }}"
+                                            width="50" height="50" class="rounded-circle">
+                                        @else 
+                                         <img src="{{ asset('storage/'.$conversation->customer->photo) }}"
+                                            width="50" height="50" class="rounded-circle">
+
                                         @endif
                                     </div>
 
-                                    {{-- CONTENT --}}
                                     <div class="flex-grow-1 overflow-hidden">
-
-                                        <div class="d-flex justify-content-between">
-
-                                            <div class="fw-semibold text-truncate">
-
-                                                {{ $customer->fullname ?? $conversation->phone }}
-
-                                            </div>
-
-                                            <small class="text-muted" style="font-size:11px;">
-
-                                                {{ optional($conversation->last_message_at)->format('H:i') }}
-
-                                            </small>
-
+                                        <div class="fw-semibold text-truncate">
+                                            {{ $conversation->customer_name ?? $conversation->phone }}
                                         </div>
 
-                                        <div class="
-                                                small
-                                                text-muted
-                                                text-truncate
-                                            "
-                                            style="
-                                                max-width:220px;
-                                            ">
-
+                                        <div class="small text-muted text-truncate">
                                             {{ optional($conversation->latestMessage)->message }}
+                                        </div>
+                                    </div>
 
+                                    @if ($conversation->unread_count > 0)
+                                        <span class="badge bg-success rounded-pill">
+                                            {{ $conversation->unread_count }}
+                                        </span>
+                                    @endif
+
+                                </div>
+                            </div>
+                        @endforeach
+
+                        {{-- ================= CONTACT LIST ================= --}}
+                    @else
+                        @foreach ($contacts as $contact)
+                            <div wire:click="startChatFromContact({{ $contact->id }})" class="border-bottom"
+                                style="cursor:pointer;">
+
+                                <div class="p-3 d-flex align-items-center">
+
+                                    <div class="me-3">
+                                        @if(! empty($contact->photo))
+                                        <img src="{{ asset('storage/'.$contact->photo) }}"
+                                            width="50" height="50" class="rounded-circle">
+                                        @else
+                                        <img src="https://ui-avatars.com/api/?background=0d6efd&color=fff&name={{ urlencode($contact->fullname) }}"
+                                            width="50" height="50" class="rounded-circle">
+                                        @endif
+                                    </div>
+
+                                    <div class="flex-grow-1">
+
+                                        <div class="fw-semibold">
+                                            {{ $contact->fullname }}
+                                        </div>
+
+                                        <div class="small text-muted">
+                                            {{ $contact->phone }}
                                         </div>
 
                                     </div>
-
-                                    {{-- UNREAD --}}
-                                    @if ($conversation->unread_count > 0)
-                                        <div class="ms-2">
-
-                                            <span
-                                                class="
-                                                    badge
-                                                    rounded-pill
-                                                "
-                                                style="
-                                                    background:#25D366;
-                                                    font-size:11px;
-                                                ">
-
-                                                {{ $conversation->unread_count }}
-
-                                            </span>
-
-                                        </div>
-                                    @endif
 
                                 </div>
 
                             </div>
+                        @endforeach
 
-                        </div>
-                    @endforeach
+                    @endif
 
                 </div>
 
@@ -198,13 +194,13 @@
                         ">
 
                         <div class="d-flex align-items-center">
-                            
-                            @if(! empty($selectedConversation->customer && ! empty($selectedConversation->customer->photo)))
-                            <img src="{{ asset('storage/'.$selectedConversation->customer->photo) }}"
-                                width="42" height="42" class="rounded-circle me-3">
-                            @else 
-                            <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($selectedConversation->customer_name) }}"
-                                width="42" height="42" class="rounded-circle me-3">
+
+                            @if (!empty($selectedConversation->customer && !empty($selectedConversation->customer->photo)))
+                                <img src="{{ asset('storage/' . $selectedConversation->customer->photo) }}"
+                                    width="42" height="42" class="rounded-circle me-3">
+                            @else
+                                <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($selectedConversation->customer_name) }}"
+                                    width="42" height="42" class="rounded-circle me-3">
                             @endif
                             <div>
 
@@ -238,7 +234,7 @@
                     <div id="chat-body" class="p-3"
                         style="
                             background:#efeae2;
-                            height:68vh;
+                            height:75vh;
                             overflow-y:auto;
                         ">
 
@@ -307,7 +303,16 @@
                                                 
                                             ">
 
-                                            {{ $msg->message }}
+                                            @if ($msg->type == 'image')
+                                                <img src="{{ asset('storage/' . $msg->attachment) }}"
+                                                    class="img-fluid rounded" style="max-width:200px;">
+                                            @elseif($msg->type == 'file')
+                                                <a href="{{ asset('storage/' . $msg->attachment) }}" target="_blank">
+                                                    📎 Download File
+                                                </a>
+                                            @else
+                                                {{ $msg->message }}
+                                            @endif
 
                                             <div class="text-end"
                                                 style="
@@ -407,7 +412,16 @@
                                                 
                                             ">
 
-                                            {{ $msg->message }}
+                                            @if ($msg->type == 'image')
+                                                <img src="{{ asset('storage/' . $msg->attachment) }}"
+                                                    class="img-fluid rounded" style="max-width:200px;">
+                                            @elseif($msg->type == 'file')
+                                                <a href="{{ asset('storage/' . $msg->attachment) }}" target="_blank">
+                                                    📎 Download File
+                                                </a>
+                                            @else
+                                                {{ $msg->message }}
+                                            @endif
 
                                             <div class="text-end"
                                                 style="
@@ -450,26 +464,43 @@
                         ">
 
                         <div class="d-flex align-items-center">
-
-                            <button
-                                class="
-                                    btn
-                                    border-0
-                                    text-muted
-                                    me-2
-                                ">
-
+                            <button id="emojiBtn" class="btn border-0 text-muted me-2">
                                 <i class="bi bi-emoji-smile fs-5"></i>
+                            </button>
+                            <emoji-picker id="emojiPicker" wire:ignore
+                                style="
+                                position:absolute;
+                                bottom:70px;
+                                right:20px;
+                                display:none;
+                                z-index:999;
+                            "></emoji-picker>
+
+                            <input type="text" id="messageInput" class="form-control border-0"
+                                placeholder="Type a message" wire:model="message" wire:keydown.enter="sendMessage"
+                                style="background:white;border-radius:10px;height:45px;">
+
+                            @if ($attachment)
+                                <div class="text-success">
+                                    File selected: {{ $attachment->getClientOriginalName() }}
+                                </div>
+                            @endif
+
+                            <div wire:loading wire:target="attachment">
+                                Uploading...
+                            </div>
+
+
+                            <input type="file" wire:model="attachment" id="fileInput" style="display:none"
+                                accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" />
+
+
+                            <button class="btn border-0 text-muted me-2"
+                                onclick="document.getElementById('fileInput').click()">
+
+                                <i class="bi bi-paperclip fs-5"></i>
 
                             </button>
-
-                            <input type="text" class="form-control border-0" placeholder="Type a message"
-                                wire:model="message" wire:keydown.enter="sendMessage"
-                                style="
-                                    background:white;
-                                    border-radius:10px;
-                                    height:45px;
-                                ">
 
                             <button
                                 class="
@@ -499,7 +530,7 @@
                             flex-column
                         "
                         style="
-                            height:80vh;
+                            height:90vh;
                             background:#f0f2f5;
                         ">
 
@@ -532,32 +563,99 @@
     </div>
 
 </div>
-
+<script type="module">
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element/index.js';
+</script>
 <script>
-    function scrollChatToBottom() {
+    function isNearBottom(container, threshold = 100) {
+        return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    }
 
-        let chatBody =
-            document.getElementById('chat-body');
+    function scrollChatToBottom(force = false) {
+        let chatBody = document.getElementById('chat-body');
 
-        if (chatBody) {
+        if (!chatBody) return;
 
-            chatBody.scrollTop =
-                chatBody.scrollHeight;
+        // cek posisi user
+        let shouldScroll = isNearBottom(chatBody);
+
+        if (shouldScroll || force) {
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
     }
 
-    document.addEventListener(
-        'livewire:initialized',
-        () => {
+    document.addEventListener('livewire:initialized', () => {
 
-            scrollChatToBottom();
+        let chatBody = document.getElementById('chat-body');
 
-            Livewire.hook('morph.updated', () => {
+        if (chatBody) {
+            // pertama kali load → paksa scroll
+            scrollChatToBottom(true);
+        }
 
-                scrollChatToBottom();
+        Livewire.hook('morph.updated', () => {
+            scrollChatToBottom(false);
+        });
 
+    });
+</script>
+<script>
+    document.addEventListener('livewire:initialized', () => {
+
+        function initEmoji() {
+
+            let picker = document.getElementById('emojiPicker');
+            let button = document.getElementById('emojiBtn');
+            let input = document.getElementById('messageInput');
+
+            if (!picker || !button || !input) return;
+
+            // ✅ CEGAH DOUBLE INIT
+            if (picker.dataset.init === '1') return;
+
+            picker.dataset.init = '1';
+
+            // TOGGLE
+            button.onclick = function(e) {
+                e.stopPropagation();
+
+                picker.style.display =
+                    picker.style.display === 'none' || picker.style.display === '' ?
+                    'block' :
+                    'none';
+            };
+
+            // EMOJI CLICK (HANYA SEKALI)
+            picker.addEventListener('emoji-click', function(event) {
+
+                let emoji = event.detail.unicode || event.detail.emoji;
+
+                // safety anti spam
+                if (emoji.length > 2) {
+                    emoji = emoji[0];
+                }
+
+                input.value += emoji;
+
+                input.dispatchEvent(new Event('input'));
+                input.focus();
             });
 
+            // CLOSE CLICK LUAR
+            document.addEventListener('click', function(e) {
+                if (!picker.contains(e.target) && !button.contains(e.target)) {
+                    picker.style.display = 'none';
+                }
+            });
         }
-    );
+
+        // INIT PERTAMA
+        setTimeout(initEmoji, 200);
+
+        // 🔥 TETAP PANGGIL, TAPI AMAN
+        Livewire.hook('morph.updated', () => {
+            setTimeout(initEmoji, 200);
+        });
+
+    });
 </script>

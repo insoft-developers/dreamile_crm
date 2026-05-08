@@ -16,7 +16,9 @@ class WhatsappMessage extends Model
         'message',
         'sender',
         'message_id',
-        'status'
+        'status',
+        'attachment',
+        'type'
     ];
 
     public function conversation():BelongsTo

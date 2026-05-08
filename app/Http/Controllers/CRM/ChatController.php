@@ -65,23 +65,5 @@ class ChatController extends Controller
         //
     }
 
-    public function waTest()
-    {
-        $token = env('WHATSAPP_TOKEN');
-
-        $phoneNumberId = env('WHATSAPP_PHONE_NUMBER_ID');
-
-        $response = Http::withToken($token)->post("https://graph.facebook.com/v22.0/$phoneNumberId/messages", [
-            'messaging_product' => 'whatsapp',
-
-            'to' => '6282165174835',
-
-            'type' => 'text',
-            'text' => [
-                'body' => 'WhatsApp CRM Testing KIrim dari laravel',
-            ],
-        ]);
-
-        dd($response->status(), $response->json());
-    }
+    
 }

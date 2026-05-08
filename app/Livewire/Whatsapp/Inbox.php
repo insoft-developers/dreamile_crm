@@ -2,18 +2,23 @@
 
 namespace App\Livewire\Whatsapp;
 
+use App\Models\Customer;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\WhatsappService;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Inbox extends Component
 {
-    public $search = '';
+    use WithFileUploads;
 
+    public $search = '';
+    public $activeTab = 'chat';
     public $selectedConversation = null;
 
     public $message = '';
+    public $attachment;
 
     /*
     |--------------------------------------------------------------------------
@@ -46,20 +51,10 @@ class Inbox extends Component
 
         $phone = $this->selectedConversation->phone;
 
-        /*
-    |-------------------------
-    | SEND MESSAGE
-    |-------------------------
-    */
         $response = app(WhatsappService::class)->send($phone, $this->message);
 
         $messageId = $response['messages'][0]['id'] ?? null;
 
-        /*
-    |-------------------------
-    | SAVE MESSAGE
-    |-------------------------
-    */
         WhatsappMessage::create([
             'conversation_id' => $this->selectedConversation->id,
             'phone' => $phone,
@@ -69,23 +64,12 @@ class Inbox extends Component
             'status' => 'sent',
         ]);
 
-        /*
-    |-------------------------
-    | UPDATE CONVERSATION
-    |-------------------------
-    */
         $this->selectedConversation->update([
             'last_message_at' => now(),
         ]);
 
         $this->message = '';
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | RENDER
-    |--------------------------------------------------------------------------
-    */
 
     public function render()
     {
@@ -95,7 +79,7 @@ class Inbox extends Component
                 $q->where('customer_name', 'like', '%' . $this->search . '%')->orWhere('phone', 'like', '%' . $this->search . '%');
             })
 
-            ->with(['latestMessage','customer'])
+            ->with(['latestMessage', 'customer'])
 
             ->orderByDesc('last_message_at')
 
@@ -103,10 +87,38 @@ class Inbox extends Component
 
         $messages = [];
 
+        $contacts = Customer::query()
+            ->whereNotNull('phone_number')
+            ->when($this->search, function ($q) {
+                $q->where('fullname', 'like', '%' . $this->search . '%')->orWhere('phone_number', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy('fullname')
+            ->get();
+
         if ($this->selectedConversation) {
             $messages = WhatsappMessage::where('conversation_id', $this->selectedConversation->id)->latest()->take(50)->get()->reverse();
         }
 
-        return view('components.whatsapp.inbox', compact('conversations', 'messages'));
+        return view('components.whatsapp.inbox', compact('conversations', 'messages', 'contacts'));
+    }
+
+    public function startChatFromContact($customerId)
+    {
+        $customer = Customer::find($customerId);
+
+        if (!$customer || !$customer->phone_number) {
+            return;
+        }
+
+        $conversation = WhatsappConversation::firstOrCreate(
+            ['phone' => $customer->phone_number],
+            [
+                'customer_name' => $customer->fullname,
+                'last_message_at' => now(),
+            ],
+        );
+
+        $this->selectConversation($conversation->id);
+        $this->activeTab = 'chat';
     }
 }
