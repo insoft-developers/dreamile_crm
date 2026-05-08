@@ -14,6 +14,7 @@ use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Models\LeadSource;
 use App\Models\Position;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,11 +28,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/wa-test', [ChatController::class, 'waTest']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', [DashboardController::class, 'index']);
     Route::resource('/company', CompanyController::class);
     Route::get('/company_table', [CompanyController::class, 'table'])->name('company.table');
@@ -66,15 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lead/export/excel', [LeadController::class, 'exportExcel']);
     Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
 
-
     Route::get('/api/province', [AdministrativeController::class, 'province']);
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
     Route::get('/api/district/{regencyCode}', [AdministrativeController::class, 'district']);
     Route::get('/api/village/{districtCode}', [AdministrativeController::class, 'village']);
-
-    
-
-
 });
 
 Route::middleware('auth')->group(function () {

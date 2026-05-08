@@ -35,6 +35,7 @@
     <link href="{{ asset('template/crm') }}/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @include('crm.css')
+    @livewireStyles
 
 </head>
 
@@ -842,7 +843,7 @@
         <script src="{{ asset('template/crm') }}/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="{{ asset('template/crm') }}/assets/libs/simplebar/simplebar.min.js"></script>
         <script src="{{ asset('template/crm') }}/assets/js/scroll-top.init.js"></script>
-        <script src="{{ asset('template/crm') }}/assets/js/app/chat.init.js?v=104"></script>
+        {{-- <script src="{{ asset('template/crm') }}/assets/js/app/chat.init.js?v=104"></script> --}}
         <!-- App js -->
     @else
         <script src="{{ asset('template/crm') }}/assets/libs/swiper/swiper-bundle.min.js"></script>
@@ -934,6 +935,7 @@
         }
     </script>
     @stack('scripts')
+    @livewireScripts
 
 </body>
 
