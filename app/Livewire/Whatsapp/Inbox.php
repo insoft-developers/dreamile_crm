@@ -18,7 +18,9 @@ class Inbox extends Component
     public $selectedConversation = null;
 
     public $message = '';
+    public $searchMessage = '';
     public $attachment;
+    public $showSearch = false;
 
     /*
     |--------------------------------------------------------------------------
@@ -29,6 +31,8 @@ class Inbox extends Component
     public function selectConversation($id)
     {
         $this->selectedConversation = WhatsappConversation::with('customer')->find($id);
+
+        $this->searchMessage = ''; // 🔥 WAJIB reset
 
         if ($this->selectedConversation) {
             $this->selectedConversation->update([
@@ -76,7 +80,9 @@ class Inbox extends Component
         $conversations = WhatsappConversation::query()
 
             ->when($this->search, function ($q) {
-                $q->where('customer_name', 'like', '%' . $this->search . '%')->orWhere('phone', 'like', '%' . $this->search . '%');
+                $q->where(function ($sub) {
+                    $sub->where('customer_name', 'like', '%' . $this->search . '%')->orWhere('phone', 'like', '%' . $this->search . '%');
+                });
             })
 
             ->with(['latestMessage', 'customer'])
@@ -90,13 +96,24 @@ class Inbox extends Component
         $contacts = Customer::query()
             ->whereNotNull('phone_number')
             ->when($this->search, function ($q) {
-                $q->where('fullname', 'like', '%' . $this->search . '%')->orWhere('phone_number', 'like', '%' . $this->search . '%');
+                $q->where(function ($sub) {
+                    $sub->where('fullname', 'like', '%' . $this->search . '%')->orWhere('phone_number', 'like', '%' . $this->search . '%');
+                });
             })
             ->orderBy('fullname')
             ->get();
 
         if ($this->selectedConversation) {
-            $messages = WhatsappMessage::where('conversation_id', $this->selectedConversation->id)->latest()->take(50)->get()->reverse();
+            $messages = WhatsappMessage::where('conversation_id', $this->selectedConversation->id)
+
+                ->when($this->searchMessage, function ($q) {
+                    $q->where('message', 'like', '%' . $this->searchMessage . '%');
+                })
+
+                ->latest()
+                ->take(50)
+                ->get()
+                ->reverse();
         }
 
         return view('components.whatsapp.inbox', compact('conversations', 'messages', 'contacts'));
@@ -121,4 +138,18 @@ class Inbox extends Component
         $this->selectConversation($conversation->id);
         $this->activeTab = 'chat';
     }
+
+    public function toggleSearch()
+    {
+        $this->showSearch = !$this->showSearch;
+    }
+
+    public function closeSearch()
+    {
+        $this->showSearch = false;
+        $this->searchMessage = '';
+        $this->dispatch('focusMessageInput');
+    }
+
+
 }

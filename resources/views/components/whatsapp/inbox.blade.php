@@ -105,13 +105,12 @@
                                 <div class="p-3 d-flex align-items-center">
 
                                     <div class="me-3">
-                                        @if(empty($conversation->customer)|| empty($conversation->customer->photo) )
-                                        <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($conversation->customer_name) }}"
-                                            width="50" height="50" class="rounded-circle">
-                                        @else 
-                                         <img src="{{ asset('storage/'.$conversation->customer->photo) }}"
-                                            width="50" height="50" class="rounded-circle">
-
+                                        @if (empty($conversation->customer) || empty($conversation->customer->photo))
+                                            <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($conversation->customer_name) }}"
+                                                width="50" height="50" class="rounded-circle">
+                                        @else
+                                            <img src="{{ asset('storage/' . $conversation->customer->photo) }}"
+                                                width="50" height="50" class="rounded-circle">
                                         @endif
                                     </div>
 
@@ -144,12 +143,12 @@
                                 <div class="p-3 d-flex align-items-center">
 
                                     <div class="me-3">
-                                        @if(! empty($contact->photo))
-                                        <img src="{{ asset('storage/'.$contact->photo) }}"
-                                            width="50" height="50" class="rounded-circle">
+                                        @if (!empty($contact->photo))
+                                            <img src="{{ asset('storage/' . $contact->photo) }}" width="50"
+                                                height="50" class="rounded-circle">
                                         @else
-                                        <img src="https://ui-avatars.com/api/?background=0d6efd&color=fff&name={{ urlencode($contact->fullname) }}"
-                                            width="50" height="50" class="rounded-circle">
+                                            <img src="https://ui-avatars.com/api/?background=0d6efd&color=fff&name={{ urlencode($contact->fullname) }}"
+                                                width="50" height="50" class="rounded-circle">
                                         @endif
                                     </div>
 
@@ -220,13 +219,67 @@
 
                         </div>
 
+                        @if ($showSearch)
+                            <div class="px-3 py-2 border-bottom bg-white">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    {{-- INPUT WRAPPER --}}
+                                    <div class="position-relative flex-grow-1">
+
+                                        {{-- ICON SEARCH --}}
+                                        <i class="bi bi-search position-absolute"
+                                            style="
+                        left:12px;
+                        top:50%;
+                        transform:translateY(-50%);
+                        color:#667781;
+                        font-size:14px;
+                    ">
+                                        </i>
+
+                                        {{-- INPUT --}}
+                                        <input type="text" class="form-control border-0"
+                                            placeholder="Search message..."
+                                            wire:model.live.debounce.300ms="searchMessage"
+                                            style="
+                        background:#f0f2f5;
+                        padding-left:35px;
+                        border-radius:20px;
+                        height:38px;
+                        font-size:14px;
+                    ">
+                                    </div>
+
+                                    {{-- CLOSE BUTTON --}}
+                                    <button class="btn btn-light border-0" wire:click="closeSearch"
+                                        style="
+        border-radius:50%;
+        width:38px;
+        height:38px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    ">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        @endif
+
                         <div class="d-flex gap-3 text-muted">
 
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-search" style="cursor:pointer" wire:click="toggleSearch"></i>
 
                             <i class="bi bi-three-dots-vertical"></i>
 
                         </div>
+
+
+
+
 
                     </div>
 
@@ -311,7 +364,15 @@
                                                     📎 Download File
                                                 </a>
                                             @else
-                                                {{ $msg->message }}
+                                                @if ($searchMessage)
+                                                    {!! str_ireplace(
+                                                        $searchMessage,
+                                                        '<mark style="background:#ffe58f;padding:0 2px;">' . $searchMessage . '</mark>',
+                                                        e($msg->message),
+                                                    ) !!}
+                                                @else
+                                                    {{ $msg->message }}
+                                                @endif
                                             @endif
 
                                             <div class="text-end"
@@ -420,7 +481,15 @@
                                                     📎 Download File
                                                 </a>
                                             @else
-                                                {{ $msg->message }}
+                                                @if ($searchMessage)
+                                                    {!! str_ireplace(
+                                                        $searchMessage,
+                                                        '<mark style="background:#ffe58f;padding:0 2px;">' . $searchMessage . '</mark>',
+                                                        e($msg->message),
+                                                    ) !!}
+                                                @else
+                                                    {{ $msg->message }}
+                                                @endif
                                             @endif
 
                                             <div class="text-end"
@@ -601,6 +670,10 @@
 </script>
 <script>
     document.addEventListener('livewire:initialized', () => {
+        Livewire.on('focusMessageInput', () => {
+            let input = document.getElementById('messageInput');
+            if (input) input.focus();
+        });
 
         function initEmoji() {
 
