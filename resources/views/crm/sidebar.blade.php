@@ -18,10 +18,10 @@
              <ul class="pe-main-menu list-unstyled">
                  <!-- Main Menu -->
                  <li class="pe-menu-title">Dashboard</li>
-                 <li class="pe-slide">
+                 <li class="pe-slide pe-has-sub">
                      <a href="{{ url('/') }}" class="pe-nav-link">
                          <i class="ri-dashboard-line pe-nav-icon"></i>
-                         <span class="slide pe-nav-content1">Dashboards</span>
+                         <span class="pe-nav-content">Dashboards</span>
 
                      </a>
 

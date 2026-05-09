@@ -54,17 +54,67 @@
 
                 </div>
 
-                <div class="d-flex border-bottom">
-                    <button class="flex-fill btn btn-sm {{ $activeTab == 'chat' ? 'btn-success text-white' : '' }}"
+                <div class="d-flex border-bottom bg-white">
+                    <button
+                        class="flex-fill btn btn-sm rounded-0 {{ $activeTab == 'chat' ? 'btn-success text-white' : 'btn-light' }}"
                         wire:click="$set('activeTab','chat')">
+
                         Chat
+
                     </button>
 
-                    <button class="flex-fill btn btn-sm {{ $activeTab == 'contact' ? 'btn-success text-white' : '' }}"
+                    <button
+                        class="flex-fill btn btn-sm rounded-0 {{ $activeTab == 'contact' ? 'btn-success text-white' : 'btn-light' }}"
                         wire:click="$set('activeTab','contact')">
+
                         Contacts
+
                     </button>
                 </div>
+
+                {{-- SUB TAB CHAT --}}
+                @if ($activeTab == 'chat')
+                    <div style="margin-top:5px"></div>
+                    <div class="d-flex border-bottom bg-light">
+
+                        <button
+                            class="flex-fill btn btn-sm 
+            {{ $chatFilter == 'all' ? 'btn-danger text-white' : 'btn-light' }}"
+                            wire:click="$set('chatFilter','all')">
+
+                            All
+
+                        </button>
+
+                        <button
+                            class="flex-fill btn btn-sm
+            {{ $chatFilter == 'unassigned' ? 'btn-danger text-white' : 'btn-light' }}"
+                            wire:click="$set('chatFilter','unassigned')">
+
+                            Unassigned
+
+                        </button>
+
+                        <button
+                            class="flex-fill btn btn-sm
+            {{ $chatFilter == 'assigned' ? 'btn-danger text-white' : 'btn-light' }}"
+                            wire:click="$set('chatFilter','assigned')">
+
+                            Assigned
+
+                        </button>
+
+                        <button
+                            class="flex-fill btn btn-sm
+            {{ $chatFilter == 'resolved' ? 'btn-danger text-white' : 'btn-light' }}"
+                            wire:click="$set('chatFilter','resolved')">
+
+                            Resolved
+
+                        </button>
+
+                    </div>
+                @endif
 
                 {{-- SEARCH --}}
                 <div class="p-2 border-bottom bg-white">
@@ -99,7 +149,7 @@
 
                         @foreach ($conversations as $conversation)
                             <div wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
-                                style="cursor:pointer;
+                                style="cursor:pointer;height:78px;
                 background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
 
                                 <div class="p-3 d-flex align-items-center">
@@ -107,16 +157,16 @@
                                     <div class="me-3">
                                         @if (empty($conversation->customer) || empty($conversation->customer->photo))
                                             <img src="https://ui-avatars.com/api/?background=25D366&color=fff&name={{ urlencode($conversation->customer_name) }}"
-                                                width="50" height="50" class="rounded-circle">
+                                                width="40" height="40" class="rounded-circle">
                                         @else
                                             <img src="{{ asset('storage/' . $conversation->customer->photo) }}"
-                                                width="50" height="50" class="rounded-circle">
+                                                width="40" height="40" class="rounded-circle">
                                         @endif
                                     </div>
 
                                     <div class="flex-grow-1 overflow-hidden">
                                         <div class="fw-semibold text-truncate">
-                                            {{ $conversation->customer_name ?? $conversation->phone }}
+                                            {{ $conversation->customer->fullname ?? $conversation->phone }}
                                         </div>
 
                                         <div class="small text-muted text-truncate">
@@ -125,12 +175,118 @@
                                     </div>
 
                                     @if ($conversation->unread_count > 0)
-                                        <span class="badge bg-success rounded-pill">
-                                            {{ $conversation->unread_count }}
-                                        </span>
+                                        <span class="custom-badge-number">{{ $conversation->unread_count }}</span>
                                     @endif
 
+                                    {{-- MENU --}}
+                                    <div class="dropdown dropdown-chat" wire:ignore>
+
+                            
+
+                                        <button id="dropdownMenu{{ $conversation->id }}"
+                                            class="btn btn-sm border-0 p-0 text-muted" data-bs-toggle="dropdown"
+                                            onclick="event.stopPropagation()">
+
+                                            <i class="bi bi-three-dots-vertical"></i>
+
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+
+                                            {{-- TAKE CHAT --}}
+
+                                            {{-- ASSIGN --}}
+                                            <li>
+
+                                                <button class="dropdown-item"
+                                                    wire:click.stop="openAssignModal({{ $conversation->id }})">
+
+                                                    <i class="bi bi-person-plus me-2"></i>
+
+                                                    Assign To
+
+                                                </button>
+
+                                            </li>
+
+                                            <li>
+
+                                                <button class="dropdown-item"
+                                                    wire:click.stop="takeChat({{ $conversation->id }})">
+
+                                                    <i class="bi bi-person-check me-2"></i>
+
+                                                    Take This Chat
+
+                                                </button>
+
+                                            </li>
+
+
+                                            {{-- ADD CONTACT --}}
+                                            <li>
+
+                                                <button class="dropdown-item"
+                                                    wire:click.stop="addToContact({{ $conversation->id }})">
+
+                                                    <i class="bi bi-person-lines-fill me-2"></i>
+
+                                                    Add To Contact
+
+                                                </button>
+
+                                            </li>
+
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+
+                                            {{-- RESOLVE --}}
+                                            <li>
+
+                                                @if ($conversation->status == 'resolved')
+                                                    <button class="dropdown-item text-success"
+                                                        wire:click.stop="reopenChat({{ $conversation->id }}, 'dropdownMenu{{ $conversation->id }}')">
+
+                                                        <i class="bi bi-check-circle me-2"></i>
+
+                                                        Reopen Chat
+
+                                                    </button>
+                                                @else
+                                                    <button class="dropdown-item text-success"
+                                                        wire:click.stop="resolveChat({{ $conversation->id }}, 'dropdownMenu{{ $conversation->id }}')">
+
+                                                        <i class="bi bi-check-circle me-2"></i>
+
+                                                        Resolve Chat
+
+                                                    </button>
+                                                @endif
+
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+
                                 </div>
+                                @if ($conversation->status == 'open')
+                                    @if (empty($conversation->assigned_to))
+                                        <span class="badge rounded-pill bg-danger chat-status">Unassigned</span>
+                                    @else
+                                        <span class="badge rounded-pill bg-warning chat-status">Assigned</span>
+                                    @endif
+                                @elseif($conversation->status == 'resolved')
+                                    <span class="badge rounded-pill bg-success chat-status">Resolved</span>
+                                @endif
+
+
+
+
+
+
                             </div>
                         @endforeach
 
@@ -234,7 +390,7 @@
                         top:50%;
                         transform:translateY(-50%);
                         color:#667781;
-                        font-size:14px;
+                        font-size:13px;
                     ">
                                         </i>
 
@@ -247,7 +403,7 @@
                         padding-left:35px;
                         border-radius:20px;
                         height:38px;
-                        font-size:14px;
+                        font-size:13px;
                     ">
                                     </div>
 
@@ -527,62 +683,102 @@
                     </div>
 
                     {{-- FOOTER --}}
-                    <div class="p-3 border-top"
-                        style="
-                            background:#f0f2f5;
-                        ">
+                    {{-- RESOLVED NOTICE --}}
+                    @if ($selectedConversation?->status == 'resolved')
+                        <div
+                            class="alert alert-success rounded-0 mb-0 d-flex align-items-center justify-content-between">
+
+                            <div>
+
+                                <i class="bi bi-check-circle me-2"></i>
+
+                                This chat has been resolved
+
+                            </div>
+
+                            <button class="btn btn-sm btn-warning"
+                                wire:click="reopenChat({{ $selectedConversation->id }})">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                                Reopen
+
+                            </button>
+
+                        </div>
+                    @endif
+
+                    {{-- FOOTER --}}
+                    <div class="p-3 border-top" style="background:#f0f2f5;">
 
                         <div class="d-flex align-items-center">
-                            <button id="emojiBtn" class="btn border-0 text-muted me-2">
+
+                            {{-- EMOJI --}}
+                            <button id="emojiBtn" class="btn border-0 text-muted me-2"
+                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}>
+
                                 <i class="bi bi-emoji-smile fs-5"></i>
+
                             </button>
+
                             <emoji-picker id="emojiPicker" wire:ignore
                                 style="
-                                position:absolute;
-                                bottom:70px;
-                                right:20px;
-                                display:none;
-                                z-index:999;
-                            "></emoji-picker>
+                position:absolute;
+                bottom:70px;
+                right:20px;
+                display:none;
+                z-index:999;
+            ">
+                            </emoji-picker>
 
+                            {{-- INPUT --}}
                             <input type="text" id="messageInput" class="form-control border-0"
-                                placeholder="Type a message" wire:model="message" wire:keydown.enter="sendMessage"
-                                style="background:white;border-radius:10px;height:45px;">
+                                placeholder="{{ $selectedConversation?->status == 'resolved' ? 'Chat resolved' : 'Type a message' }}"
+                                wire:model="message" wire:keydown.enter="sendMessage"
+                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}
+                                style="
+                background:white;
+                border-radius:10px;
+                height:45px;
+            ">
 
+                            {{-- FILE INFO --}}
                             @if ($attachment)
-                                <div class="text-success">
-                                    File selected: {{ $attachment->getClientOriginalName() }}
+                                <div class="text-success ms-2">
+
+                                    File:
+                                    {{ $attachment->getClientOriginalName() }}
+
                                 </div>
                             @endif
 
+                            {{-- UPLOADING --}}
                             <div wire:loading wire:target="attachment">
+
                                 Uploading...
+
                             </div>
 
-
+                            {{-- FILE INPUT --}}
                             <input type="file" wire:model="attachment" id="fileInput" style="display:none"
                                 accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" />
 
-
+                            {{-- ATTACH BUTTON --}}
                             <button class="btn border-0 text-muted me-2"
-                                onclick="document.getElementById('fileInput').click()">
+                                onclick="document.getElementById('fileInput').click()"
+                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}>
 
                                 <i class="bi bi-paperclip fs-5"></i>
 
                             </button>
 
-                            <button
-                                class="
-                                    btn
-                                    btn-success
-                                    ms-2
-                                    rounded-circle
-                                "
-                                wire:click="sendMessage"
+                            {{-- SEND BUTTON --}}
+                            <button class="btn btn-success ms-2 rounded-circle" wire:click="sendMessage"
+                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}
                                 style="
-                                    width:45px;
-                                    height:45px;
-                                ">
+                width:45px;
+                height:45px;
+            ">
 
                                 <i class="bi bi-send-fill"></i>
 
@@ -631,6 +827,79 @@
 
     </div>
 
+    @if ($showAssignModal)
+
+        <div class="modal fade show d-block" style="background:rgba(0,0,0,0.5);">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div class="modal-content border-0 shadow">
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+
+                            Assign Chat
+
+                        </h5>
+
+                        <button type="button" class="btn-close" wire:click="$set('showAssignModal', false)">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <label class="form-label">
+
+                            Select Agent
+
+                        </label>
+
+                        <select class="form-select" wire:model="assignToUser">
+
+                            <option value="">
+
+                                Choose agent
+
+                            </option>
+
+                            @foreach ($agents as $agent)
+                                <option value="{{ $agent->id }}">
+
+                                    {{ $agent->name }}
+
+                                </option>
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button class="btn btn-light" wire:click="$set('showAssignModal', false)">
+
+                            Cancel
+
+                        </button>
+
+                        <button class="btn btn-success" wire:click="assignChat">
+
+                            Assign
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    @endif
+
 </div>
 <script type="module">
     import 'https://cdn.jsdelivr.net/npm/emoji-picker-element/index.js';
@@ -670,6 +939,21 @@
 </script>
 <script>
     document.addEventListener('livewire:initialized', () => {
+        Livewire.on('closeDropdown', (event) => {
+
+            let button = document.getElementById(event.id);
+
+            if (!button) return;
+
+            let dropdown =
+                bootstrap.Dropdown.getOrCreateInstance(button);
+
+            dropdown.hide();
+
+        });
+
+
+
         Livewire.on('focusMessageInput', () => {
             let input = document.getElementById('messageInput');
             if (input) input.focus();

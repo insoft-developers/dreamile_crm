@@ -3,6 +3,7 @@
 namespace App\Livewire\Whatsapp;
 
 use App\Models\Customer;
+use App\Models\User;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\WhatsappService;
@@ -21,6 +22,21 @@ class Inbox extends Component
     public $searchMessage = '';
     public $attachment;
     public $showSearch = false;
+
+    public $chatFilter = 'all';
+
+    public $showAssignModal = false;
+
+    public $selectedConversationId;
+
+    public $assignToUser;
+
+    public $agents = [];
+
+    public function mount()
+    {
+        $this->agents = User::where('position', 'agent')->get();
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -79,14 +95,30 @@ class Inbox extends Component
     {
         $conversations = WhatsappConversation::query()
 
+            // SEARCH
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('customer_name', 'like', '%' . $this->search . '%')->orWhere('phone', 'like', '%' . $this->search . '%');
                 });
             })
 
+            // FILTER TAB
+            ->when($this->chatFilter == 'unassigned', function ($q) {
+                $q->whereNull('assigned_to');
+            })
+
+            ->when($this->chatFilter == 'assigned', function ($q) {
+                $q->whereNotNull('assigned_to')->where('status', 'open');
+            })
+
+            ->when($this->chatFilter == 'resolved', function ($q) {
+                $q->where('status', 'resolved');
+            })
+
+            // RELATION
             ->with(['latestMessage', 'customer'])
 
+            // SORT
             ->orderByDesc('last_message_at')
 
             ->get();
@@ -151,5 +183,63 @@ class Inbox extends Component
         $this->dispatch('focusMessageInput');
     }
 
+    public function takeChat($conversationId)
+    {
+        WhatsappConversation::find($conversationId)->update([
+            'assigned_to' => auth()->id(),
+            'status' => 'open',
+        ]);
+    }
 
+    public function resolveChat($conversationId, $dropdownId)
+    {
+        // dd($conversationId);
+        WhatsappConversation::where('id', $conversationId)->update([
+            'status' => 'resolved',
+        ]);
+
+        $this->dispatch('closeDropdown', id: $dropdownId);
+    }
+
+    public function addToContact($conversationId)
+    {
+        $conversation = WhatsappConversation::find($conversationId);
+
+        // create customer/contact
+    }
+
+    public function openAssignModal($conversationId)
+    {
+        $this->selectedConversationId = $conversationId;
+
+        $this->assignToUser = null;
+
+        $this->showAssignModal = true;
+    }
+
+    public function assignChat()
+    {
+        WhatsappConversation::where('id', $this->selectedConversationId)->update([
+            'assigned_to' => $this->assignToUser,
+            'status' => 'open',
+        ]);
+
+        $this->showAssignModal = false;
+        $this->dispatch('closeDropdown');
+        session()->flash('success', 'Chat assigned');
+    }
+
+    public function reopenChat($conversationId, $dropdownId = null)
+    {
+        WhatsappConversation::where('id',$conversationId)->update([
+            'status' => 'open',
+        ]);
+
+        $this->selectedConversation = WhatsappConversation::find($conversationId);
+        if($dropdownId) {
+            $this->dispatch('closeDropdown', id: $dropdownId);
+        }
+        
+        session()->flash('success', 'Chat reopened');
+    }
 }

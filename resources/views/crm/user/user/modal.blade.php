@@ -57,6 +57,7 @@
                                 <option value="{{ $position->slug }}">{{ $position->position_name }}</option>
                             @endforeach
                             <option value="consultant">Education Consultant</option>
+                            <option value="agent">Sales Agent</option>
                         </select>
                     </div>
                     <div class="form-group mb-3">

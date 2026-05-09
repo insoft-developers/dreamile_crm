@@ -45,7 +45,11 @@ class UserController extends Controller
                 ->addColumn('position', function ($row) {
                     if($row->position === 'consultant') {
                         return 'Education Consultant';
-                    } else {
+                    } 
+                    else if($row->position === 'agent') {
+                        return 'Sales Agent';
+                    } 
+                    else {
                         return $row->positions->position_name ?? '';
                     }
                     

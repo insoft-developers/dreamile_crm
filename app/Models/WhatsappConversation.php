@@ -12,7 +12,7 @@ class WhatsappConversation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['customer_name', 'phone', 'assigned_to', 'unread_count', 'last_message_at'];
+    protected $fillable = ['customer_name', 'phone', 'assigned_to', 'unread_count', 'last_message_at','status'];
 
     public function messages(): HasMany
     {

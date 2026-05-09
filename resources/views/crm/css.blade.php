@@ -67,28 +67,77 @@
     .table td {
         padding: 4px 8px;
     }
-    .tombol{
+
+    .tombol {
         cursor: pointer;
-        
+
     }
-    .tombol:hover{
-        border:1px solid red;
+
+    .tombol:hover {
+        border: 1px solid red;
         background: black !important;
-        color:white;
+        color: white;
     }
 
     .text-edit {
         cursor: pointer;
         color: orange;
     }
+
     .text-edit:hover {
-        color:blue;
+        color: blue;
     }
+
     .text-delete {
         cursor: pointer;
         color: red;
     }
+
     .text-delete:hover {
-        color:blue;
+        color: blue;
+    }
+
+    .chat-status {
+        position: relative;
+        top: -14px;
+        padding: 5px;
+        left: 163px;
+        font-size: 9px;
+    }
+
+    .custom-badge-number {
+        background: orangered;
+        padding: 3px 8px;
+        font-size: 10px;
+        color: white;
+        border-radius: 7px;
+        position: relative;
+        top: -6px;
+        right: -14px;
+    }
+
+    .btn-3-chat {
+        position: relative;
+        top: 30px;
+    }
+
+    .dropdown-chat ul {
+        font-size: 13px;
+        background: #dcffee;
+        color: white !important;
+    }
+
+    .chat-item:hover {
+        background: #f5f6f6 !important;
+    }
+
+    .dropdown-menu {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .dropdown-item {
+        font-size: 14px;
+        padding: 10px 14px;
     }
 </style>
