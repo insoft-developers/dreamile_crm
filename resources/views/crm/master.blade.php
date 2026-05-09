@@ -45,6 +45,9 @@
     <div id="layout-wrapper">
 
         <!-- Begin Header -->
+        @if($view == 'inbox')
+        
+        @else
         <header class="app-header" id="appHeader">
             <div class="container-fluid w-100">
                 <div class="d-flex justify-content-between align-items-center">
@@ -272,7 +275,7 @@
             </div>
         </header>
         <!-- END Header -->
-
+        @endif
 
 
         @include('crm.sidebar')
@@ -843,8 +846,7 @@
         <script src="{{ asset('template/crm') }}/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="{{ asset('template/crm') }}/assets/libs/simplebar/simplebar.min.js"></script>
         <script src="{{ asset('template/crm') }}/assets/js/scroll-top.init.js"></script>
-        {{-- <script src="{{ asset('template/crm') }}/assets/js/app/chat.init.js?v=104"></script> --}}
-        <!-- App js -->
+        
     @else
         <script src="{{ asset('template/crm') }}/assets/libs/swiper/swiper-bundle.min.js"></script>
         <script src="{{ asset('template/crm') }}/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>

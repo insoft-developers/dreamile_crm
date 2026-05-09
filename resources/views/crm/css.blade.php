@@ -140,4 +140,8 @@
         font-size: 14px;
         padding: 10px 14px;
     }
+
+    .inbox-wrapper {
+        margin-top: -10px !important;
+    }
 </style>

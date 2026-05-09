@@ -2,7 +2,7 @@
 
 @section('content')
 
-<main class="app-wrapper">
+<main class="app-wrapper inbox-wrapper">
 
     <div class="container-fluid">
 

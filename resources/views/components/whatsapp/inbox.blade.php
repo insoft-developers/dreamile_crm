@@ -73,19 +73,37 @@
                 </div>
 
                 {{-- SUB TAB CHAT --}}
+                {{-- SUB TAB CHAT --}}
                 @if ($activeTab == 'chat')
+
                     <div style="margin-top:5px"></div>
+
                     <div class="d-flex border-bottom bg-light">
 
-                        <button
-                            class="flex-fill btn btn-sm 
-            {{ $chatFilter == 'all' ? 'btn-danger text-white' : 'btn-light' }}"
-                            wire:click="$set('chatFilter','all')">
+                        {{-- AGENT --}}
+                        @if (auth()->user()->position == 'agent')
+                            {{-- MY CHAT --}}
+                            <button
+                                class="flex-fill btn btn-sm
+                {{ $chatFilter == 'mychat' ? 'btn-danger text-white' : 'btn-light' }}"
+                                wire:click="$set('chatFilter','mychat')">
 
-                            All
+                                My Chat
 
-                        </button>
+                            </button>
+                        @else
+                            {{-- ADMIN / SUPERVISOR --}}
+                            <button
+                                class="flex-fill btn btn-sm
+                {{ $chatFilter == 'all' ? 'btn-danger text-white' : 'btn-light' }}"
+                                wire:click="$set('chatFilter','all')">
 
+                                All
+
+                            </button>
+                        @endif
+
+                        {{-- UNASSIGNED --}}
                         <button
                             class="flex-fill btn btn-sm
             {{ $chatFilter == 'unassigned' ? 'btn-danger text-white' : 'btn-light' }}"
@@ -95,15 +113,19 @@
 
                         </button>
 
-                        <button
-                            class="flex-fill btn btn-sm
-            {{ $chatFilter == 'assigned' ? 'btn-danger text-white' : 'btn-light' }}"
-                            wire:click="$set('chatFilter','assigned')">
+                        {{-- ASSIGNED --}}
+                        @if (auth()->user()->position != 'agent')
+                            <button
+                                class="flex-fill btn btn-sm
+                {{ $chatFilter == 'assigned' ? 'btn-danger text-white' : 'btn-light' }}"
+                                wire:click="$set('chatFilter','assigned')">
 
-                            Assigned
+                                Assigned
 
-                        </button>
+                            </button>
+                        @endif
 
+                        {{-- RESOLVED --}}
                         <button
                             class="flex-fill btn btn-sm
             {{ $chatFilter == 'resolved' ? 'btn-danger text-white' : 'btn-light' }}"
@@ -114,6 +136,7 @@
                         </button>
 
                     </div>
+
                 @endif
 
                 {{-- SEARCH --}}
@@ -146,8 +169,9 @@
 
                     {{-- ================= CHAT LIST ================= --}}
                     @if ($activeTab == 'chat')
-
+                     
                         @foreach ($conversations as $conversation)
+                        
                             <div wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
                                 style="cursor:pointer;height:78px;
                 background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
@@ -181,7 +205,7 @@
                                     {{-- MENU --}}
                                     <div class="dropdown dropdown-chat" wire:ignore>
 
-                            
+
 
                                         <button id="dropdownMenu{{ $conversation->id }}"
                                             class="btn btn-sm border-0 p-0 text-muted" data-bs-toggle="dropdown"

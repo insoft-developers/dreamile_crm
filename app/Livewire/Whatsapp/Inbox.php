@@ -115,6 +115,11 @@ class Inbox extends Component
                 $q->where('status', 'resolved');
             })
 
+            // MY CHAT (AGENT)
+            ->when($this->chatFilter == 'mychat', function ($q) {
+                $q->where('assigned_to', auth()->id())->where('status', 'open');
+            })
+
             // RELATION
             ->with(['latestMessage', 'customer'])
 
@@ -210,6 +215,7 @@ class Inbox extends Component
 
     public function openAssignModal($conversationId)
     {
+        dd($conversationId);
         $this->selectedConversationId = $conversationId;
 
         $this->assignToUser = null;
@@ -219,6 +225,8 @@ class Inbox extends Component
 
     public function assignChat()
     {
+        
+        dd($this->selectedConversationId);
         WhatsappConversation::where('id', $this->selectedConversationId)->update([
             'assigned_to' => $this->assignToUser,
             'status' => 'open',
@@ -231,15 +239,15 @@ class Inbox extends Component
 
     public function reopenChat($conversationId, $dropdownId = null)
     {
-        WhatsappConversation::where('id',$conversationId)->update([
+        WhatsappConversation::where('id', $conversationId)->update([
             'status' => 'open',
         ]);
 
         $this->selectedConversation = WhatsappConversation::find($conversationId);
-        if($dropdownId) {
+        if ($dropdownId) {
             $this->dispatch('closeDropdown', id: $dropdownId);
         }
-        
+
         session()->flash('success', 'Chat reopened');
     }
 }
