@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\WhatsappService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -36,6 +37,9 @@ class Inbox extends Component
     public function mount()
     {
         $this->agents = User::where('position', 'agent')->get();
+        if (Auth::user()->position === 'agent') {
+            $this->chatFilter = 'mychat';
+        }
     }
 
     /*
@@ -82,6 +86,7 @@ class Inbox extends Component
             'sender' => 'agent',
             'message_id' => $messageId, // 🔥 INI WAJIB
             'status' => 'sent',
+            'userid' => Auth::user()->id,
         ]);
 
         $this->selectedConversation->update([
@@ -93,6 +98,8 @@ class Inbox extends Component
 
     public function render()
     {
+        $ownerid = Auth::user()->id;
+        $ownerposition = Auth::user()->position;
         $conversations = WhatsappConversation::query()
 
             // SEARCH
@@ -117,7 +124,7 @@ class Inbox extends Component
 
             // MY CHAT (AGENT)
             ->when($this->chatFilter == 'mychat', function ($q) {
-                $q->where('assigned_to', auth()->id())->where('status', 'open');
+                $q->where('assigned_to', auth()->id());
             })
 
             // RELATION
@@ -153,7 +160,7 @@ class Inbox extends Component
                 ->reverse();
         }
 
-        return view('components.whatsapp.inbox', compact('conversations', 'messages', 'contacts'));
+        return view('components.whatsapp.inbox', compact('conversations', 'messages', 'contacts', 'ownerid', 'ownerposition'));
     }
 
     public function startChatFromContact($customerId)
@@ -215,7 +222,13 @@ class Inbox extends Component
 
     public function openAssignModal($conversationId)
     {
-        dd($conversationId);
+        $conversation = WhatsappConversation::find($conversationId);
+
+        if ($conversation->assigned_to) {
+            session()->flash('warning', 'Chat already assigned to ' . ($conversation->agent?->name ?? 'Agent'));
+
+            return;
+        }
         $this->selectedConversationId = $conversationId;
 
         $this->assignToUser = null;
@@ -225,8 +238,7 @@ class Inbox extends Component
 
     public function assignChat()
     {
-        
-        dd($this->selectedConversationId);
+        // dd($this->selectedConversationId);
         WhatsappConversation::where('id', $this->selectedConversationId)->update([
             'assigned_to' => $this->assignToUser,
             'status' => 'open',
@@ -249,5 +261,16 @@ class Inbox extends Component
         }
 
         session()->flash('success', 'Chat reopened');
+    }
+
+    public function takeThisChat($conversationId, $dropdownId = null)
+    {
+        WhatsappConversation::where('id', $conversationId)->update([
+            'assigned_to' => Auth::user()->id,
+            'status' => 'open',
+        ]);
+        if ($dropdownId) {
+            $this->dispatch('closeDropdown', id: $dropdownId);
+        }
     }
 }

@@ -48,10 +48,14 @@ class UserController extends Controller
                     } 
                     else if($row->position === 'agent') {
                         return 'Sales Agent';
-                    } 
-                    else {
-                        return $row->positions->position_name ?? '';
                     }
+                    else if($row->position === 'supervisor') {
+                        return 'Supervisor';
+                    }
+                    else if($row->position === 'admin') {
+                        return 'Admin';
+                    } 
+                    
                     
                 })
                 ->addColumn('is_active', function ($row) {

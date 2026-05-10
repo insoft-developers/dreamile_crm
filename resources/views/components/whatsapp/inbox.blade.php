@@ -35,7 +35,7 @@
                         <div>
 
                             <div class="fw-bold">
-                                Dreamile Chat
+                                {{ Auth::user()->name }}
                             </div>
 
                             <small class="text-success">
@@ -77,6 +77,7 @@
                 @if ($activeTab == 'chat')
 
                     <div style="margin-top:5px"></div>
+                    
 
                     <div class="d-flex border-bottom bg-light">
 
@@ -161,6 +162,13 @@
                             ">
 
                     </div>
+                    @if (session()->has('warning'))
+                        <div class="alert alert-warning mb-2">
+
+                            {{ session('warning') }}
+
+                        </div>
+                    @endif
 
                 </div>
 
@@ -169,12 +177,12 @@
 
                     {{-- ================= CHAT LIST ================= --}}
                     @if ($activeTab == 'chat')
-                     
-                        @foreach ($conversations as $conversation)
-                        
-                            <div wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
+
+                        @forelse ($conversations as $conversation)
+                            <div wire:key="conversation-{{ $conversation->id }}"
+                                wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
                                 style="cursor:pointer;height:78px;
-                background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
+                                    background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
 
                                 <div class="p-3 d-flex align-items-center">
 
@@ -217,34 +225,24 @@
 
                                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
 
-                                            {{-- TAKE CHAT --}}
+
 
                                             {{-- ASSIGN --}}
-                                            <li>
+                                            @if (Auth::user()->position == 'agent')
+                                            @else
+                                                <li>
 
-                                                <button class="dropdown-item"
-                                                    wire:click.stop="openAssignModal({{ $conversation->id }})">
+                                                    <button class="dropdown-item"
+                                                        wire:click.stop="openAssignModal({{ $conversation->id }})">
 
-                                                    <i class="bi bi-person-plus me-2"></i>
+                                                        <i class="bi bi-person-plus me-2"></i>
 
-                                                    Assign To
+                                                        Assign To
 
-                                                </button>
+                                                    </button>
 
-                                            </li>
-
-                                            <li>
-
-                                                <button class="dropdown-item"
-                                                    wire:click.stop="takeChat({{ $conversation->id }})">
-
-                                                    <i class="bi bi-person-check me-2"></i>
-
-                                                    Take This Chat
-
-                                                </button>
-
-                                            </li>
+                                                </li>
+                                            @endif
 
 
                                             {{-- ADD CONTACT --}}
@@ -265,30 +263,7 @@
                                                 <hr class="dropdown-divider">
                                             </li>
 
-                                            {{-- RESOLVE --}}
-                                            <li>
 
-                                                @if ($conversation->status == 'resolved')
-                                                    <button class="dropdown-item text-success"
-                                                        wire:click.stop="reopenChat({{ $conversation->id }}, 'dropdownMenu{{ $conversation->id }}')">
-
-                                                        <i class="bi bi-check-circle me-2"></i>
-
-                                                        Reopen Chat
-
-                                                    </button>
-                                                @else
-                                                    <button class="dropdown-item text-success"
-                                                        wire:click.stop="resolveChat({{ $conversation->id }}, 'dropdownMenu{{ $conversation->id }}')">
-
-                                                        <i class="bi bi-check-circle me-2"></i>
-
-                                                        Resolve Chat
-
-                                                    </button>
-                                                @endif
-
-                                            </li>
 
                                         </ul>
 
@@ -300,19 +275,25 @@
                                     @if (empty($conversation->assigned_to))
                                         <span class="badge rounded-pill bg-danger chat-status">Unassigned</span>
                                     @else
-                                        <span class="badge rounded-pill bg-warning chat-status">Assigned</span>
+                                        <span
+                                            class="badge rounded-pill bg-warning chat-status">{{ \Illuminate\Support\Str::limit($conversation->agent?->name, 15) }}</span>
                                     @endif
                                 @elseif($conversation->status == 'resolved')
                                     <span class="badge rounded-pill bg-success chat-status">Resolved</span>
                                 @endif
 
+                            </div>
+                        @empty
 
+                            <div class="d-flex flex-column align-items-center justify-content-center text-muted"
+                                style="height:200px;">
 
+                                <i class="bi bi-chat-square-text fs-1 mb-2"></i>
 
-
+                                <div>No Data</div>
 
                             </div>
-                        @endforeach
+                        @endforelse
 
                         {{-- ================= CONTACT LIST ================= --}}
                     @else
@@ -482,6 +463,7 @@
 
                             @endphp
 
+
                             {{-- DATE --}}
                             @if ($lastDate != $messageDate)
                                 <div class="text-center my-3">
@@ -551,7 +533,8 @@
                                                         e($msg->message),
                                                     ) !!}
                                                 @else
-                                                    {{ $msg->message }}
+                                                    <small><strong>{{ $msg->user?->name ?? '' }}
+                                                            ({{ $msg->user?->position ?? '' }})</strong></small><br>{{ $msg->message }}
                                                 @endif
                                             @endif
 
@@ -720,7 +703,8 @@
 
                             </div>
 
-                            <button class="btn btn-sm btn-warning"
+                            <button {{ $selectedConversation->assigned_to !== $ownerid ? 'disabled' : '' }}
+                                class="btn btn-sm btn-warning"
                                 wire:click="reopenChat({{ $selectedConversation->id }})">
 
                                 <i class="bi bi-arrow-counterclockwise me-1"></i>
@@ -730,6 +714,30 @@
                             </button>
 
                         </div>
+                    @elseif($ownerid !== $selectedConversation->assigned_to && $ownerposition !== 'supervisor')
+                        <div
+                            class="alert alert-danger rounded-0 mb-0 d-flex align-items-center justify-content-between">
+
+                            <div>
+
+                                <i class="bi bi-check-circle me-2"></i>
+
+                                This chat hasn't been assigned to you
+
+                            </div>
+
+                            @if (empty($selectedConversation->assigned_to))
+                                <button class="btn btn-sm btn-danger"
+                                    wire:click="takeThisChat({{ $selectedConversation->id }})">
+
+                                    <i class="bi bi-person-check me-2 me-1"></i>
+
+                                    Take this chat
+
+                                </button>
+                            @endif
+
+                        </div>
                     @endif
 
                     {{-- FOOTER --}}
@@ -737,9 +745,10 @@
 
                         <div class="d-flex align-items-center">
 
+
                             {{-- EMOJI --}}
                             <button id="emojiBtn" class="btn border-0 text-muted me-2"
-                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}>
+                                {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}>
 
                                 <i class="bi bi-emoji-smile fs-5"></i>
 
@@ -755,11 +764,13 @@
             ">
                             </emoji-picker>
 
+
+
                             {{-- INPUT --}}
                             <input type="text" id="messageInput" class="form-control border-0"
                                 placeholder="{{ $selectedConversation?->status == 'resolved' ? 'Chat resolved' : 'Type a message' }}"
                                 wire:model="message" wire:keydown.enter="sendMessage"
-                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}
+                                {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation?->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}
                                 style="
                 background:white;
                 border-radius:10px;
@@ -790,7 +801,7 @@
                             {{-- ATTACH BUTTON --}}
                             <button class="btn border-0 text-muted me-2"
                                 onclick="document.getElementById('fileInput').click()"
-                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}>
+                                {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}>
 
                                 <i class="bi bi-paperclip fs-5"></i>
 
@@ -798,7 +809,7 @@
 
                             {{-- SEND BUTTON --}}
                             <button class="btn btn-success ms-2 rounded-circle" wire:click="sendMessage"
-                                {{ $selectedConversation?->status == 'resolved' ? 'disabled' : '' }}
+                                {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation?->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}
                                 style="
                 width:45px;
                 height:45px;
@@ -833,6 +844,7 @@
 
                         <h4 class="mt-3">
                             Dreamile WhatsApp CRM
+
                         </h4>
 
                         <p class="text-muted">

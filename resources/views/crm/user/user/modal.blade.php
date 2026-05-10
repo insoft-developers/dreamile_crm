@@ -53,11 +53,10 @@
                         <label for="position" class="form-label">Position</label>
                         <select class="form-control" id="position" name="position" required>
                             <option value="">- Select -</option>
-                            @foreach ($positions as $position)
-                                <option value="{{ $position->slug }}">{{ $position->position_name }}</option>
-                            @endforeach
                             <option value="consultant">Education Consultant</option>
                             <option value="agent">Sales Agent</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </div>
                     <div class="form-group mb-3">

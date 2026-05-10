@@ -18,7 +18,8 @@ class WhatsappMessage extends Model
         'message_id',
         'status',
         'attachment',
-        'type'
+        'type',
+        'userid'
     ];
 
     public function conversation():BelongsTo
@@ -27,5 +28,10 @@ class WhatsappMessage extends Model
             WhatsappConversation::class,
             'conversation_id'
         );
+    }
+
+    public function user():BelongsTo
+    {
+        return $this->belongsTo(User::class, 'userid');
     }
 }

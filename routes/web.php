@@ -41,8 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user_table', [UserController::class, 'table'])->name('user.table');
     Route::post('/user_activate', [UserController::class, 'activate']);
 
-    Route::resource('/position', PositionController::class);
-    Route::get('/position_table', [PositionController::class, 'table'])->name('position.table');
+    // Route::resource('/position', PositionController::class);
+    // Route::get('/position_table', [PositionController::class, 'table'])->name('position.table');
     Route::resource('/level', LevelController::class);
     Route::get('/level_table', [LevelController::class, 'table'])->name('level.table');
 

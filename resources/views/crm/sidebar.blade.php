@@ -180,11 +180,7 @@
                                  Branch
                              </a>
                          </li>
-                         <li class="pe-slide-item">
-                             <a href="{{ url('position') }}" class="pe-nav-link">
-                                 Positions
-                             </a>
-                         </li>
+                         
                          <li class="pe-slide-item">
                              <a href="{{ url('level') }}" class="pe-nav-link">
                                  Levels
