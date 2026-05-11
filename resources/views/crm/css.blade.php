@@ -100,9 +100,9 @@
     .chat-status {
         position: relative;
         top: -14px;
-        padding: 5px;
+        padding: 7px;
         left: 163px;
-        font-size: 9px;
+        font-size: 8px;
     }
 
     .custom-badge-number {
@@ -142,6 +142,6 @@
     }
 
     .inbox-wrapper {
-        margin-top: -10px !important;
+        margin-top: -86px !important;
     }
 </style>

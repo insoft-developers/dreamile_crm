@@ -7,7 +7,7 @@
                  src="{{ asset('images/logo_trans.png') }}">
 
          </a>
-         <h3 class="text-body-emphasis fw-bolder mb-0 ms-1">CRM</h3>
+         <h3 class="text-body-emphasis fw-bolder mb-0 ms-1">{{ $view == 'inbox' ? '' : 'CRM' }}</h3>
          <button type="button" id="sidebarDefaultArrow"
              class="btn btn-sm p-0 fs-16 text-body-emphasis ms-auto float-end d-none icon-hover-btn d-none"><i
                  class="ri-arrow-right-line fs-5"></i></button>
@@ -20,9 +20,8 @@
                  <li class="pe-menu-title">Dashboard</li>
                  <li class="pe-slide pe-has-sub">
                      <a href="{{ url('/') }}" class="pe-nav-link">
-                         <i class="ri-dashboard-line pe-nav-icon"></i>
+                         <i onclick="toDashboard()" class="ri-dashboard-line pe-nav-icon"></i>
                          <span class="pe-nav-content">Dashboards</span>
-
                      </a>
 
                  </li>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Whatsapp;
 
+use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\WhatsappConversation;
@@ -27,12 +28,22 @@ class Inbox extends Component
     public $chatFilter = 'all';
 
     public $showAssignModal = false;
+    public $showContactModal = false;
 
     public $selectedConversationId;
 
     public $assignToUser;
 
     public $agents = [];
+    public $branches = [];
+    public $contactPhone = '';
+    public $contactName = '';
+    public $contactAddress = '';
+    public $contactSchool = '';
+    public $contactClass = '';
+    public $contactMajor = '';
+    public $contactGender = '';
+    public $contactBranch = '';
 
     public function mount()
     {
@@ -40,6 +51,8 @@ class Inbox extends Component
         if (Auth::user()->position === 'agent') {
             $this->chatFilter = 'mychat';
         }
+
+        $this->branches = Branch::all();
     }
 
     /*
@@ -203,21 +216,12 @@ class Inbox extends Component
         ]);
     }
 
-    public function resolveChat($conversationId, $dropdownId)
+    public function resolveChat($conversationId)
     {
         // dd($conversationId);
         WhatsappConversation::where('id', $conversationId)->update([
             'status' => 'resolved',
         ]);
-
-        $this->dispatch('closeDropdown', id: $dropdownId);
-    }
-
-    public function addToContact($conversationId)
-    {
-        $conversation = WhatsappConversation::find($conversationId);
-
-        // create customer/contact
     }
 
     public function openAssignModal($conversationId)
@@ -271,6 +275,60 @@ class Inbox extends Component
         ]);
         if ($dropdownId) {
             $this->dispatch('closeDropdown', id: $dropdownId);
+        }
+    }
+
+    public function openContactModal($conversationId)
+    {
+        $conversation = WhatsappConversation::find($conversationId);
+        $this->selectedConversationId = $conversationId;
+
+        $this->contactName = $conversation->customer?->fullname;
+        $this->contactPhone = $conversation->phone;
+        $this->contactAddress = $conversation->customer?->full_address;
+        $this->contactSchool = $conversation->customer?->school_from;
+        $this->contactClass = $conversation->customer?->class;
+        $this->contactMajor = $conversation->customer?->major;
+        $this->contactGender = $conversation->customer?->gender;
+        $this->contactBranch = $conversation->customer?->branch_id;
+
+        $this->showContactModal = true;
+    }
+
+    public function updateContact()
+    {
+        try {
+            $customer = Customer::firstOrNew([
+                'phone_number' => $this->contactPhone,
+            ]);
+
+            $customer->fullname = $this->contactName;
+            $customer->full_address = $this->contactAddress;
+           
+            $customer->school_from = $this->contactSchool;
+            $customer->class = $this->contactClass;
+            $customer->major = $this->contactMajor;
+            $customer->branch_id = $this->contactBranch;
+            $customer->gender = $this->contactGender;
+            
+
+            // hanya saat data baru
+            if (!$customer->exists) {
+                $customer->lead_source_id = '';
+                $customer->created_by = Auth::id();
+                $customer->phone_number = $this->contactPhone;
+            }
+
+            $customer->save();
+
+
+            $this->showContactModal = false;
+            $this->dispatch('closeDropdown');
+            session()->flash('success', 'Contact updated');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+            $this->showContactModal = false;
+            $this->dispatch('closeDropdown');
         }
     }
 }

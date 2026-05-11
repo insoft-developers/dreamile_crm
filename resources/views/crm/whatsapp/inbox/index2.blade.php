@@ -2,9 +2,9 @@
 
 @section('content')
 
-<main class="app-wrapper inbox-wrapper">
+<main class="app-wrapper">
 
-    <div class="container-fluid">
+    <div class="container-fluid inbox-wrapper">
 
         {{-- BREADCRUMB --}}
         <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">

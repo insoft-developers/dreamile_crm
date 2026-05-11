@@ -1,7 +1,6 @@
 <div wire:poll.2s>
     {{-- <div> --}}
     <div class="card border-0 shadow-sm overflow-hidden">
-
         <div class="row g-0">
 
             {{-- SIDEBAR --}}
@@ -77,7 +76,7 @@
                 @if ($activeTab == 'chat')
 
                     <div style="margin-top:5px"></div>
-                    
+
 
                     <div class="d-flex border-bottom bg-light">
 
@@ -169,6 +168,21 @@
 
                         </div>
                     @endif
+                    @if (session()->has('error'))
+                        <div class="alert alert-danger mb-2">
+
+                            {{ session('error') }}
+
+                        </div>
+                    @endif
+
+                    @if (session()->has('success'))
+                        <div class="alert alert-success mb-2">
+
+                            {{ session('success') }}
+
+                        </div>
+                    @endif
 
                 </div>
 
@@ -249,7 +263,7 @@
                                             <li>
 
                                                 <button class="dropdown-item"
-                                                    wire:click.stop="addToContact({{ $conversation->id }})">
+                                                    wire:click.stop="openContactModal({{ $conversation->id }})">
 
                                                     <i class="bi bi-person-lines-fill me-2"></i>
 
@@ -391,12 +405,12 @@
                                         {{-- ICON SEARCH --}}
                                         <i class="bi bi-search position-absolute"
                                             style="
-                        left:12px;
-                        top:50%;
-                        transform:translateY(-50%);
-                        color:#667781;
-                        font-size:13px;
-                    ">
+                                            left:12px;
+                                            top:50%;
+                                            transform:translateY(-50%);
+                                            color:#667781;
+                                            font-size:13px;
+                                        ">
                                         </i>
 
                                         {{-- INPUT --}}
@@ -404,24 +418,24 @@
                                             placeholder="Search message..."
                                             wire:model.live.debounce.300ms="searchMessage"
                                             style="
-                        background:#f0f2f5;
-                        padding-left:35px;
-                        border-radius:20px;
-                        height:38px;
-                        font-size:13px;
-                    ">
+                                                background:#f0f2f5;
+                                                padding-left:35px;
+                                                border-radius:20px;
+                                                height:38px;
+                                                font-size:13px;
+                                            ">
                                     </div>
 
                                     {{-- CLOSE BUTTON --}}
                                     <button class="btn btn-light border-0" wire:click="closeSearch"
                                         style="
-        border-radius:50%;
-        width:38px;
-        height:38px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-    ">
+                                                border-radius:50%;
+                                                width:38px;
+                                                height:38px;
+                                                display:flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                            ">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
 
@@ -434,10 +448,18 @@
 
                             <i class="bi bi-search" style="cursor:pointer" wire:click="toggleSearch"></i>
 
-                            <i class="bi bi-three-dots-vertical"></i>
+                            
 
                         </div>
+                        @if($selectedConversation->status == 'open')
+                        <button style="position:relative;float:right;margin-left:-450px;" class="btn btn-sm btn-info"
+                            wire:click="resolveChat({{ $selectedConversation->id }})">
 
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Resolve
+
+                        </button>
+                        @endif
 
 
 
@@ -534,7 +556,8 @@
                                                     ) !!}
                                                 @else
                                                     <small><strong>{{ $msg->user?->name ?? '' }}
-                                                            ({{ $msg->user?->position ?? '' }})</strong></small><br>{{ $msg->message }}
+                                                            ({{ $msg->user?->position ?? '' }})
+                                                        </strong></small><br>{{ $msg->message }}
                                                 @endif
                                             @endif
 
@@ -703,7 +726,8 @@
 
                             </div>
 
-                            <button {{ $selectedConversation->assigned_to !== $ownerid ? 'disabled' : '' }}
+                            <button
+                                {{ $selectedConversation->assigned_to !== $ownerid && $ownerposition !== 'supervisor' ? 'disabled' : '' }}
                                 class="btn btn-sm btn-warning"
                                 wire:click="reopenChat({{ $selectedConversation->id }})">
 
@@ -738,6 +762,10 @@
                             @endif
 
                         </div>
+
+
+
+
                     @endif
 
                     {{-- FOOTER --}}
@@ -802,11 +830,8 @@
                             <button class="btn border-0 text-muted me-2"
                                 onclick="document.getElementById('fileInput').click()"
                                 {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}>
-
                                 <i class="bi bi-paperclip fs-5"></i>
-
                             </button>
-
                             {{-- SEND BUTTON --}}
                             <button class="btn btn-success ms-2 rounded-circle" wire:click="sendMessage"
                                 {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation?->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}
@@ -841,30 +866,50 @@
                             style="
                                 font-size:80px;
                             "></i>
-
                         <h4 class="mt-3">
                             Dreamile WhatsApp CRM
-
                         </h4>
-
                         <p class="text-muted">
-
                             Select conversation to start chat
-
                         </p>
-
                     </div>
-
                 @endif
-
             </div>
-
         </div>
-
     </div>
-
     @if ($showAssignModal)
+        <div class="modal fade show d-block" style="background:rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Chat</h5>
+                        <button type="button" class="btn-close" wire:click="$set('showAssignModal', false)">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Select Agent</label>
+                        <select class="form-select" wire:model="assignToUser">
+                            <option value="">Choose agent</option>
+                            @foreach ($agents as $agent)
+                                <option value="{{ $agent->id }}">
+                                    {{ $agent->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-light" wire:click="$set('showAssignModal', false)">
+                            Cancel
+                        </button>
+                        <button class="btn btn-success" wire:click="assignChat">Assign</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
+
+    @if ($showContactModal)
         <div class="modal fade show d-block" style="background:rgba(0,0,0,0.5);">
 
             <div class="modal-dialog modal-dialog-centered">
@@ -875,55 +920,94 @@
 
                         <h5 class="modal-title">
 
-                            Assign Chat
+                            Add to Contact
 
                         </h5>
 
-                        <button type="button" class="btn-close" wire:click="$set('showAssignModal', false)">
+                        <button type="button" class="btn-close" wire:click="$set('showContactModal', false)">
                         </button>
 
                     </div>
 
                     <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
 
-                        <label class="form-label">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Contact Name
+                                    </label>
+                                    <input type="text" class="form-control" wire:model="contactName"
+                                        placeholder="Input contact name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Phone Number
+                                    </label>
+                                    <input readonly type="text" class="form-control" wire:model="contactPhone"
+                                        placeholder="Input contact phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Address
+                                    </label>
+                                    <textarea class="form-control" wire:model="contactAddress" placeholder="Input contact address"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        School From
+                                    </label>
+                                    <input type="text" class="form-control" wire:model="contactSchool"
+                                        placeholder="Input school name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Class
+                                    </label>
+                                    <input type="text" class="form-control" wire:model="contactClass"
+                                        placeholder="Input Class">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Major
+                                    </label>
+                                    <input type="text" class="form-control" wire:model="contactMajor"
+                                        placeholder="Input Major">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Gender
+                                    </label>
+                                    <select class="form-select" wire:model="contactGender">
+                                        <option value="">- Select -</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Branch
+                                    </label>
+                                    <select class="form-select" wire:model="contactBranch">
+                                        <option value="">- Select -</option>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-                            Select Agent
-
-                        </label>
-
-                        <select class="form-select" wire:model="assignToUser">
-
-                            <option value="">
-
-                                Choose agent
-
-                            </option>
-
-                            @foreach ($agents as $agent)
-                                <option value="{{ $agent->id }}">
-
-                                    {{ $agent->name }}
-
-                                </option>
-                            @endforeach
-
-                        </select>
 
                     </div>
-
                     <div class="modal-footer">
-
-                        <button class="btn btn-light" wire:click="$set('showAssignModal', false)">
-
+                        <button class="btn btn-light" wire:click="$set('showContactModal', false)">
                             Cancel
-
                         </button>
-
-                        <button class="btn btn-success" wire:click="assignChat">
-
-                            Assign
-
+                        <button class="btn btn-success" wire:click="updateContact">
+                            Update Contact
                         </button>
 
                     </div>
@@ -933,7 +1017,6 @@
             </div>
 
         </div>
-
     @endif
 
 </div>
