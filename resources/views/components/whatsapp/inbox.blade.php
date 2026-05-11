@@ -448,17 +448,18 @@
 
                             <i class="bi bi-search" style="cursor:pointer" wire:click="toggleSearch"></i>
 
-                            
+
 
                         </div>
-                        @if($selectedConversation->status == 'open')
-                        <button style="position:relative;float:right;margin-left:-450px;" class="btn btn-sm btn-info"
-                            wire:click="resolveChat({{ $selectedConversation->id }})">
+                        @if ($selectedConversation->status == 'open' && $selectedConversation->assigned_to == $ownerid)
+                            <button style="position:relative;float:right;margin-left:-450px;"
+                                class="btn btn-sm btn-info"
+                                wire:click="resolveChat({{ $selectedConversation->id }})">
 
-                            <i class="bi bi-arrow-counterclockwise me-1"></i>
-                            Resolve
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                Resolve
 
-                        </button>
+                            </button>
                         @endif
 
 
@@ -519,11 +520,41 @@
                             @if ($msg->sender == 'agent')
                                 <div class="d-flex justify-content-end mb-2">
 
-                                    <div class="position-relative"
+                                    <div class="position-relative msg-wrapper"
                                         style="
                                             max-width:72%;
                                         ">
+                                        <div class="msg-actions dropdown" wire:ignore>
 
+                                            <button class="msg-menu-btn" data-bs-toggle="dropdown">
+                                                <i class="bi bi-chevron-down"></i>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-chat">
+
+                                                <li>
+                                                    <a class="dropdown-item" href="#"
+                                                        wire:click.prevent="replyMessage({{ $msg->id }})">
+
+                                                        <i class="bi bi-reply me-2"></i>
+                                                        Reply
+
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="dropdown-item" href="#"
+                                                        wire:click.prevent="forwardMessage({{ $msg->id }})">
+
+                                                        <i class="bi bi-forward me-2"></i>
+                                                        Forward
+
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
                                         <div class="
                                                 px-3
                                                 py-0
@@ -569,16 +600,16 @@
                                                 ">
 
                                                 <div class="
-        d-flex
-        align-items-center
-        justify-content-end
-        gap-1
-    "
+                                                        d-flex
+                                                        align-items-center
+                                                        justify-content-end
+                                                        gap-1
+                                                    "
                                                     style="
-        font-size:11px;
-        color:#667781;
-        margin-top:0;
-    ">
+                                                        font-size:11px;
+                                                        color:#667781;
+                                                        margin-top:0;
+                                                    ">
 
                                                     <span>
 
@@ -638,11 +669,41 @@
                             @else
                                 <div class="d-flex justify-content-start mb-2">
 
-                                    <div class="position-relative"
+                                    <div class="position-relative msg-wrapper"
                                         style="
                                             max-width:72%;
                                         ">
+                                        <div class="msg-actions dropdown" wire:ignore>
 
+                                            <button class="msg-menu-btn" data-bs-toggle="dropdown">
+                                                <i class="bi bi-chevron-down icon-reply"></i>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-chat">
+
+                                                <li>
+                                                    <a class="dropdown-item" href="#"
+                                                        wire:click.prevent="replyMessage({{ $msg->id }})">
+
+                                                        <i class="bi bi-reply me-2"></i>
+                                                        Reply
+
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="dropdown-item" href="#"
+                                                        wire:click.prevent="forwardMessage({{ $msg->id }})">
+
+                                                        <i class="bi bi-forward me-2"></i>
+                                                        Forward
+
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
                                         <div class="
                                                 px-3
                                                 py-0
@@ -770,8 +831,34 @@
 
                     {{-- FOOTER --}}
                     <div class="p-3 border-top" style="background:#f0f2f5;">
+                        @if ($replyPreview)
+                            <div
+                                class="bg-light border-top border-bottom p-2 d-flex justify-content-between align-items-start">
+
+                                <div>
+
+                                    <div class="fw-semibold text-success small">
+                                        Replying to
+                                    </div>
+
+                                    <div style="font-size:13px;">
+                                        {{ Str::limit($replyPreview->message, 100) }}
+                                    </div>
+
+                                </div>
+
+                                <button class="btn btn-sm"
+        wire:click="closeReplyPreview">
+
+    <i class="bi bi-x-lg"></i>
+
+</button>
+
+                            </div>
+                        @endif
 
                         <div class="d-flex align-items-center">
+
 
 
                             {{-- EMOJI --}}
@@ -795,6 +882,7 @@
 
 
                             {{-- INPUT --}}
+
                             <input type="text" id="messageInput" class="form-control border-0"
                                 placeholder="{{ $selectedConversation?->status == 'resolved' ? 'Chat resolved' : 'Type a message' }}"
                                 wire:model="message" wire:keydown.enter="sendMessage"

@@ -45,6 +45,9 @@ class Inbox extends Component
     public $contactGender = '';
     public $contactBranch = '';
 
+    public $replyMessageId = null;
+    public $replyPreview = null;
+
     public function mount()
     {
         $this->agents = User::where('position', 'agent')->get();
@@ -304,13 +307,12 @@ class Inbox extends Component
 
             $customer->fullname = $this->contactName;
             $customer->full_address = $this->contactAddress;
-           
+
             $customer->school_from = $this->contactSchool;
             $customer->class = $this->contactClass;
             $customer->major = $this->contactMajor;
             $customer->branch_id = $this->contactBranch;
             $customer->gender = $this->contactGender;
-            
 
             // hanya saat data baru
             if (!$customer->exists) {
@@ -321,7 +323,6 @@ class Inbox extends Component
 
             $customer->save();
 
-
             $this->showContactModal = false;
             $this->dispatch('closeDropdown');
             session()->flash('success', 'Contact updated');
@@ -330,5 +331,21 @@ class Inbox extends Component
             $this->showContactModal = false;
             $this->dispatch('closeDropdown');
         }
+    }
+
+    public function replyMessage($id)
+    {
+        $message = WhatsappMessage::find($id);
+
+        $this->replyMessageId = $message->message_id; // wamid
+        $this->replyPreview = $message;
+
+        $this->dispatch('focusMessageInput');
+    }
+
+    public function closeReplyPreview()
+    {
+        $this->replyMessageId = null;
+        $this->replyPreview = null;
     }
 }

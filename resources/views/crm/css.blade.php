@@ -144,4 +144,49 @@
     .inbox-wrapper {
         margin-top: -86px !important;
     }
+
+    .msg-actions {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        display: none;
+        z-index: 10;
+    }
+
+    .msg-wrapper:hover .msg-actions {
+        display: block;
+    }
+
+    .msg-menu-btn {
+        border: none;
+        background: orange;
+        color: white;
+        padding: 4px 5px;
+        position: relative;
+        right: -16px;
+        border-radius: 16px;
+        font-size: 11px;
+    }
+
+    .reply-box {
+        background: rgba(0, 0, 0, 0.05);
+        border-left: 3px solid #00a884;
+        border-radius: 6px;
+        padding: 5px 8px;
+        margin-bottom: 6px;
+        font-size: 12px;
+    }
+
+    .reply-name {
+        font-weight: 600;
+        color: #00a884;
+        margin-bottom: 2px;
+    }
+
+    .dropdown-menu-chat {
+        min-width: 130px;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+    }
 </style>
