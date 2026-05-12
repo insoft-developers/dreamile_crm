@@ -542,15 +542,6 @@
                                                     </a>
                                                 </li>
 
-                                                <li>
-                                                    <a class="dropdown-item" href="#"
-                                                        wire:click.prevent="forwardMessage({{ $msg->id }})">
-
-                                                        <i class="bi bi-forward me-2"></i>
-                                                        Forward
-
-                                                    </a>
-                                                </li>
 
                                             </ul>
 
@@ -560,6 +551,7 @@
                                                 py-0
                                                 shadow-sm
                                                 position-relative
+                                                chat-buble
                                             "
                                             style="
                                                 background:#d9fdd3;
@@ -674,6 +666,41 @@
                                                 ">
                                             </div>
 
+                                            {{-- REACTION BUTTON --}}
+                                            <div class="reaction-trigger reaction-left">
+
+                                                😊
+
+                                                <div class="reaction-picker picker-left">
+
+                                                    <span wire:click="react({{ $msg->id }}, '👍')">👍</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '❤️')">❤️</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '😂')">😂</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '😮')">😮</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '🙏')">🙏</span>
+
+                                                </div>
+
+                                            </div>
+                                            {{-- REACTIONS --}}
+                                            @if ($msg->reactions->count())
+                                                <div class="reaction-container">
+
+                                                    @foreach ($msg->reactions->groupBy('emoji') as $emoji => $group)
+                                                        <span class="reaction-badge">
+
+                                                            {{ $emoji }} {{ $group->count() }}
+
+                                                        </span>
+                                                    @endforeach
+
+                                                </div>
+                                            @endif
+
                                         </div>
 
                                     </div>
@@ -705,17 +732,6 @@
 
                                                     </a>
                                                 </li>
-
-                                                <li>
-                                                    <a class="dropdown-item" href="#"
-                                                        wire:click.prevent="forwardMessage({{ $msg->id }})">
-
-                                                        <i class="bi bi-forward me-2"></i>
-                                                        Forward
-
-                                                    </a>
-                                                </li>
-
                                             </ul>
 
                                         </div>
@@ -724,6 +740,7 @@
                                                 py-0
                                                 shadow-sm
                                                 position-relative
+                                                chat-bubble
                                             "
                                             style="
                                                 background:white;
@@ -793,7 +810,41 @@
                                                 ">
                                             </div>
 
+                                            {{-- REACTION BUTTON --}}
+                                            <div class="reaction-trigger">
+
+                                                😊
+
+                                                <div class="reaction-picker">
+
+                                                    <span wire:click="react({{ $msg->id }}, '👍')">👍</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '❤️')">❤️</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '😂')">😂</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '😮')">😮</span>
+
+                                                    <span wire:click="react({{ $msg->id }}, '🙏')">🙏</span>
+
+                                                </div>
+
+                                            </div>
                                         </div>
+                                        {{-- REACTIONS --}}
+                                        @if ($msg->reactions->count())
+                                            <div class="reaction-container">
+
+                                                @foreach ($msg->reactions->groupBy('emoji') as $emoji => $group)
+                                                    <span class="reaction-badge">
+
+                                                        {{ $emoji }} {{ $group->count() }}
+
+                                                    </span>
+                                                @endforeach
+
+                                            </div>
+                                        @endif
 
                                     </div>
 

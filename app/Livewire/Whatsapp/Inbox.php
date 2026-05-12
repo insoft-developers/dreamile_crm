@@ -4,6 +4,7 @@ namespace App\Livewire\Whatsapp;
 
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\MessageReaction;
 use App\Models\User;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
@@ -103,7 +104,7 @@ class Inbox extends Component
             'message_id' => $messageId, // 🔥 INI WAJIB
             'status' => 'sent',
             'userid' => Auth::user()->id,
-            'reply_message_id' => $this->replyMessageId
+            'reply_message_id' => $this->replyMessageId,
         ]);
 
         $this->selectedConversation->update([
@@ -111,7 +112,7 @@ class Inbox extends Component
         ]);
 
         $this->message = '';
-        if($this->replyMessageId) {
+        if ($this->replyMessageId) {
             $this->replyMessageId = null;
             $this->replyPreview = null;
         }
@@ -169,7 +170,8 @@ class Inbox extends Component
             ->get();
 
         if ($this->selectedConversation) {
-            $messages = WhatsappMessage::with('replyTo')->where('conversation_id', $this->selectedConversation->id)
+            $messages = WhatsappMessage::with('replyTo')
+                ->where('conversation_id', $this->selectedConversation->id)
 
                 ->when($this->searchMessage, function ($q) {
                     $q->where('message', 'like', '%' . $this->searchMessage . '%');
@@ -352,5 +354,38 @@ class Inbox extends Component
     {
         $this->replyMessageId = null;
         $this->replyPreview = null;
+    }
+
+    public function react($messageId, $emoji)
+    {
+        $msg = WhatsappMessage::find($messageId);
+
+        
+    
+        $reaction = MessageReaction::where('message_id', $messageId)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        // toggle remove
+        if ($reaction && $reaction->emoji === $emoji) {
+            $reaction->delete();
+            return;
+        }
+
+        // update existing
+        if ($reaction) {
+            $reaction->update([
+                'emoji' => $emoji,
+            ]);
+        } else {
+            // create
+            MessageReaction::create([
+                'message_id' => $messageId,
+                'user_id' => auth()->id(),
+                'emoji' => $emoji,
+            ]);
+        }
+        // kirim reaction ke WhatsApp
+        app(WhatsappService::class)->react($msg->phone,$msg->message_id,$emoji);
     }
 }

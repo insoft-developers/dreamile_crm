@@ -35,4 +35,28 @@ class WhatsappService
             ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
             ->json();
     }
+
+    public function react($phone, $messageId, $emoji)
+    {
+        $token = env('WHATSAPP_TOKEN');
+
+        $phoneNumberId = env('WHATSAPP_PHONE_NUMBER_ID');
+
+        $payload = [
+            'messaging_product' => 'whatsapp',
+
+            'to' => $phone,
+
+            'type' => 'reaction',
+
+            'reaction' => [
+                'message_id' => $messageId,
+                'emoji' => $emoji,
+            ],
+        ];
+
+        return Http::withToken($token)
+            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
+            ->json();
+    }
 }
