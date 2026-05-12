@@ -10,28 +10,20 @@ class WhatsappMessage extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'conversation_id',
-        'phone',
-        'message',
-        'sender',
-        'message_id',
-        'status',
-        'attachment',
-        'type',
-        'userid'
-    ];
+    protected $fillable = ['conversation_id', 'phone', 'message', 'sender', 'message_id', 'status', 'attachment', 'type', 'userid', 'reply_message_id'];
 
-    public function conversation():BelongsTo
+    public function conversation(): BelongsTo
     {
-        return $this->belongsTo(
-            WhatsappConversation::class,
-            'conversation_id'
-        );
+        return $this->belongsTo(WhatsappConversation::class, 'conversation_id');
     }
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'userid');
+    }
+
+    public function replyTo():BelongsTo
+    {
+        return $this->belongsTo(WhatsappMessage::class, 'reply_message_id', 'message_id');
     }
 }

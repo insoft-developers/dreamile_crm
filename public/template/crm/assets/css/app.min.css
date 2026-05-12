@@ -3240,7 +3240,7 @@ File: Main Css File
 }
 
 [data-sidebar=icon] body {
-  min-height: 1300px;
+  min-height: 100vh;
   position: relative;
 }
 [data-sidebar=icon] .pe-app-sidebar {
@@ -3322,7 +3322,7 @@ File: Main Css File
   display: none;
 }
 [data-sidebar=icon] .app-wrapper {
-  min-height: 1430px;
+  min-height: 100vh;
 }
 @media (min-width: 992px) {
   [data-sidebar=icon] .app-header {

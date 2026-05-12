@@ -62,6 +62,7 @@ class WhatsappController extends Controller
                     'sender' => 'customer',
                     'message_id' => $messageData['id'] ?? null,
                     'status' => 'sent',
+                    'reply_message_id' => $messageData['context']['id'] ?? null,
                 ]);
 
                 $conversation->update([

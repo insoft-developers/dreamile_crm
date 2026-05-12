@@ -112,8 +112,8 @@
         color: white;
         border-radius: 7px;
         position: relative;
-        top: -6px;
-        right: -14px;
+        top: 20px;
+        right: -17px;
     }
 
     .btn-3-chat {

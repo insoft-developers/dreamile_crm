@@ -520,7 +520,7 @@
                             @if ($msg->sender == 'agent')
                                 <div class="d-flex justify-content-end mb-2">
 
-                                    <div class="position-relative msg-wrapper"
+                                    <div id="msg-{{ $msg->message_id }}" class="position-relative msg-wrapper"
                                         style="
                                             max-width:72%;
                                         ">
@@ -586,6 +586,21 @@
                                                         e($msg->message),
                                                     ) !!}
                                                 @else
+                                                    @if ($msg->replyTo)
+                                                        <div class="reply-box"
+                                                            onclick="scrollToMessage('{{ $msg->reply_message_id }}')"
+                                                            style="cursor:pointer;">
+
+                                                            <div class="reply-name">
+                                                                {{ $msg->replyTo->sender == 'agent' ? 'You' : 'Customer' }}
+                                                            </div>
+
+                                                            <div>
+                                                                {{ Str::limit($msg->replyTo->message, 100) }}
+                                                            </div>
+
+                                                        </div>
+                                                    @endif
                                                     <small><strong>{{ $msg->user?->name ?? '' }}
                                                             ({{ $msg->user?->position ?? '' }})
                                                         </strong></small><br>{{ $msg->message }}
@@ -669,7 +684,7 @@
                             @else
                                 <div class="d-flex justify-content-start mb-2">
 
-                                    <div class="position-relative msg-wrapper"
+                                    <div id="msg-{{ $msg->message_id }}" class="position-relative msg-wrapper"
                                         style="
                                             max-width:72%;
                                         ">
@@ -735,6 +750,21 @@
                                                         e($msg->message),
                                                     ) !!}
                                                 @else
+                                                    @if ($msg->replyTo)
+                                                        <div class="reply-box"
+                                                            onclick="scrollToMessage('{{ $msg->reply_message_id }}')"
+                                                            style="cursor:pointer;">
+
+                                                            <div class="reply-name">
+                                                                {{ $msg->replyTo->sender == 'agent' ? 'You' : 'Customer' }}
+                                                            </div>
+
+                                                            <div>
+                                                                {{ Str::limit($msg->replyTo->message, 100) }}
+                                                            </div>
+
+                                                        </div>
+                                                    @endif
                                                     {{ $msg->message }}
                                                 @endif
                                             @endif
@@ -847,12 +877,11 @@
 
                                 </div>
 
-                                <button class="btn btn-sm"
-        wire:click="closeReplyPreview">
+                                <button class="btn btn-sm" wire:click="closeReplyPreview">
 
-    <i class="bi bi-x-lg"></i>
+                                    <i class="bi bi-x-lg"></i>
 
-</button>
+                                </button>
 
                             </div>
                         @endif
@@ -1168,58 +1197,70 @@
 
         function initEmoji() {
 
-            let picker = document.getElementById('emojiPicker');
-            let button = document.getElementById('emojiBtn');
-            let input = document.getElementById('messageInput');
+            const picker = document.getElementById('emojiPicker');
+            const button = document.getElementById('emojiBtn');
+            const input = document.getElementById('messageInput');
 
             if (!picker || !button || !input) return;
 
-            // ✅ CEGAH DOUBLE INIT
-            if (picker.dataset.init === '1') return;
-
-            picker.dataset.init = '1';
-
-            // TOGGLE
-            button.onclick = function(e) {
+            // toggle
+            button.onclick = (e) => {
                 e.stopPropagation();
-
-                picker.style.display =
-                    picker.style.display === 'none' || picker.style.display === '' ?
-                    'block' :
-                    'none';
+                picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
             };
 
-            // EMOJI CLICK (HANYA SEKALI)
-            picker.addEventListener('emoji-click', function(event) {
+            // prevent duplicate listener
+            if (!picker.dataset.bound) {
+                picker.addEventListener('emoji-click', (event) => {
+                    const emoji = event.detail.unicode;
 
-                let emoji = event.detail.unicode || event.detail.emoji;
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
 
-                // safety anti spam
-                if (emoji.length > 2) {
-                    emoji = emoji[0];
-                }
+                    input.setRangeText(emoji, start, end, 'end');
 
-                input.value += emoji;
+                    input.dispatchEvent(new Event('input'));
+                    input.focus();
+                });
 
-                input.dispatchEvent(new Event('input'));
-                input.focus();
-            });
+                picker.dataset.bound = '1';
+            }
 
-            // CLOSE CLICK LUAR
-            document.addEventListener('click', function(e) {
+            // close outside
+            document.addEventListener('click', (e) => {
                 if (!picker.contains(e.target) && !button.contains(e.target)) {
                     picker.style.display = 'none';
                 }
             });
         }
 
-        // INIT PERTAMA
         setTimeout(initEmoji, 200);
 
-        // 🔥 TETAP PANGGIL, TAPI AMAN
         Livewire.hook('morph.updated', () => {
             setTimeout(initEmoji, 200);
         });
 
     });
+</script>
+<script>
+    function scrollToMessage(messageId) {
+
+        const el = document.getElementById('msg-' + messageId);
+
+        if (el) {
+
+            el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            // highlight sementara
+            el.style.transition = '0.3s';
+            el.style.background = '#fff3cd';
+
+            setTimeout(() => {
+                el.style.background = '';
+            }, 2000);
+        }
+    }
 </script>

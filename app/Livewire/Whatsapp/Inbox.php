@@ -91,7 +91,7 @@ class Inbox extends Component
 
         $phone = $this->selectedConversation->phone;
 
-        $response = app(WhatsappService::class)->send($phone, $this->message);
+        $response = app(WhatsappService::class)->send($phone, $this->message, $this->replyMessageId);
 
         $messageId = $response['messages'][0]['id'] ?? null;
 
@@ -103,6 +103,7 @@ class Inbox extends Component
             'message_id' => $messageId, // 🔥 INI WAJIB
             'status' => 'sent',
             'userid' => Auth::user()->id,
+            'reply_message_id' => $this->replyMessageId
         ]);
 
         $this->selectedConversation->update([
@@ -110,6 +111,10 @@ class Inbox extends Component
         ]);
 
         $this->message = '';
+        if($this->replyMessageId) {
+            $this->replyMessageId = null;
+            $this->replyPreview = null;
+        }
     }
 
     public function render()
@@ -164,7 +169,7 @@ class Inbox extends Component
             ->get();
 
         if ($this->selectedConversation) {
-            $messages = WhatsappMessage::where('conversation_id', $this->selectedConversation->id)
+            $messages = WhatsappMessage::with('replyTo')->where('conversation_id', $this->selectedConversation->id)
 
                 ->when($this->searchMessage, function ($q) {
                     $q->where('message', 'like', '%' . $this->searchMessage . '%');
@@ -231,8 +236,8 @@ class Inbox extends Component
     {
         $conversation = WhatsappConversation::find($conversationId);
 
-        if ($conversation->assigned_to) {
-            session()->flash('warning', 'Chat already assigned to ' . ($conversation->agent?->name ?? 'Agent'));
+        if ($conversation->assigned_to && $conversation->status == 'open') {
+            session()->flash('error', 'Chat already assigned to ' . ($conversation->agent?->name ?? 'Agent'));
 
             return;
         }
