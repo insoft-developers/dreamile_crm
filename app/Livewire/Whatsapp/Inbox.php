@@ -170,7 +170,7 @@ class Inbox extends Component
             ->get();
 
         if ($this->selectedConversation) {
-            $messages = WhatsappMessage::with('replyTo')
+            $messages = WhatsappMessage::with(['replyTo','reactions'])
                 ->where('conversation_id', $this->selectedConversation->id)
 
                 ->when($this->searchMessage, function ($q) {
@@ -358,9 +358,12 @@ class Inbox extends Component
 
     public function react($messageId, $emoji)
     {
-        $msg = WhatsappMessage::find($messageId);
+        
+        try {
 
         
+        $msg = WhatsappMessage::find($messageId);
+
     
         $reaction = MessageReaction::where('message_id', $messageId)
             ->where('user_id', auth()->id())
@@ -383,9 +386,14 @@ class Inbox extends Component
                 'message_id' => $messageId,
                 'user_id' => auth()->id(),
                 'emoji' => $emoji,
+                
             ]);
         }
         // kirim reaction ke WhatsApp
         app(WhatsappService::class)->react($msg->phone,$msg->message_id,$emoji);
+        }
+        catch(\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }

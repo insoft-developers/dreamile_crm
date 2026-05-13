@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Models\MessageReaction;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use Illuminate\Http\Request;
@@ -71,11 +72,34 @@ class WhatsappController extends Controller
                 ]);
             }
 
-            /*
-        |--------------------------
-        | HANDLE STATUS UPDATE
-        |--------------------------
-        */
+            $type = $messageData['type'] ?? null;
+            if ($type === 'reaction') {
+                $reactionData = $messageData['reaction'];
+
+                $waMessageId = $reactionData['message_id'] ?? null;
+
+                $emoji = $reactionData['emoji'] ?? '';
+
+                $msg = WhatsappMessage::where('message_id', $waMessageId)->first();
+                if ($msg) {
+                    // remove reaction
+                    if (empty($emoji)) {
+                        MessageReaction::where('message_id', $msg->id)->where('customer_phone', $phone)->delete();
+                    } else {
+                        MessageReaction::updateOrCreate(
+                            [
+                                'message_id' => $msg->id,
+                                'customer_phone' => $phone,
+                            ],
+
+                            [
+                                'emoji' => $emoji,
+                            ],
+                        );
+                    }
+                }
+            }
+
             if (!empty($value['statuses'])) {
                 $statusData = $value['statuses'][0];
 
