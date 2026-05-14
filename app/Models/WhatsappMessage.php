@@ -11,7 +11,7 @@ class WhatsappMessage extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['conversation_id', 'phone', 'message', 'sender', 'message_id', 'status', 'attachment', 'type', 'userid', 'reply_message_id'];
+    protected $fillable = ['conversation_id', 'phone', 'message', 'sender', 'message_id', 'status', 'attachment', 'type', 'userid', 'reply_message_id','mime_type','file_name'];
 
     public function conversation(): BelongsTo
     {

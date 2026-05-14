@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\MessageReaction;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
+use App\Services\WhatsappService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class WhatsappController extends Controller
 {
@@ -44,36 +47,172 @@ class WhatsappController extends Controller
             $value = $data['entry'][0]['changes'][0]['value'] ?? [];
 
             /*
-        |--------------------------
-        | HANDLE MESSAGE INCOMING
-        |--------------------------
+        |--------------------------------------------------------------------------
+        | HANDLE INCOMING MESSAGE
+        |--------------------------------------------------------------------------
         */
+
             if (!empty($value['messages'])) {
                 $messageData = $value['messages'][0];
 
                 $phone = $messageData['from'] ?? null;
-                $message = $messageData['text']['body'] ?? '';
 
-                $conversation = WhatsappConversation::firstOrCreate(['phone' => $phone], ['customer_name' => $phone]);
+                $type = $messageData['type'] ?? 'text';
+
+                $message = '';
+
+                $attachment = null;
+
+                $mimeType = null;
+
+                $fileName = null;
+
+                /*
+            |--------------------------------------------------------------------------
+            | TEXT
+            |--------------------------------------------------------------------------
+            */
+
+                if ($type === 'text') {
+                    $message = $messageData['text']['body'] ?? '';
+                }
+                /*
+            |--------------------------------------------------------------------------
+            | IMAGE
+            |--------------------------------------------------------------------------
+            */ elseif ($type === 'image') {
+                    $image = $messageData['image'];
+
+                    $mediaId = $image['id'] ?? null;
+
+                    $message = $image['caption'] ?? '';
+
+                    $mimeType = $image['mime_type'] ?? null;
+
+                    if ($mediaId) {
+                        // ambil url media
+                        $media = app(WhatsappService::class)->getMediaUrl($mediaId);
+
+                        $url = $media['url'] ?? null;
+
+                        if ($url) {
+                            // download file
+                            $file = app(WhatsappService::class)->downloadMedia($url);
+
+                            $extension = explode('/', $mimeType)[1] ?? 'jpg';
+
+                            $path = 'chat/' . Str::uuid() . '.' . $extension;
+
+                            Storage::disk('public')->put($path, $file->body());
+
+                            $attachment = $path;
+                        }
+                    }
+                }
+                /*
+            |--------------------------------------------------------------------------
+            | DOCUMENT
+            |--------------------------------------------------------------------------
+            */ elseif ($type === 'document') {
+                    $document = $messageData['document'];
+
+                    $mediaId = $document['id'] ?? null;
+
+                    $fileName = $document['filename'] ?? 'file';
+
+                    $mimeType = $document['mime_type'] ?? null;
+
+                    if ($mediaId) {
+                        $media = app(WhatsappService::class)->getMediaUrl($mediaId);
+
+                        $url = $media['url'] ?? null;
+
+                        if ($url) {
+                            $file = app(WhatsappService::class)->downloadMedia($url);
+
+                            $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+                            $path = 'chat/' . Str::uuid() . '.' . $extension;
+
+                            Storage::disk('public')->put($path, $file->body());
+
+                            $attachment = $path;
+                        }
+                    }
+
+                    $type = 'file';
+                }
+
+                /*
+            |--------------------------------------------------------------------------
+            | CONVERSATION
+            |--------------------------------------------------------------------------
+            */
+
+                $conversation = WhatsappConversation::firstOrCreate(
+                    [
+                        'phone' => $phone,
+                    ],
+
+                    [
+                        'customer_name' => $phone,
+                    ],
+                );
+
+                /*
+            |--------------------------------------------------------------------------
+            | SAVE MESSAGE
+            |--------------------------------------------------------------------------
+            */
 
                 WhatsappMessage::create([
                     'conversation_id' => $conversation->id,
+
                     'phone' => $phone,
+
                     'message' => $message,
+
                     'sender' => 'customer',
+
                     'message_id' => $messageData['id'] ?? null,
+
                     'status' => 'sent',
+
+                    'attachment' => $attachment,
+
+                    'mime_type' => $mimeType,
+
+                    'file_name' => $fileName,
+
+                    'type' => $type,
+
                     'reply_message_id' => $messageData['context']['id'] ?? null,
                 ]);
 
+                /*
+            |--------------------------------------------------------------------------
+            | UPDATE CONVERSATION
+            |--------------------------------------------------------------------------
+            */
+
                 $conversation->update([
                     'last_message_at' => now(),
+
                     'unread_count' => $conversation->unread_count + 1,
                 ]);
             }
 
-            $type = $messageData['type'] ?? null;
-            if ($type === 'reaction') {
+            /*
+        |--------------------------------------------------------------------------
+        | HANDLE REACTION
+        |--------------------------------------------------------------------------
+        */
+
+            if (!empty($value['messages']) && ($value['messages'][0]['type'] ?? null) === 'reaction') {
+                $messageData = $value['messages'][0];
+
+                $phone = $messageData['from'] ?? null;
+
                 $reactionData = $messageData['reaction'];
 
                 $waMessageId = $reactionData['message_id'] ?? null;
@@ -81,6 +220,7 @@ class WhatsappController extends Controller
                 $emoji = $reactionData['emoji'] ?? '';
 
                 $msg = WhatsappMessage::where('message_id', $waMessageId)->first();
+
                 if ($msg) {
                     // remove reaction
                     if (empty($emoji)) {
@@ -89,6 +229,7 @@ class WhatsappController extends Controller
                         MessageReaction::updateOrCreate(
                             [
                                 'message_id' => $msg->id,
+
                                 'customer_phone' => $phone,
                             ],
 
@@ -100,10 +241,17 @@ class WhatsappController extends Controller
                 }
             }
 
+            /*
+        |--------------------------------------------------------------------------
+        | HANDLE STATUS
+        |--------------------------------------------------------------------------
+        */
+
             if (!empty($value['statuses'])) {
                 $statusData = $value['statuses'][0];
 
                 $messageId = $statusData['id'] ?? null;
+
                 $status = $statusData['status'] ?? null;
 
                 if ($messageId) {
@@ -113,12 +261,20 @@ class WhatsappController extends Controller
                 }
             }
 
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+            ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+
             Log::error($e->getTraceAsString());
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(
+                [
+                    'error' => $e->getMessage(),
+                ],
+                500,
+            );
         }
     }
 }

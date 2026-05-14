@@ -563,39 +563,131 @@
                                                 
                                             ">
 
-                                            @if ($msg->type == 'image')
-                                                <img src="{{ asset('storage/' . $msg->attachment) }}"
-                                                    class="img-fluid rounded" style="max-width:200px;">
-                                            @elseif($msg->type == 'file')
-                                                <a href="{{ asset('storage/' . $msg->attachment) }}" target="_blank">
-                                                    📎 Download File
-                                                </a>
+                                            @if ($searchMessage)
+                                                {!! str_ireplace(
+                                                    $searchMessage,
+                                                    '<mark style="background:#ffe58f;padding:0 2px;">' . $searchMessage . '</mark>',
+                                                    e($msg->message),
+                                                ) !!}
                                             @else
-                                                @if ($searchMessage)
-                                                    {!! str_ireplace(
-                                                        $searchMessage,
-                                                        '<mark style="background:#ffe58f;padding:0 2px;">' . $searchMessage . '</mark>',
-                                                        e($msg->message),
-                                                    ) !!}
-                                                @else
-                                                    @if ($msg->replyTo)
-                                                        <div class="reply-box"
-                                                            onclick="scrollToMessage('{{ $msg->reply_message_id }}')"
-                                                            style="cursor:pointer;">
+                                                @if ($msg->replyTo)
+                                                    <div class="reply-box d-flex align-items-start gap-2"
+                                                        onclick="scrollToMessage('{{ $msg->reply_message_id }}')"
+                                                        style="
+            cursor:pointer;
+            background:rgba(0,0,0,0.05);
+            border-left:4px solid #53bdeb;
+            padding:6px 8px;
+            border-radius:7px;
+            margin-bottom:4px;
+         ">
 
-                                                            <div class="reply-name">
+                                                        {{-- IMAGE THUMB --}}
+                                                        @if ($msg->replyTo->type == 'image')
+                                                            <img src="{{ asset('storage/' . $msg->replyTo->attachment) }}"
+                                                                style="
+                    width:45px;
+                    height:45px;
+                    object-fit:cover;
+                    border-radius:5px;
+                    flex-shrink:0;
+                 ">
+
+                                                            {{-- FILE ICON --}}
+                                                        @elseif($msg->replyTo->type == 'file')
+                                                            <div
+                                                                style="
+                    width:45px;
+                    height:45px;
+                    background:#e9edef;
+                    border-radius:5px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    flex-shrink:0;
+                 ">
+
+                                                                <i class="bi bi-file-earmark"
+                                                                    style="font-size:20px;"></i>
+
+                                                            </div>
+                                                        @endif
+
+                                                        {{-- CONTENT --}}
+                                                        <div style="overflow:hidden;">
+
+                                                            <div class="reply-name"
+                                                                style="
+                    font-size:13px;
+                    font-weight:600;
+                    color:#53bdeb;
+                 ">
+
                                                                 {{ $msg->replyTo->sender == 'agent' ? 'You' : 'Customer' }}
+
                                                             </div>
 
-                                                            <div>
-                                                                {{ Str::limit($msg->replyTo->message, 100) }}
+                                                            <div
+                                                                style="
+                    font-size:12px;
+                    color:#667781;
+                    white-space:nowrap;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                    max-width:220px;
+                 ">
+
+                                                                @if ($msg->replyTo->type == 'image')
+                                                                    📷 Photo
+                                                                @elseif($msg->replyTo->type == 'file')
+                                                                    📎 {{ $msg->replyTo->file_name ?? 'File' }}
+                                                                @else
+                                                                    {{ Str::limit($msg->replyTo->message, 80) }}
+                                                                @endif
+
                                                             </div>
 
                                                         </div>
-                                                    @endif
-                                                    <small><strong>{{ $msg->user?->name ?? '' }}
+
+                                                    </div>
+                                                @endif
+
+                                                {{-- AGENT NAME --}}
+                                                @if ($msg->sender == 'agent')
+                                                    <small>
+                                                        <strong>
+                                                            {{ $msg->user?->name ?? '' }}
                                                             ({{ $msg->user?->position ?? '' }})
-                                                        </strong></small><br>{{ $msg->message }}
+                                                        </strong>
+                                                    </small>
+                                                    <br>
+                                                @endif
+
+                                                {{-- CONTENT --}}
+                                                @if ($msg->type == 'image')
+                                                    <img src="{{ asset('storage/' . $msg->attachment) }}"
+                                                        class="img-fluid rounded" style="max-width:200px;">
+
+                                                    @if ($msg->message)
+                                                        <div class="mt-1">
+                                                            {{ $msg->message }}
+                                                        </div>
+                                                    @endif
+                                                @elseif($msg->type == 'file')
+                                                    <a href="{{ asset('storage/' . $msg->attachment) }}"
+                                                        target="_blank" class="text-decoration-none">
+
+                                                        📎 {{ $msg->file_name ?? 'Download File' }}
+
+                                                    </a>
+
+                                                    @if ($msg->message)
+                                                        <div class="mt-1">
+                                                            {{ $msg->message }}
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    {{ $msg->message }}
                                                 @endif
                                             @endif
 
@@ -710,39 +802,40 @@
                                 {{-- CUSTOMER --}}
                             @else
                                 <div class="d-flex justify-content-start mb-2">
-                                    @if(!empty($msg->message))
-                                    <div id="msg-{{ $msg->message_id }}" class="position-relative msg-wrapper"
-                                        style="
+                                    @if (empty($msg->message) && !$msg->attachment)
+                                    @else
+                                        <div id="msg-{{ $msg->message_id }}" class="position-relative msg-wrapper"
+                                            style="
                                             max-width:72%;
                                         ">
-                                        <div class="msg-actions dropdown" wire:ignore>
+                                            <div class="msg-actions dropdown" wire:ignore>
 
-                                            <button class="msg-menu-btn" data-bs-toggle="dropdown">
-                                                <i class="bi bi-chevron-down icon-reply"></i>
-                                            </button>
+                                                <button class="msg-menu-btn" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-chevron-down icon-reply"></i>
+                                                </button>
 
-                                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-chat">
+                                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-chat">
 
-                                                <li>
-                                                    <a class="dropdown-item" href="#"
-                                                        wire:click.prevent="replyMessage({{ $msg->id }})">
+                                                    <li>
+                                                        <a class="dropdown-item" href="#"
+                                                            wire:click.prevent="replyMessage({{ $msg->id }})">
 
-                                                        <i class="bi bi-reply me-2"></i>
-                                                        Reply
+                                                            <i class="bi bi-reply me-2"></i>
+                                                            Reply
 
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                                        </a>
+                                                    </li>
+                                                </ul>
 
-                                        </div>
-                                        <div class="
+                                            </div>
+                                            <div class="
                                                 px-3
                                                 py-0
                                                 shadow-sm
                                                 position-relative
                                                 chat-bubble
                                             "
-                                            style="
+                                                style="
                                                 background:white;
                                                 border-radius:8px;
                                                 color:#111b21;
@@ -752,14 +845,6 @@
                                                 
                                             ">
 
-                                            @if ($msg->type == 'image')
-                                                <img src="{{ asset('storage/' . $msg->attachment) }}"
-                                                    class="img-fluid rounded" style="max-width:200px;">
-                                            @elseif($msg->type == 'file')
-                                                <a href="{{ asset('storage/' . $msg->attachment) }}" target="_blank">
-                                                    📎 Download File
-                                                </a>
-                                            @else
                                                 @if ($searchMessage)
                                                     {!! str_ireplace(
                                                         $searchMessage,
@@ -767,39 +852,131 @@
                                                         e($msg->message),
                                                     ) !!}
                                                 @else
+                                                    {{-- REPLY --}}
                                                     @if ($msg->replyTo)
-                                                        <div class="reply-box"
+                                                        <div class="reply-box d-flex align-items-start gap-2"
                                                             onclick="scrollToMessage('{{ $msg->reply_message_id }}')"
-                                                            style="cursor:pointer;">
+                                                            style="
+                cursor:pointer;
+                background:rgba(0,0,0,0.05);
+                border-left:4px solid #53bdeb;
+                padding:6px 8px;
+                border-radius:7px;
+                margin-bottom:4px;
+             ">
 
-                                                            <div class="reply-name">
-                                                                {{ $msg->replyTo->sender == 'agent' ? 'You' : 'Customer' }}
-                                                            </div>
+                                                            {{-- IMAGE THUMB --}}
+                                                            @if ($msg->replyTo->type == 'image')
+                                                                <img src="{{ asset('storage/' . $msg->replyTo->attachment) }}"
+                                                                    style="
+                        width:45px;
+                        height:45px;
+                        object-fit:cover;
+                        border-radius:5px;
+                        flex-shrink:0;
+                     ">
 
-                                                            <div>
-                                                                {{ Str::limit($msg->replyTo->message, 100) }}
+                                                                {{-- FILE ICON --}}
+                                                            @elseif($msg->replyTo->type == 'file')
+                                                                <div
+                                                                    style="
+                        width:45px;
+                        height:45px;
+                        background:#e9edef;
+                        border-radius:5px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        flex-shrink:0;
+                     ">
+
+                                                                    <i class="bi bi-file-earmark"
+                                                                        style="font-size:20px;"></i>
+
+                                                                </div>
+                                                            @endif
+
+                                                            {{-- CONTENT --}}
+                                                            <div style="overflow:hidden;">
+
+                                                                <div class="reply-name"
+                                                                    style="
+                        font-size:13px;
+                        font-weight:600;
+                        color:#53bdeb;
+                     ">
+
+                                                                    {{ $msg->replyTo->sender == 'agent' ? 'You' : 'Customer' }}
+
+                                                                </div>
+
+                                                                <div
+                                                                    style="
+                        font-size:12px;
+                        color:#667781;
+                        white-space:nowrap;
+                        overflow:hidden;
+                        text-overflow:ellipsis;
+                        max-width:220px;
+                     ">
+
+                                                                    @if ($msg->replyTo->type == 'image')
+                                                                        📷 Photo
+                                                                    @elseif($msg->replyTo->type == 'file')
+                                                                        📎 {{ $msg->replyTo->file_name ?? 'File' }}
+                                                                    @else
+                                                                        {{ Str::limit($msg->replyTo->message, 80) }}
+                                                                    @endif
+
+                                                                </div>
+
                                                             </div>
 
                                                         </div>
                                                     @endif
-                                                    {{ $msg->message }}
-                                                @endif
-                                            @endif
 
-                                            <div class="text-end"
-                                                style="
+                                                    {{-- CONTENT --}}
+                                                    @if ($msg->type == 'image')
+                                                        <img src="{{ asset('storage/' . $msg->attachment) }}"
+                                                            class="img-fluid rounded" style="max-width:200px;">
+
+                                                        @if ($msg->message)
+                                                            <div class="mt-1">
+                                                                {{ $msg->message }}
+                                                            </div>
+                                                        @endif
+                                                    @elseif($msg->type == 'file')
+                                                        <a href="{{ asset('storage/' . $msg->attachment) }}"
+                                                            target="_blank" class="text-decoration-none">
+
+                                                            📎 {{ $msg->file_name ?? 'Download File' }}
+
+                                                        </a>
+
+                                                        @if ($msg->message)
+                                                            <div class="mt-1">
+                                                                {{ $msg->message }}
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        {{ $msg->message }}
+                                                    @endif
+                                                @endif
+
+                                                <div class="text-end"
+                                                    style="
                                                     font-size:11px;
                                                     color:#667781;
                                                     margin-top:2px;
                                                 ">
 
-                                                {{ \Carbon\Carbon::parse($msg->created_at)->format('H:i') }}
+                                                    {{ \Carbon\Carbon::parse($msg->created_at)->format('H:i') }}
 
-                                            </div>
+                                                </div>
 
-                                            {{-- TAIL --}}
-                                            <div
-                                                style="
+                                                {{-- TAIL --}}
+                                                <div
+                                                    style="
                                                     position:absolute;
                                                     left:-6px;
                                                     top:0;
@@ -808,45 +985,45 @@
                                                     border-top:10px solid white;
                                                     border-right:10px solid transparent;
                                                 ">
-                                            </div>
-
-                                            {{-- REACTION BUTTON --}}
-                                            <div class="reaction-trigger">
-
-                                                😊
-
-                                                <div class="reaction-picker picker-right">
-
-                                                    <span wire:click="react({{ $msg->id }}, '👍')">👍</span>
-
-                                                    <span wire:click="react({{ $msg->id }}, '❤️')">❤️</span>
-
-                                                    <span wire:click="react({{ $msg->id }}, '😂')">😂</span>
-
-                                                    <span wire:click="react({{ $msg->id }}, '😮')">😮</span>
-
-                                                    <span wire:click="react({{ $msg->id }}, '🙏')">🙏</span>
-
                                                 </div>
 
+                                                {{-- REACTION BUTTON --}}
+                                                <div class="reaction-trigger">
+
+                                                    😊
+
+                                                    <div class="reaction-picker picker-right">
+
+                                                        <span wire:click="react({{ $msg->id }}, '👍')">👍</span>
+
+                                                        <span wire:click="react({{ $msg->id }}, '❤️')">❤️</span>
+
+                                                        <span wire:click="react({{ $msg->id }}, '😂')">😂</span>
+
+                                                        <span wire:click="react({{ $msg->id }}, '😮')">😮</span>
+
+                                                        <span wire:click="react({{ $msg->id }}, '🙏')">🙏</span>
+
+                                                    </div>
+
+                                                </div>
                                             </div>
+                                            {{-- REACTIONS --}}
+                                            @if ($msg->reactions->count())
+                                                <div class="reaction-container">
+
+                                                    @foreach ($msg->reactions->groupBy('emoji') as $emoji => $group)
+                                                        <span class="reaction-badge">
+
+                                                            {{ $emoji }} {{ $group->count() }}
+
+                                                        </span>
+                                                    @endforeach
+
+                                                </div>
+                                            @endif
+
                                         </div>
-                                        {{-- REACTIONS --}}
-                                        @if ($msg->reactions->count())
-                                            <div class="reaction-container">
-
-                                                @foreach ($msg->reactions->groupBy('emoji') as $emoji => $group)
-                                                    <span class="reaction-badge">
-
-                                                        {{ $emoji }} {{ $group->count() }}
-
-                                                    </span>
-                                                @endforeach
-
-                                            </div>
-                                        @endif
-
-                                    </div>
                                     @endif
                                 </div>
                             @endif
@@ -913,21 +1090,98 @@
                     {{-- FOOTER --}}
                     <div class="p-3 border-top" style="background:#f0f2f5;">
                         @if ($replyPreview)
+
                             <div
-                                class="bg-light border-top border-bottom p-2 d-flex justify-content-between align-items-start">
+                                class="
+            bg-light
+            border-top
+            border-bottom
+            p-2
+            d-flex
+            justify-content-between
+            align-items-start
+        ">
 
-                                <div>
+                                <div class="d-flex align-items-start gap-2 w-100">
 
-                                    <div class="fw-semibold text-success small">
-                                        Replying to
-                                    </div>
+                                    {{-- IMAGE THUMB --}}
+                                    @if ($replyPreview->type == 'image')
+                                        <img src="{{ asset('storage/' . $replyPreview->attachment) }}"
+                                            style="
+                        width:50px;
+                        height:50px;
+                        object-fit:cover;
+                        border-radius:6px;
+                        flex-shrink:0;
+                     ">
 
-                                    <div style="font-size:13px;">
-                                        {{ Str::limit($replyPreview->message, 100) }}
+                                        {{-- FILE ICON --}}
+                                    @elseif($replyPreview->type == 'file')
+                                        <div
+                                            style="
+                        width:50px;
+                        height:50px;
+                        background:#e9edef;
+                        border-radius:6px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        flex-shrink:0;
+                     ">
+
+                                            <i class="bi bi-file-earmark" style="font-size:22px;"></i>
+
+                                        </div>
+                                    @endif
+
+                                    {{-- CONTENT --}}
+                                    <div class="flex-grow-1"
+                                        style="
+                    border-left:4px solid #25d366;
+                    padding-left:10px;
+                    overflow:hidden;
+                 ">
+
+                                        <div class="fw-semibold text-success small">
+
+                                            {{ $replyPreview->sender == 'agent' ? 'Replying to yourself' : 'Replying to customer' }}
+
+                                        </div>
+
+                                        <div
+                                            style="
+                        font-size:13px;
+                        color:#667781;
+                        white-space:nowrap;
+                        overflow:hidden;
+                        text-overflow:ellipsis;
+                     ">
+
+                                            @if ($replyPreview->type == 'image')
+
+                                                📷 Photo
+
+                                                @if ($replyPreview->message)
+                                                    — {{ Str::limit($replyPreview->message, 50) }}
+                                                @endif
+                                            @elseif($replyPreview->type == 'file')
+                                                📎 {{ $replyPreview->file_name ?? 'File' }}
+
+                                                @if ($replyPreview->message)
+                                                    — {{ Str::limit($replyPreview->message, 50) }}
+                                                @endif
+                                            @else
+                                                {{ Str::limit($replyPreview->message, 100) }}
+
+                                            @endif
+
+                                        </div>
+
                                     </div>
 
                                 </div>
 
+                                {{-- CLOSE --}}
                                 <button class="btn btn-sm" wire:click="closeReplyPreview">
 
                                     <i class="bi bi-x-lg"></i>
@@ -935,6 +1189,7 @@
                                 </button>
 
                             </div>
+
                         @endif
 
                         <div class="d-flex align-items-center">
@@ -974,29 +1229,159 @@
             ">
 
                             {{-- FILE INFO --}}
-                            @if ($attachment)
-                                <div class="text-success ms-2">
+                            {{-- MULTIPLE ATTACHMENT PREVIEW --}}
+                            @if (!empty($attachments))
 
-                                    File:
-                                    {{ $attachment->getClientOriginalName() }}
+                                <div class="d-flex flex-column gap-2 mt-2 px-2">
+
+                                    @foreach ($attachments as $index => $attachment)
+                                        <div class="
+                    border
+                    rounded-3
+                    bg-light
+                    p-2
+                    d-flex
+                    align-items-center
+                    justify-content-between
+                 "
+                                            style="
+                    max-width:320px;
+                 ">
+
+                                            <div
+                                                class="
+                        d-flex
+                        align-items-center
+                        gap-2
+                        overflow-hidden
+                     ">
+
+                                                {{-- IMAGE --}}
+                                                @if (str_starts_with($attachment->getMimeType(), 'image/'))
+                                                    <img src="{{ $attachment->temporaryUrl() }}"
+                                                        style="
+                                width:48px;
+                                height:48px;
+                                object-fit:cover;
+                                border-radius:8px;
+                                flex-shrink:0;
+                             ">
+                                                @else
+                                                    {{-- FILE ICON --}}
+                                                    <div
+                                                        style="
+                                width:48px;
+                                height:48px;
+                                background:#e9edef;
+                                border-radius:8px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                flex-shrink:0;
+                             ">
+
+                                                        @if (str_contains($attachment->getMimeType(), 'pdf'))
+                                                            <i class="bi bi-file-earmark-pdf"
+                                                                style="
+                                        font-size:22px;
+                                        color:#e53935;
+                                   "></i>
+                                                        @elseif (str_contains($attachment->getMimeType(), 'word') || str_contains($attachment->getMimeType(), 'document'))
+                                                            <i class="bi bi-file-earmark-word"
+                                                                style="
+                                        font-size:22px;
+                                        color:#1976d2;
+                                   "></i>
+                                                        @else
+                                                            <i class="bi bi-paperclip"
+                                                                style="
+                                        font-size:20px;
+                                        color:#667781;
+                                   "></i>
+                                                        @endif
+
+                                                    </div>
+                                                @endif
+
+                                                {{-- FILE INFO --}}
+                                                <div class="overflow-hidden">
+
+                                                    <div
+                                                        style="
+                                font-size:13px;
+                                font-weight:600;
+                                color:#111b21;
+                                white-space:nowrap;
+                                overflow:hidden;
+                                text-overflow:ellipsis;
+                             ">
+
+                                                        {{ $attachment->getClientOriginalName() }}
+
+                                                    </div>
+
+                                                    <div
+                                                        style="
+                                font-size:11px;
+                                color:#667781;
+                             ">
+
+                                                        {{ number_format($attachment->getSize() / 1024, 1) }}
+                                                        KB
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            {{-- REMOVE --}}
+                                            <button type="button" class="btn btn-sm btn-light border"
+                                                wire:click="removeAttachment({{ $index }})">
+
+                                                <i class="bi bi-x-lg"></i>
+
+                                            </button>
+
+                                        </div>
+                                    @endforeach
 
                                 </div>
+
                             @endif
 
-                            {{-- UPLOADING --}}
-                            <div wire:loading wire:target="attachment">
+                            <div wire:loading.delay wire:target="attachments"
+                                class="
+                                    d-none
+                                    mt-2
+                                    ms-2
+                                    px-3
+                                    py-2
+                                    rounded-pill
+                                    bg-light
+                                    d-flex
+                                    align-items-center
+                                    gap-2
+                                "
+                                wire:loading.class.remove="d-none">
 
-                                Uploading...
+                                <div class="spinner-border spinner-border-sm" role="status"
+                                    style="
+                                        width:14px;
+                                        height:14px;
+                                    ">
+                                </div>
+
+                                Uploading files...
 
                             </div>
 
                             {{-- FILE INPUT --}}
-                            <input type="file" wire:model="attachment" id="fileInput" style="display:none"
-                                accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" />
+                            <input type="file" multiple wire:model="attachments" id="chatAttachment" hidden>
 
                             {{-- ATTACH BUTTON --}}
                             <button class="btn border-0 text-muted me-2"
-                                onclick="document.getElementById('fileInput').click()"
+                                onclick="document.getElementById('chatAttachment').click()"
                                 {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}>
                                 <i class="bi bi-paperclip fs-5"></i>
                             </button>
@@ -1004,9 +1389,9 @@
                             <button class="btn btn-success ms-2 rounded-circle" wire:click="sendMessage"
                                 {{ $selectedConversation?->status == 'resolved' || ($ownerid !== $selectedConversation?->assigned_to && $ownerposition !== 'supervisor') ? 'disabled' : '' }}
                                 style="
-                width:45px;
-                height:45px;
-            ">
+                                    width:45px;
+                                    height:45px;
+                                ">
 
                                 <i class="bi bi-send-fill"></i>
 

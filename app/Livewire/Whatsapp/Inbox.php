@@ -23,7 +23,7 @@ class Inbox extends Component
 
     public $message = '';
     public $searchMessage = '';
-    public $attachment;
+    public $attachments = [];
     public $showSearch = false;
 
     public $chatFilter = 'all';
@@ -86,35 +86,156 @@ class Inbox extends Component
 
     public function sendMessage()
     {
-        if (!$this->message || !$this->selectedConversation) {
+        if (!$this->message && !$this->attachments) {
             return;
         }
 
+        if (!$this->selectedConversation) {
+            return;
+        }
+
+        $this->validate([
+            'attachments.*' => 'nullable|max:20480',
+        ]);
+
         $phone = $this->selectedConversation->phone;
 
-        $response = app(WhatsappService::class)->send($phone, $this->message, $this->replyMessageId);
+        $type = 'text';
 
-        $messageId = $response['messages'][0]['id'] ?? null;
+        $path = null;
 
-        WhatsappMessage::create([
-            'conversation_id' => $this->selectedConversation->id,
-            'phone' => $phone,
-            'message' => $this->message,
-            'sender' => 'agent',
-            'message_id' => $messageId, // 🔥 INI WAJIB
-            'status' => 'sent',
-            'userid' => Auth::user()->id,
-            'reply_message_id' => $this->replyMessageId,
-        ]);
+        $mime = null;
 
-        $this->selectedConversation->update([
-            'last_message_at' => now(),
-        ]);
+        $fileName = null;
 
-        $this->message = '';
-        if ($this->replyMessageId) {
+        try {
+            /*
+    |--------------------------------------------------------------------------
+    | ATTACHMENTS
+    |--------------------------------------------------------------------------
+    */
+
+            if (!empty($this->attachments)) {
+                foreach ($this->attachments as $attachment) {
+                    $mime = $attachment->getMimeType();
+
+                    $fileName = $attachment->getClientOriginalName();
+
+                    $path = $attachment->store('chat', 'public');
+
+                    $upload = app(WhatsappService::class)->uploadMedia($path, $mime);
+
+                    $mediaId = $upload['id'] ?? null;
+
+                    if (!$mediaId) {
+                        continue;
+                    }
+
+                    /*
+            |--------------------------------------------------------------------------
+            | IMAGE
+            |--------------------------------------------------------------------------
+            */
+
+                    if (str_starts_with($mime, 'image/')) {
+                        $type = 'image';
+
+                        $response = app(WhatsappService::class)->sendImage($phone, $mediaId, $this->message, $this->replyMessageId);
+                    } else {
+                        /*
+                |--------------------------------------------------------------------------
+                | FILE
+                |--------------------------------------------------------------------------
+                */
+
+                        $type = 'file';
+
+                        $response = app(WhatsappService::class)->sendDocument($phone, $mediaId, $fileName, $this->replyMessageId);
+                    }
+
+                    $waMessageId = $response['messages'][0]['id'] ?? null;
+
+                    WhatsappMessage::create([
+                        'conversation_id' => $this->selectedConversation->id,
+
+                        'phone' => $phone,
+
+                        'message' => $this->message,
+
+                        'sender' => 'agent',
+
+                        'message_id' => $waMessageId,
+
+                        'status' => 'sent',
+
+                        'attachment' => $path,
+
+                        'mime_type' => $mime,
+
+                        'file_name' => $fileName,
+
+                        'type' => $type,
+
+                        'userid' => Auth::id(),
+
+                        'reply_message_id' => $this->replyMessageId,
+                    ]);
+                }
+            } else {
+                /*
+        |--------------------------------------------------------------------------
+        | TEXT ONLY
+        |--------------------------------------------------------------------------
+        */
+
+                $response = app(WhatsappService::class)->send($phone, $this->message, $this->replyMessageId);
+
+                $waMessageId = $response['messages'][0]['id'] ?? null;
+
+                WhatsappMessage::create([
+                    'conversation_id' => $this->selectedConversation->id,
+
+                    'phone' => $phone,
+
+                    'message' => $this->message,
+
+                    'sender' => 'agent',
+
+                    'message_id' => $waMessageId,
+
+                    'status' => 'sent',
+
+                    'type' => 'text',
+
+                    'userid' => Auth::id(),
+
+                    'reply_message_id' => $this->replyMessageId,
+                ]);
+            }
+
+            /*
+    |--------------------------------------------------------------------------
+    | UPDATE CONVERSATION
+    |--------------------------------------------------------------------------
+    */
+
+            $this->selectedConversation->update([
+                'last_message_at' => now(),
+            ]);
+
+            /*
+    |--------------------------------------------------------------------------
+    | RESET
+    |--------------------------------------------------------------------------
+    */
+
+            $this->reset(['message', 'attachments']);
+
             $this->replyMessageId = null;
+
             $this->replyPreview = null;
+        } catch (\Throwable $e) {
+            dd($e->getMessage(), $e->getFile(), $e->getLine());
         }
     }
 
@@ -170,7 +291,7 @@ class Inbox extends Component
             ->get();
 
         if ($this->selectedConversation) {
-            $messages = WhatsappMessage::with(['replyTo','reactions'])
+            $messages = WhatsappMessage::with(['replyTo', 'reactions'])
                 ->where('conversation_id', $this->selectedConversation->id)
 
                 ->when($this->searchMessage, function ($q) {
@@ -358,42 +479,43 @@ class Inbox extends Component
 
     public function react($messageId, $emoji)
     {
-        
         try {
+            $msg = WhatsappMessage::find($messageId);
 
-        
-        $msg = WhatsappMessage::find($messageId);
+            $reaction = MessageReaction::where('message_id', $messageId)
+                ->where('user_id', auth()->id())
+                ->first();
 
-    
-        $reaction = MessageReaction::where('message_id', $messageId)
-            ->where('user_id', auth()->id())
-            ->first();
+            // toggle remove
+            if ($reaction && $reaction->emoji === $emoji) {
+                $reaction->delete();
+                return;
+            }
 
-        // toggle remove
-        if ($reaction && $reaction->emoji === $emoji) {
-            $reaction->delete();
-            return;
-        }
-
-        // update existing
-        if ($reaction) {
-            $reaction->update([
-                'emoji' => $emoji,
-            ]);
-        } else {
-            // create
-            MessageReaction::create([
-                'message_id' => $messageId,
-                'user_id' => auth()->id(),
-                'emoji' => $emoji,
-                
-            ]);
-        }
-        // kirim reaction ke WhatsApp
-        app(WhatsappService::class)->react($msg->phone,$msg->message_id,$emoji);
-        }
-        catch(\Exception $e) {
+            // update existing
+            if ($reaction) {
+                $reaction->update([
+                    'emoji' => $emoji,
+                ]);
+            } else {
+                // create
+                MessageReaction::create([
+                    'message_id' => $messageId,
+                    'user_id' => auth()->id(),
+                    'emoji' => $emoji,
+                ]);
+            }
+            // kirim reaction ke WhatsApp
+            app(WhatsappService::class)->react($msg->phone, $msg->message_id, $emoji);
+        } catch (\Exception $e) {
             dd($e->getMessage());
         }
+    }
+
+    public function removeAttachment($index)
+    {
+        unset($this->attachments[$index]);
+
+        $this->attachments = array_values($this->attachments);
     }
 }
