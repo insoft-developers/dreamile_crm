@@ -441,6 +441,7 @@ class Inbox extends Component
             $customer->major = $this->contactMajor;
             $customer->branch_id = $this->contactBranch;
             $customer->gender = $this->contactGender;
+            
 
             // hanya saat data baru
             if (!$customer->exists) {

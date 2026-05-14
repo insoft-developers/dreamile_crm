@@ -881,6 +881,19 @@
         @endif
     @endif
     <script type="module" src="{{ asset('template/crm') }}/assets/js/app.js"></script>
+
+
+    <script>
+        setInterval(() => {
+            fetch("{{ url('heartbeat') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+        }, 30000); // 30 detik
+    </script>
     <script>
         function formatRupiah(angka) {
             return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);

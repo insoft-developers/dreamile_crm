@@ -28,8 +28,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/wa-test', [ChatController::class, 'waTest']);
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', [DashboardController::class, 'index']);
@@ -70,6 +68,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
     Route::get('/api/district/{regencyCode}', [AdministrativeController::class, 'district']);
     Route::get('/api/village/{districtCode}', [AdministrativeController::class, 'village']);
+
+    Route::post('/heartbeat', [DashboardController::class, 'hearbeat']);
 });
 
 Route::middleware('auth')->group(function () {

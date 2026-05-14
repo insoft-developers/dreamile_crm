@@ -670,7 +670,7 @@
 
                                                     @if ($msg->message)
                                                         <div class="mt-1">
-                                                            {{ $msg->message }}
+                                                            {!! makeLinksClickable($msg->message) !!}
                                                         </div>
                                                     @endif
                                                 @elseif($msg->type == 'file')
@@ -683,11 +683,11 @@
 
                                                     @if ($msg->message)
                                                         <div class="mt-1">
-                                                            {{ $msg->message }}
+                                                             {!! makeLinksClickable($msg->message) !!}
                                                         </div>
                                                     @endif
                                                 @else
-                                                    {{ $msg->message }}
+                                                     {!! makeLinksClickable($msg->message) !!}
                                                 @endif
                                             @endif
 
@@ -942,7 +942,7 @@
 
                                                         @if ($msg->message)
                                                             <div class="mt-1">
-                                                                {{ $msg->message }}
+                                                                 {!! makeLinksClickable($msg->message) !!}
                                                             </div>
                                                         @endif
                                                     @elseif($msg->type == 'file')
@@ -955,11 +955,11 @@
 
                                                         @if ($msg->message)
                                                             <div class="mt-1">
-                                                                {{ $msg->message }}
+                                                                {!! makeLinksClickable($msg->message) !!}
                                                             </div>
                                                         @endif
                                                     @else
-                                                        {{ $msg->message }}
+                                                        {!! makeLinksClickable($msg->message) !!}
                                                     @endif
                                                 @endif
 
