@@ -710,7 +710,7 @@
                                 {{-- CUSTOMER --}}
                             @else
                                 <div class="d-flex justify-content-start mb-2">
-
+                                    @if(!empty($msg->message))
                                     <div id="msg-{{ $msg->message_id }}" class="position-relative msg-wrapper"
                                         style="
                                             max-width:72%;
@@ -815,7 +815,7 @@
 
                                                 😊
 
-                                                <div class="reaction-picker">
+                                                <div class="reaction-picker picker-right">
 
                                                     <span wire:click="react({{ $msg->id }}, '👍')">👍</span>
 
@@ -847,7 +847,7 @@
                                         @endif
 
                                     </div>
-
+                                    @endif
                                 </div>
                             @endif
                         @endforeach

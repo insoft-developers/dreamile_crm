@@ -274,4 +274,9 @@
         bottom: 32px;
         right: auto;
     }
+
+    .picker-right{
+            left: -78px;
+    width: 179px;
+    }
 </style>
