@@ -2,16 +2,20 @@
 
 use App\Http\Controllers\CRM\AdministrativeController;
 use App\Http\Controllers\CRM\BranchController;
+use App\Http\Controllers\CRM\BroadcastController;
 use App\Http\Controllers\CRM\ChatController;
 use App\Http\Controllers\CRM\CompanyController;
+use App\Http\Controllers\CRM\ContactGroupController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
+use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Models\ContactGroup;
 use App\Models\LeadSource;
 use App\Models\Position;
 use Illuminate\Support\Facades\Http;
@@ -68,6 +72,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
     Route::get('/api/district/{regencyCode}', [AdministrativeController::class, 'district']);
     Route::get('/api/village/{districtCode}', [AdministrativeController::class, 'village']);
+
+    Route::resource('/broadcast', BroadcastController::class);
+    Route::get('/broadcast_table', [BroadcastController::class, 'table'])->name('broadcast.table');
+
+    Route::resource('/broadcast_template', TemplateController::class);
+    Route::get('/template_table', [TemplateController::class, 'table'])->name('template.table');
+
+    Route::resource('/contact_group', ContactGroupController::class);
+    Route::get('/contact_group_table', [ContactGroupController::class, 'table'])->name('contact.group.table');
+
 
     Route::post('/heartbeat', [DashboardController::class, 'hearbeat']);
 });

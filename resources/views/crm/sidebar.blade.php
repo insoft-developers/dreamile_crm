@@ -111,10 +111,16 @@
                      </a>
                      <ul class="pe-slide-menu collapse" id="collapseAdvancedUI">
                          <li class="slide pe-nav-content1">
-                             <a href="javascript:void(0)">Advanced UI</a>
+                             <a href="javascript:void(0)">Broadcast</a>
                          </li>
                          <li class="pe-slide-item">
-                             <a href="ui-block.html" class="pe-nav-link">Block</a>
+                             <a href="{{ url('broadcast') }}" class="pe-nav-link">Broadcast</a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="{{ url('contact_group') }}" class="pe-nav-link">Contact Group</a>
+                         </li>
+                         <li class="pe-slide-item">
+                             <a href="{{ url('broadcast_template') }}" class="pe-nav-link">Template</a>
                          </li>
 
                      </ul>

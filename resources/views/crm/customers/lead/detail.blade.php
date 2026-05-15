@@ -1,287 +1,686 @@
- @extends('crm.master')
- @section('content')
-     <main class="app-wrapper">
-         <div class="container-fluid">
+<style>
+    .bg-gradient-light {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
 
+    .modern-card {
+        border: 0;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+        transition: all .2s ease;
+        background: #fff;
+    }
 
-             <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">
-                 <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">Leads Detail Data</h2>
-                 
-                 <div class="flex-shrink-0">
-                     <nav aria-label="breadcrumb">
-                         <ol class="breadcrumb justify-content-end mb-0">
-                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
-                             <li class="breadcrumb-item" aria-current="page">Customers</li>
-                             <li class="breadcrumb-item" aria-current="page"><a href="{{ url('lead') }}">Leads Data</a></li>
-                             <li class="breadcrumb-item active" aria-current="page">Leads Detail Data</li>
-                         </ol>
-                     </nav>
-                 </div>
-             </div>
+    .modern-card:hover {
+        transform: translateY(-2px);
+    }
 
+    .modern-header {
+        padding: 1.5rem 1.5rem 0;
+        border: 0;
+        background: #fff;
+    }
 
+    .modern-body {
+        padding: 1.5rem;
+    }
 
-             <div class="card position-relative z-1">
-                 <div class="card-body p-5">
-                    <button onclick="window.history.back()" class="btn btn-sm btn-primary mb-2"><i class="bi bi-arrow-left"></i> Back to Lead Data</button>
-                     <div class="d-flex justify-content-between flex-wrap align-items-center gap-6">
-                         <div class="flex-shrink-0">
-                             <div class="position-relative d-inline-block">
-                                
-                                 @if (!empty($data->photo))
-                                     <img src="{{ asset('storage/' . $data->photo) }}" alt="Avatar Image"
-                                         class="h-100px w-100px rounded-pill">
-                                 @else
-                                     {
-                                     <img src="{{ asset('template/crm/assets/images/avatar/dummy.jpg') }}"
-                                         alt="Avatar Image" class="h-100px w-100px rounded-pill">
-                                 @endif
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
 
-                                 <div
-                                     class="h-30px w-30px rounded-pill bg-primary d-flex justify-content-center align-items-center text-white border border-3 border-light-subtle position-absolute fs-12 bottom-0 end-0">
+    .info-box {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 24px;
+        text-align: center;
+        min-width: 140px;
+    }
 
-                                 </div>
-                                 <span class="position-absolute profile-dot bg-success rounded-circle">
-                                     <span class="visually-hidden">unread messages</span>
-                                 </span>
-                             </div>
-                         </div>
-                         <div class="flex-grow-1">
-                             <h4 class="mb-1">{{ $data->fullname }} <i
-                                     class="bi bi-patch-check-fill fs-16 ms-1 text-success"></i>
-                             </h4>
-                             <p style="white-space: normal;width:300px;" class="text-muted mb-1">{{ $data->full_address }}
-                             </p>
+    .info-box h4 {
+        font-size: 15px;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
 
-                         </div>
-                         <div class="d-flex flex-wrap gap-3">
-                             <div
-                                 class="d-flex flex-column justify-content-center gap-1 w-256px text-center py-4 border rounded-2">
-                                 <h4 class="mb-2 lh-1">School</h4>
-                                 <span class="text-muted lh-sm fs-12">{{ $data->school_from }}</span>
-                             </div>
-                             <div
-                                 class="d-flex flex-column justify-content-center gap-1 w-128px text-center py-4 border rounded-2">
-                                 <h4 class="mb-2 lh-1">Class</h4>
-                                 <span class="text-muted lh-sm fs-12">{{ $data->class }}</span>
-                             </div>
-                             <div
-                                 class="d-flex flex-column justify-content-center gap-1 w-128px text-center py-4 border rounded-2">
-                                 <h4 class="mb-2 lh-1">Major</h4>
-                                 <span class="text-muted lh-sm fs-12">{{ $data->major }}</span>
-                             </div>
+    .info-box span {
+        font-size: 13px;
+        color: #64748b;
+    }
 
-                         </div>
-                         <div class="d-flex float-end gap-2 flex-shrink-0">
+    .icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6366f1;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
 
+    .timeline-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
 
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             <div class="row">
-                 <div class="col-xl-3">
-                     <div class="card">
-                         <div class="card-header">
-                             <h5 class="card-title mb-0">Personal Details</h5>
+    .visit-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 18px;
+        padding: 4px;
+        border: 2px solid #22c55e;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
 
-                         </div>
-                         <div class="card-body d-flex flex-column gap-4 text-truncate">
-                             <div class="d-flex align-items-center gap-3">
-                                 <i class="ri-map-pin-line fs-16 text-muted"></i>
-                                 <p class="mb-0">
-                                     {{ $data->village_name }}<br>{{ $data->district_name }}<br>{{ $data->regency_name }}<br>{{ $data->province_name }}
-                                 </p>
-                             </div>
-                             <div class="d-flex align-items-center gap-3">
-                                 <i class="ri-mail-line fs-16 text-muted"></i>
-                                 <p class="mb-0">{{ $data->email }}</p>
-                             </div>
-                             <div class="d-flex align-items-center gap-3">
-                                 <i class="ri-phone-line fs-16 text-muted"></i>
-                                 <p class="mb-0">{{ $data->phone_number }}</p>
-                             </div>
+    .followup-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
 
-                             <div class="d-flex align-items-center gap-3">
-                                 <i class="ri-user-2-line fs-16 text-muted"></i>
-                                 <p class="mb-0">{{ $data->gender }}</p>
-                             </div>
+    .badge-modern {
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-                             <div class="d-flex align-items-center gap-3">
-                                 <i class="ri-time-line fs-16 text-muted"></i>
-                                 <p class="mb-0">Join on {{ date('d F Y', strtotime($data->created_at)) }}</p>
-                             </div>
-                         </div>
-                     </div>
+    .consultant-photo {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+</style>
 
-                     <div class="card text-center">
-                         <div class="card-header">
-                             <h5 class="card-title">Leads Source</h5>
-                         </div>
-                         <div class="card-body p-4 card-color">
-                             @if ($data->lead_source_id == 'event')
-                                 <h5>Event</h5>
-                                 <table class="table table-bordered table-stripped">
-                                     <tr>
-                                         <td><strong>{{ $data->events->event_name ?? '' }}</strong></td>
-                                     </tr>
-                                     @if (!empty($data->events->image))
-                                         <tr>
-                                             <td>
-                                                 <a href="{{ asset('storage/' . $data->events->image) }}" target="_blank"><img class="img-fluid"
-                                                     src="{{ asset('storage/' . $data->events->image) }}"></a>
-                                             </td>
-                                         </tr>
-                                     @endif
-                                     <tr>
-                                         <td>{{ $data->events->event_location ?? '' }}</td>
-                                     </tr>
-                                     <tr>
-                                         <td><strong>{{ date('d F Y', strtotime($data->events->event_date)) ?? '' }}</strong>
-                                         </td>
-                                     </tr>
-                                 </table>
-                             @elseif($data->lead_source_id == 'presentation')
-                                 <h5>Presentation</h5>
-                             @else
-                                 <h5>{{ $data->leadsource->source_name ?? '' }}</h5>
-                             @endif
-                         </div>
-                     </div>
+@extends('crm.master')
 
-                     <div class="card">
-                         <div class="card-header">
-                             <h5 class="card-title">Note</h5>
-                         </div>
-                         <div class="card-body p-6">
-                             <p>{{ $data->note }}</p>
-                         </div>
-                     </div>
-                 </div>
-                 <div class="col-xl-6 order-last order-xl-2">
-                     <div class="tab-content">
-                         <div class="tab-pane active show" id="pages-profile-tab" role="tabpanel">
-                             <div class="card">
-                                 <div class="card-header">
-                                     <h5 class="card-title">Visit</h5>
-                                     @if ($data->visit_status == 'scheduled')
-                                         <span class="badge bg-warning-subtle text-warning">Scheduled</span>
-                                     @elseif($data->visit_status == 'done')
-                                         <span class="badge bg-success-subtle text-success">Done</span>
-                                     @else
-                                     @endif
+@section('content')
 
-                                 </div>
-                                 <div class="card-body">
+<main class="app-wrapper">
 
-                                     <label><strong>Photo on Visit:</strong></label>
-                                     <div class="mb-3">
-                                         @if (!empty($data->visitImages))
-                                             @foreach ($data->visitImages as $photo)
-                                                 <a href="{{ asset('storage/' . $photo->image) }}" target="_blank"><img src="{{ asset('storage/' . $photo->image) }}" alt="photo"
-                                                     style="width:120px; height:120px; object-fit:cover; margin-right:10px; margin-bottom:10px; border-radius:8px;border:2px solid green;padding:3px;"></a>
-                                             @endforeach
-                                         @else
-                                             <p>No photos available</p>
-                                         @endif
-                                     </div>
-                                     <label><strong>Date:</strong></label>
-                                     <p class="mb-3">{{ $data->visit_date == null ? '' : date('d F Y H:i', strtotime($data->visit_date)) }}</p>
-                                     <label><strong>Location:</strong></label>
-                                     <p class="mb-3">{{ $data->visit_location ?? '' }}</p>
-                                     <label><strong>Visit Note:</strong></label>
-                                     <p class="mb-3">{{ $data->visit_note }}</p>
+    <div class="container-fluid">
 
-                                 </div>
-                             </div>
-                             <div class="card">
-                                 <div class="card-header">
-                                     <h5 class="card-title">Followups</h5>
-                                 </div>
-                                 <div class="card-body">
-                                     <div class="timeline2 icon-timeline">
-                                         <ul>
-                                          
-                                            @if($data->followup)
-                                            @foreach($data->followup as $fw)
-                                             <li class="box">
-                                                 <span class="bg-primary">
-                                                     <i class="ri-image-line"></i>
-                                                 </span>
-                                                 <div class="text-muted float-end fs-13">{{ $fw->date == null ? '' : date('d F Y H:s', strtotime($fw->date)) }}</div>
-                                                 <div class="title">Followup {{ $fw->step }}</div>
-                                                 <div class="info">{{ $fw->note }}</div>
-                                                 <div class="info text-muted">Uploaded <b
-                                                         class="text-body">“Image”</b></div>
-                                                 <div class="mt-3 d-flex gap-2">
-                                                    @if(!empty($fw->image))
-                                                     <a href="{{ asset('storage/'.$fw->image) }}" target="_blank"><img src="{{ asset('storage/'.$fw->image) }}"
-                                                         class="rounded h-56px" alt="Uploaded Image"></a>
-                                                     @endif
-                                                 </div>
-                                             </li>
-                                             @endforeach
-                                             @endif
-                                         </ul>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
+        <!-- Breadcrumb -->
+        <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">
 
-                     </div>
-                 </div>
-                 <div class="col-xl-3 order-2 order-xl-last">
-                     <div class="d-flex flex-column">
-                         <div class="card order-1 order-xl-2">
-                             <div class="card-header">
-                                 <h5 class="card-title mb-0">Status</h5>
-                             </div>
-                             <div class="card-body d-flex flex-column gap-6">
-                                 <div class="d-flex align-items-center gap-3">
+            <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">
+                Leads Detail Data
+            </h2>
 
-                                     <div class="text-truncate">
-                                         @if ($data->status == 'new-lead')
-                                             <span class="badge bg-success rounded-pill">{{ strtoupper($data->status) }}</span>
-                                         @elseif($data->status == 'visit')
-                                             <span class="badge bg-warning rounded-pill">{{ strtoupper($data->status) }}</span>
-                                         @elseif($data->status == 'deal')
-                                             <span class="badge bg-info rounded-pill">{{ strtoupper($data->status) }}</span>
-                                         @elseif($data->status == 'nok')
-                                             <span class="badge bg-danger rounded-pill">{{ strtoupper($data->status) }}</span>
-                                         @elseif($data->status == 'confirm')
-                                             <span class="badge bg-primary rounded-pill">{{ strtoupper($data->status) }}</span>
-                                         @endif
-                                     </div>
+            <div class="flex-shrink-0">
 
-                                 </div>
+                <nav aria-label="breadcrumb">
 
-                             </div>
-                         </div>
+                    <ol class="breadcrumb justify-content-end mb-0">
 
-                         <div class="card order-1 order-xl-2">
-                             <div class="card-header">
-                                 <h5 class="card-title mb-0">Education Consultant</h5>
-                             </div>
-                             <div class="card-body d-flex flex-column gap-6">
-                                 <div class="d-flex align-items-center gap-3">
-                                     @if ($data->consultant && $data->consultant->photo_profile)
-                                         <img src="{{ asset('storage/' . $data->consultant->photo_profile) }}"
-                                             class="rounded-circle avatar-md" alt="User">
-                                     @endif
-                                     <div class="text-truncate">
-                                         <h6 class="mb-0">{{ $data->consultant?->name ?? '' }}</i></h6>
-                                         <small
-                                             class="text-muted">{{ $data->consultant?->levels?->level_name ?? '' }}</small>
-                                     </div>
+                        <li class="breadcrumb-item">
+                            <a href="{{ url('/') }}">Dashboard</a>
+                        </li>
 
-                                 </div>
+                        <li class="breadcrumb-item">
+                            Customers
+                        </li>
 
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-         </div><!--End container-fluid-->
-     </main><!--End app-wrapper-->
- @endsection
+                        <li class="breadcrumb-item">
+                            <a href="{{ url('lead') }}">Leads Data</a>
+                        </li>
+
+                        <li class="breadcrumb-item active">
+                            Leads Detail Data
+                        </li>
+
+                    </ol>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+        <!-- PROFILE HERO -->
+        <div class="modern-card mb-4">
+
+            <div class="card-body p-4 p-xl-5 bg-gradient-light">
+
+                <button onclick="window.history.back()"
+                    class="btn btn-light border rounded-pill px-4 shadow-sm mb-4">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Lead Data
+
+                </button>
+
+                <div class="d-flex justify-content-between flex-wrap align-items-center gap-4">
+
+                    <!-- Left -->
+                    <div class="d-flex align-items-center gap-4">
+
+                        <div class="position-relative">
+
+                            @if (!empty($data->photo))
+
+                                <img src="{{ asset('storage/' . $data->photo) }}"
+                                    class="profile-avatar">
+
+                            @else
+
+                                <img src="{{ asset('template/crm/assets/images/avatar/dummy.jpg') }}"
+                                    class="profile-avatar">
+
+                            @endif
+
+                            <span class="position-absolute bottom-0 end-0 p-2 bg-success border border-3 border-white rounded-circle"></span>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="fw-bold mb-2 d-flex align-items-center gap-2">
+
+                                {{ $data->fullname }}
+
+                                <i class="bi bi-patch-check-fill text-success"></i>
+
+                            </h3>
+
+                            <p class="text-muted mb-2" style="max-width:450px;">
+                                {{ $data->full_address }}
+                            </p>
+
+                            <div class="d-flex align-items-center gap-2 text-muted small">
+
+                                <i class="ri-time-line"></i>
+
+                                Joined
+                                {{ date('d F Y', strtotime($data->created_at)) }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Right -->
+                    <div class="d-flex flex-wrap gap-3">
+
+                        <div class="info-box">
+
+                            <h4>School</h4>
+
+                            <span>{{ $data->school_from }}</span>
+
+                        </div>
+
+                        <div class="info-box">
+
+                            <h4>Class</h4>
+
+                            <span>{{ $data->class }}</span>
+
+                        </div>
+
+                        <div class="info-box">
+
+                            <h4>Major</h4>
+
+                            <span>{{ $data->major }}</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row g-4">
+
+            <!-- LEFT -->
+            <div class="col-xl-3">
+
+                <!-- PERSONAL -->
+                <div class="modern-card mb-4">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Personal Details
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body d-flex flex-column gap-4">
+
+                        <div class="d-flex gap-3">
+
+                            <div class="icon-box">
+                                <i class="ri-map-pin-line"></i>
+                            </div>
+
+                            <div>
+
+                                {{ $data->village_name }}<br>
+                                {{ $data->district_name }}<br>
+                                {{ $data->regency_name }}<br>
+                                {{ $data->province_name }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex gap-3">
+
+                            <div class="icon-box">
+                                <i class="ri-mail-line"></i>
+                            </div>
+
+                            <div>{{ $data->email }}</div>
+
+                        </div>
+
+                        <div class="d-flex gap-3">
+
+                            <div class="icon-box">
+                                <i class="ri-phone-line"></i>
+                            </div>
+
+                            <div>{{ $data->phone_number }}</div>
+
+                        </div>
+
+                        <div class="d-flex gap-3">
+
+                            <div class="icon-box">
+                                <i class="ri-user-2-line"></i>
+                            </div>
+
+                            <div>{{ $data->gender }}</div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- LEAD SOURCE -->
+                <div class="modern-card mb-4">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Leads Source
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body text-center">
+
+                        @if ($data->lead_source_id == 'event')
+
+                            <h5 class="fw-bold mb-4">
+                                Event
+                            </h5>
+
+                            <table class="table table-bordered">
+
+                                <tr>
+                                    <td>
+                                        <strong>{{ $data->events->event_name ?? '' }}</strong>
+                                    </td>
+                                </tr>
+
+                                @if (!empty($data->events->image))
+
+                                    <tr>
+
+                                        <td>
+
+                                            <a href="{{ asset('storage/' . $data->events->image) }}"
+                                                target="_blank">
+
+                                                <img class="img-fluid rounded-4"
+                                                    src="{{ asset('storage/' . $data->events->image) }}">
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                @endif
+
+                                <tr>
+                                    <td>{{ $data->events->event_location ?? '' }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            {{ date('d F Y', strtotime($data->events->event_date)) ?? '' }}
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        @elseif($data->lead_source_id == 'presentation')
+
+                            <h5 class="fw-bold">
+                                Presentation
+                            </h5>
+
+                        @else
+
+                            <h5 class="fw-bold">
+                                {{ $data->leadsource->source_name ?? '' }}
+                            </h5>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+                <!-- NOTE -->
+                <div class="modern-card">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Note
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body">
+
+                        <p class="mb-0">
+                            {{ $data->note }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CENTER -->
+            <div class="col-xl-6">
+
+                <!-- VISIT -->
+                <div class="modern-card mb-4">
+
+                    <div class="modern-header d-flex justify-content-between align-items-center">
+
+                        <h5 class="fw-bold mb-0">
+                            Visit
+                        </h5>
+
+                        @if ($data->visit_status == 'scheduled')
+
+                            <span class="badge bg-warning-subtle text-warning badge-modern">
+                                Scheduled
+                            </span>
+
+                        @elseif($data->visit_status == 'done')
+
+                            <span class="badge bg-success-subtle text-success badge-modern">
+                                Done
+                            </span>
+
+                        @endif
+
+                    </div>
+
+                    <div class="modern-body">
+
+                        <label class="fw-bold mb-3">
+                            Photo on Visit
+                        </label>
+
+                        <div class="mb-4">
+
+                            @if (!empty($data->visitImages))
+
+                                @foreach ($data->visitImages as $photo)
+
+                                    <a href="{{ asset('storage/' . $photo->image) }}"
+                                        target="_blank">
+
+                                        <img src="{{ asset('storage/' . $photo->image) }}"
+                                            class="visit-image">
+
+                                    </a>
+
+                                @endforeach
+
+                            @else
+
+                                <p>No photos available</p>
+
+                            @endif
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="fw-bold">
+                                Date
+                            </label>
+
+                            <p>
+                                {{ $data->visit_date == null ? '' : date('d F Y H:i', strtotime($data->visit_date)) }}
+                            </p>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="fw-bold">
+                                Location
+                            </label>
+
+                            <p>{{ $data->visit_location ?? '' }}</p>
+
+                        </div>
+
+                        <div>
+
+                            <label class="fw-bold">
+                                Visit Note
+                            </label>
+
+                            <p>{{ $data->visit_note }}</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOLLOWUPS -->
+                <div class="modern-card">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Followups
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body">
+
+                        @if($data->followup)
+
+                            @foreach($data->followup as $fw)
+
+                                <div class="timeline-card">
+
+                                    <div class="d-flex justify-content-between mb-2">
+
+                                        <h6 class="fw-bold mb-0">
+                                            Followup {{ $fw->step }}
+                                        </h6>
+
+                                        <small class="text-muted">
+
+                                            {{ $fw->date == null ? '' : date('d F Y H:i', strtotime($fw->date)) }}
+
+                                        </small>
+
+                                    </div>
+
+                                    <p class="mb-3">
+                                        {{ $fw->note }}
+                                    </p>
+
+                                    @if(!empty($fw->image))
+
+                                        <a href="{{ asset('storage/'.$fw->image) }}"
+                                            target="_blank">
+
+                                            <img src="{{ asset('storage/'.$fw->image) }}"
+                                                class="followup-image">
+
+                                        </a>
+
+                                    @endif
+
+                                </div>
+
+                            @endforeach
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-xl-3">
+
+                <!-- STATUS -->
+                <div class="modern-card mb-4">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Status
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body">
+
+                        @if ($data->status == 'new-lead')
+
+                            <span class="badge bg-success badge-modern">
+                                NEW LEAD
+                            </span>
+
+                        @elseif($data->status == 'visit')
+
+                            <span class="badge bg-warning badge-modern">
+                                VISIT
+                            </span>
+
+                        @elseif($data->status == 'deal')
+
+                            <span class="badge bg-info badge-modern">
+                                DEAL
+                            </span>
+
+                        @elseif($data->status == 'nok')
+
+                            <span class="badge bg-danger badge-modern">
+                                NOK
+                            </span>
+
+                        @elseif($data->status == 'confirm')
+
+                            <span class="badge bg-primary badge-modern">
+                                CONFIRM
+                            </span>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+                <!-- CONSULTANT -->
+                <div class="modern-card">
+
+                    <div class="modern-header">
+
+                        <h5 class="fw-bold mb-0">
+                            Education Consultant
+                        </h5>
+
+                    </div>
+
+                    <div class="modern-body">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            @if ($data->consultant && $data->consultant->photo_profile)
+
+                                <img src="{{ asset('storage/' . $data->consultant->photo_profile) }}"
+                                    class="consultant-photo">
+
+                            @endif
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+                                    {{ $data->consultant?->name ?? '' }}
+                                </h6>
+
+                                <small class="text-muted">
+
+                                    {{ $data->consultant?->levels?->level_name ?? '' }}
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+@endsection
