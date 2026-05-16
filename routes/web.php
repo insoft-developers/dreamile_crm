@@ -8,6 +8,7 @@ use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\ContactGroupController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
+use App\Http\Controllers\CRM\GroupManageController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
@@ -20,6 +21,7 @@ use App\Models\LeadSource;
 use App\Models\Position;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Svg\Tag\Group;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +83,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/contact_group', ContactGroupController::class);
     Route::get('/contact_group_table', [ContactGroupController::class, 'table'])->name('contact.group.table');
+
+    Route::resource('/group_manage', GroupManageController::class);
+    Route::get('/group_manage_table', [GroupManageController::class, 'table'])->name('group.manage.table');
 
 
     Route::post('/heartbeat', [DashboardController::class, 'hearbeat']);

@@ -1,8 +1,23 @@
 <script>
+
+
+    $('#modal-add').on('shown.bs.modal', function() {
+        $(this).find('.select2').select2({
+            dropdownParent: $('#modal-add'),
+            width: '100%'
+        });
+    });
+
+
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('contact.group.table') }}',
+        ajax: {
+            url: '{{ route('group.manage.table') }}',
+            data: function(d) {
+                d.contact_group_id = "{{ $contact_group_id }}";
+            }
+        },
         order: [
             [0, 'desc']
         ],
@@ -25,31 +40,26 @@
                 searchable: false
             },
             {
-                data: 'group_name',
-                name: 'group_name'
+                data: 'contact_group_id',
+                name: 'contact_group_id'
             },
             {
-                data: 'description',
-                name: 'description'
+                data: 'customer_id',
+                name: 'customer_id'
             },
             {
-                data: 'branch_id',
-                name: 'branch_id'
+                data: 'phone_number',
+                name: 'phone_number'
             },
 
-            {
-                data: 'created_at',
-                name: 'created_at'
-            },
-
-
+            
         ]
     });
 
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Contact Group");
+        $(".modal-title").text("Add Contact to Group");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -78,8 +88,8 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('contact_group') }}";
-        else url = "{{ url('contact_group') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('group_manage') }}";
+        else url = "{{ url('group_manage') . '/' }}" + id;
         $.ajax({
             url: url,
             type: "POST",
@@ -162,6 +172,17 @@
         $('#form-add')[0].reset();
     }
 
-  
-    
+
+    $('#source_name').on('keyup', function() {
+        let text = $(this).val();
+
+        let slug = text
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '') // hapus karakter aneh
+            .replace(/\s+/g, '-') // spasi jadi -
+            .replace(/-+/g, '-'); // hindari --
+
+        $('#slug').val(slug);
+    });
 </script>

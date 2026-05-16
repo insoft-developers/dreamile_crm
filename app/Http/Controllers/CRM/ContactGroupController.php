@@ -24,7 +24,9 @@ class ContactGroupController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-
+                ->addColumn('group_name', function($row){
+                    return $row->group_name.'<br>('.$row->items->count().' contacts)';
+                })
                 ->addColumn('created_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
                 })
@@ -39,14 +41,14 @@ class ContactGroupController extends Controller
                     $button = '';
                     $button .= '<center>';
 
-                    $button .= '<button onclick="manageData('.$row->id.')" title="Manage Data" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-gear"></i></button>';
+                    $button .= '<a href="'.url('/group_manage/'.$row->id).'"><button title="Manage Data" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-gear"></i></button></a>';
                     $button .= '<button style="margin-left:3px;" onclick="broadcastData('.$row->id.')" title="Broadcast" class="me-0 btn btn-insoft btn-success"><i class="ri-whatsapp-line"></i></button>';
                     $button .= '<button onclick="editData('.$row->id.')" style="margin-left:3px;" title="Edit Data" class="btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','description'])
+                ->rawColumns(['action','description','group_name'])
                 ->make(true);
         }
     }
