@@ -273,7 +273,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('lead_source') }}" + "/" + id,
+                    url: "{{ url('broadcast') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -320,15 +320,19 @@
 
     function retryBroadcast(id) {
         $.post(
-            "{{ url('broadcast/retry') }}/" + id,
-            {
+            "{{ url('broadcast/retry') }}/" + id, {
                 _token: '{{ csrf_token() }}'
             },
             function(response) {
                 if (response.success) {
-                   reloadTable();
+                    reloadTable();
                 }
             }
         );
     }
+
+    setInterval(function() {
+        reloadTable();
+
+    }, 10000);
 </script>

@@ -276,7 +276,8 @@ class BroadcastController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        BroadcastItem::where('broadcast_id', $id)->delete();
+        return Broadcast::destroy($id);
     }
 
     public function start(string $id)
@@ -316,4 +317,5 @@ class BroadcastController extends Controller
             'success' => true,
         ]);
     }
+    
 }
