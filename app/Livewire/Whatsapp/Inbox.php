@@ -56,7 +56,12 @@ class Inbox extends Component
             $this->chatFilter = 'mychat';
         }
 
-        $this->branches = Branch::all();
+        $query = Branch::query();
+        if(empty(Auth::user()->branch_id)) {
+            $this->branches = $query->get();
+        } else {
+            $this->branches = $query->where('id', Auth::user()->branch_id)->get();
+        }
     }
 
     /*
@@ -280,15 +285,22 @@ class Inbox extends Component
 
         $messages = [];
 
-        $contacts = Customer::query()
+        $contact_query = Customer::query()
             ->whereNotNull('phone_number')
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('fullname', 'like', '%' . $this->search . '%')->orWhere('phone_number', 'like', '%' . $this->search . '%');
                 });
             })
-            ->orderBy('fullname')
-            ->get();
+            ->orderBy('fullname');
+        if(empty(Auth::user()->branch_id)) {
+            $contacts = $contact_query->get();
+        } else {
+            $contacts = $contact_query->where('branch_id', Auth::user()->branch_id)->get();
+        }
+
+           
+
 
         if ($this->selectedConversation) {
             $messages = WhatsappMessage::with(['replyTo', 'reactions'])

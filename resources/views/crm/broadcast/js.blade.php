@@ -1,4 +1,122 @@
 <script>
+    function initContactSelect() {
+
+        $('#contact_target').select2({
+            width: '100%',
+           dropdownParent: $('#modal-add .modal-content'),
+            placeholder: 'Select Contacts',
+            closeOnSelect: false
+        });
+
+    }
+
+    function initGroupSelect() {
+
+        $('#group_target').select2({
+            width: '100%',
+           dropdownParent: $('#modal-add .modal-content'),
+            placeholder: 'Select Groups',
+            closeOnSelect: false
+        });
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FIRST LOAD
+    |--------------------------------------------------------------------------
+    */
+
+    initContactSelect();
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHANGE TYPE
+    |--------------------------------------------------------------------------
+    */
+
+    $('#contact_type').on('change', function() {
+
+        let type = $(this).val();
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONTACT
+        |--------------------------------------------------------------------------
+        */
+
+        if (type == 'contact') {
+
+            /*
+            |--------------------------------------------------------------------------
+            | DESTROY GROUP
+            |--------------------------------------------------------------------------
+            */
+
+            if ($('#group_target').hasClass("select2-hidden-accessible")) {
+                $('#group_target').select2('destroy');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | SHOW HIDE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#contact-container').removeClass('d-none');
+
+            $('#group-container').addClass('d-none');
+
+            /*
+            |--------------------------------------------------------------------------
+            | INIT CONTACT
+            |--------------------------------------------------------------------------
+            */
+
+            initContactSelect();
+
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | GROUP
+        |--------------------------------------------------------------------------
+        */
+        else if (type == 'group') {
+
+            /*
+            |--------------------------------------------------------------------------
+            | DESTROY CONTACT
+            |--------------------------------------------------------------------------
+            */
+
+            if ($('#contact_target').hasClass("select2-hidden-accessible")) {
+                $('#contact_target').select2('destroy');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | SHOW HIDE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#contact-container').addClass('d-none');
+
+            $('#group-container').removeClass('d-none');
+
+            /*
+            |--------------------------------------------------------------------------
+            | INIT GROUP
+            |--------------------------------------------------------------------------
+            */
+
+            initGroupSelect();
+
+        }
+
+    });
+
+
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
@@ -65,7 +183,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Lead Source Data");
+        $(".modal-title").text("Add New Broadcast");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -93,8 +211,8 @@
         e.preventDefault();
         loading("btn-save-data");
         var id = $('#id').val();
-        if (save_method == "add") url = "{{ url('lead_source') }}";
-        else url = "{{ url('lead_source') . '/' }}" + id;
+        if (save_method == "add") url = "{{ url('broadcast') }}";
+        else url = "{{ url('broadcast') . '/' }}" + id;
         $.ajax({
             url: url,
             type: "POST",
@@ -177,17 +295,8 @@
         $('#form-add')[0].reset();
     }
 
+    $("#contact_type").change(function() {
+        var contactType = $(this).val();
 
-    $('#source_name').on('keyup', function() {
-        let text = $(this).val();
-
-        let slug = text
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9\s-]/g, '') // hapus karakter aneh
-            .replace(/\s+/g, '-') // spasi jadi -
-            .replace(/-+/g, '-'); // hindari --
-
-        $('#slug').val(slug);
     });
 </script>

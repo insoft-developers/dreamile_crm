@@ -39,10 +39,7 @@
                 orderable: false,
                 searchable: false
             },
-            {
-                data: 'contact_group_id',
-                name: 'contact_group_id'
-            },
+           
             {
                 data: 'customer_id',
                 name: 'customer_id'
@@ -50,6 +47,10 @@
             {
                 data: 'phone_number',
                 name: 'phone_number'
+            },
+             {
+                data: 'contact_group_id',
+                name: 'contact_group_id'
             },
 
             
@@ -64,24 +65,7 @@
         $("#modal-add").modal("show");
     }
 
-    function editData(id) {
-        save_method = "edit";
-        $('input[name=_method]').val('PATCH');
-        $.ajax({
-            url: "{{ url('/contact_group') }}" + "/" + id + "/edit",
-            type: "GET",
-            dataType: "JSON",
-            success: function(data) {
-                $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Contact Group");
-                $('#id').val(data.id);
-                $("#group_name").val(data.group_name);
-                $("#description").val(data.description);
-                $("#branch_id").val(data.branch_id);
-
-            }
-        })
-    }
+    
 
 
     $("#form-add").submit(function(e) {
@@ -146,7 +130,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('lead_source') }}" + "/" + id,
+                    url: "{{ url('group_manage') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -172,17 +156,5 @@
         $('#form-add')[0].reset();
     }
 
-
-    $('#source_name').on('keyup', function() {
-        let text = $(this).val();
-
-        let slug = text
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9\s-]/g, '') // hapus karakter aneh
-            .replace(/\s+/g, '-') // spasi jadi -
-            .replace(/-+/g, '-'); // hindari --
-
-        $('#slug').val(slug);
-    });
+    
 </script>

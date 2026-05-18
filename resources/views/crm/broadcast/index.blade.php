@@ -55,9 +55,10 @@
                 </div>
 
             </div><!--End row-->
+            @include('crm.broadcast.modal')
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
-    @include('crm.broadcast.modal')
+    
 @endsection
 
 @push('scripts')

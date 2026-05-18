@@ -84,6 +84,8 @@ class ContactGroupController extends Controller
             'branch_id' => 'required'
         ]);
 
+        
+
 
         ContactGroup::create($input);
 

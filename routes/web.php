@@ -78,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/broadcast', BroadcastController::class);
     Route::get('/broadcast_table', [BroadcastController::class, 'table'])->name('broadcast.table');
 
+
     Route::resource('/broadcast_template', TemplateController::class);
     Route::get('/template_table', [TemplateController::class, 'table'])->name('template.table');
 

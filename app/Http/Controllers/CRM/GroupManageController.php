@@ -34,7 +34,7 @@ class GroupManageController extends Controller
                     $button = '';
                     $button .= '<center>';
 
-                    $button .= '<button onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
+                   
                     $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
@@ -117,7 +117,7 @@ class GroupManageController extends Controller
      */
     public function edit(string $id)
     {
-        //
+       
     }
 
     /**
@@ -133,6 +133,6 @@ class GroupManageController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return ContactGroupItem::destroy($id);
     }
 }

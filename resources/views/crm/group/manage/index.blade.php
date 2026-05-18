@@ -36,9 +36,10 @@
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
-                                            <th>Group</th>
+                                            
                                             <th>Name</th>
                                             <th>Phone</th>
+                                            <th>Group</th>
                                           
                                         </tr>
                                     </thead>

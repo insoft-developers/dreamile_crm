@@ -55,6 +55,10 @@ class LeadController extends Controller
             if ($request->filter_branch) {
                 $data->where('branch_id', $request->filter_branch);
             }
+
+            if(!empty(Auth::user()->branch_id)) {
+                $data->where('branch_id', Auth::user()->branch_id);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('lead_source_id', function ($row) {
