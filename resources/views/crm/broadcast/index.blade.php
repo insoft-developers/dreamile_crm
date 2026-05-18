@@ -40,6 +40,7 @@
                                             <th>Sent</th>
                                             <th>Failed</th>
                                             <th>Status</th>
+                                            <th>Progress</th>
                                             <th>Branch</th>
                                             <th>Created At</th>
                                         </tr>

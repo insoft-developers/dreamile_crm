@@ -78,6 +78,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/broadcast', BroadcastController::class);
     Route::get('/broadcast_table', [BroadcastController::class, 'table'])->name('broadcast.table');
 
+    Route::post('broadcast/start/{id}', [BroadcastController::class, 'start']);
+    Route::post('broadcast/retry/{id}', [BroadcastController::class, 'retry']);
 
     Route::resource('/broadcast_template', TemplateController::class);
     Route::get('/template_table', [TemplateController::class, 'table'])->name('template.table');
@@ -87,7 +89,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/group_manage', GroupManageController::class);
     Route::get('/group_manage_table', [GroupManageController::class, 'table'])->name('group.manage.table');
-
 
     Route::post('/heartbeat', [DashboardController::class, 'hearbeat']);
 });

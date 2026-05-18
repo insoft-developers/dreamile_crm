@@ -3,7 +3,7 @@
 
         $('#contact_target').select2({
             width: '100%',
-           dropdownParent: $('#modal-add .modal-content'),
+            dropdownParent: $('#modal-add .modal-content'),
             placeholder: 'Select Contacts',
             closeOnSelect: false
         });
@@ -14,7 +14,7 @@
 
         $('#group_target').select2({
             width: '100%',
-           dropdownParent: $('#modal-add .modal-content'),
+            dropdownParent: $('#modal-add .modal-content'),
             placeholder: 'Select Groups',
             closeOnSelect: false
         });
@@ -167,13 +167,17 @@
                 name: 'status'
             },
             {
+                data: 'progress',
+                name: 'progress'
+            },
+            {
                 data: 'branch_id',
                 name: 'branch_id'
             },
 
             {
-                data: 'updated_at',
-                name: 'updated_at'
+                data: 'created_at',
+                name: 'created_at'
             },
 
 
@@ -299,4 +303,32 @@
         var contactType = $(this).val();
 
     });
+
+
+    function startBroadcast(id) {
+        $.post(
+            "{{ url('broadcast/start') }}/" + id, {
+                _token: '{{ csrf_token() }}'
+            },
+            function(response) {
+                if (response.success) {
+                    reloadTable();
+                }
+            }
+        );
+    }
+
+    function retryBroadcast(id) {
+        $.post(
+            "{{ url('broadcast/retry') }}/" + id,
+            {
+                _token: '{{ csrf_token() }}'
+            },
+            function(response) {
+                if (response.success) {
+                   reloadTable();
+                }
+            }
+        );
+    }
 </script>

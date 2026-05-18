@@ -43,9 +43,13 @@
                                 Template Name
                             </label>
 
-                            <input type="text" class="form-control modern-input" id="template_name"
+                            <select class="form-control modern-input" id="template_name"
                                 name="template_name" placeholder="Ex: promo_ramadhan" required>
-
+                                <option value="">- Select -</option>
+                                @foreach($templates as $template)
+                                    <option value="{{ $template->template_name }}">{{ $template->display_name }}</option>
+                                @endforeach
+                            </select>
                             <small class="text-muted">
                                 WhatsApp approved template name.
                             </small>
@@ -89,7 +93,7 @@
 
                                     @foreach ($dataContact as $contact)
                                         <option value="{{ $contact->id }}">
-                                            {{ $contact->fullname }}
+                                            {{ $contact->fullname }} - ({{ $contact->branch?->branch_name ?? '' }})
                                         </option>
                                     @endforeach
 
@@ -112,7 +116,7 @@
 
                                     @foreach ($dataGroup as $group)
                                         <option value="{{ $group->id }}">
-                                            {{ $group->group_name }}
+                                            {{ $group->group_name }} - ({{ $group->branch?->branch_name ?? '' }})
                                         </option>
                                     @endforeach
 
