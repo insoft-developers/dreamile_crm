@@ -88,9 +88,7 @@ class BroadcastController extends Controller
                 </span>
             ';
                 })
-                ->addColumn('recipients', function ($row) {
-                    return '<a href="javascript:void(0);"><center>View Recipients</center></a>';
-                })
+                
                 ->addColumn('created_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
                 })
@@ -115,7 +113,7 @@ class BroadcastController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'progress', 'status', 'recipients'])
+                ->rawColumns(['action', 'progress', 'status'])
                 ->make(true);
         }
     }

@@ -146,10 +146,7 @@
                 data: 'name',
                 name: 'name'
             },
-            {
-                data: 'recipients',
-                name: 'recipients'
-            },
+            
             {
                 data: 'total',
                 name: 'total'

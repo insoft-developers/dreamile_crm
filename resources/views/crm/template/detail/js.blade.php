@@ -2,7 +2,12 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('template.detail.table') }}',
+        ajax: {
+            url: '{{ route('template.detail.table') }}',
+            data: function(d) {
+                d.template_id = "{{ $template_id }}";
+            }
+        },
         order: [
             [0, 'asc']
         ],
@@ -40,7 +45,7 @@
                 data: 'template_id',
                 name: 'template_id'
             },
-           
+
             {
                 data: 'created_at',
                 name: 'created_at'
@@ -62,19 +67,23 @@
         save_method = "edit";
         $('input[name=_method]').val('PATCH');
         $.ajax({
-            url: "{{ url('/broadcast_template') }}" + "/" + id + "/edit",
+            url: "{{ url('/template_detail') }}" + "/" + id + "/edit",
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Template Data");
+                $('.modal-title').text("Edit Template Detail");
                 $('#id').val(data.id);
-                $("#display_name").val(data.display_name);
-                $("#template_name").val(data.template_name);
-                $("#category").val(data.category);
-                $("#language").val(data.language);
-                $("#total_variable").val(data.total_variable);
-                $("#status").val(data.status);
+                $("#template_id").val(data.template_id);
+                $("#content_type").val(data.content_type);
+                $("#field_type").val(data.field_type);
+                $("#field_value").val(data.field_value);
+                if (data.field_type != 'image' && data.field_type != 'text') {
+                    $("#field_value").prop("readonly", true);
+                } else {
+                    $("#field_value").prop("readonly", false);
+                }
+
 
             }
         })
@@ -143,7 +152,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('broadcast_template') }}" + "/" + id,
+                    url: "{{ url('template_detail') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -169,4 +178,14 @@
         $('#form-add')[0].reset();
     }
 
+    $("#field_type").change(function() {
+        let fieldType = $(this).val();
+        if (fieldType != 'image' && fieldType != 'text') {
+            $("#field_value").val('generate from database');
+            $("#field_value").prop("readonly", true);
+        } else {
+            $("#field_value").val('');
+            $("#field_value").prop("readonly", false);
+        }
+    });
 </script>

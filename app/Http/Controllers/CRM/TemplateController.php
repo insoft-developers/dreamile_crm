@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
 use App\Models\Template;
+use App\Models\TemplateDetail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -19,6 +20,10 @@ class TemplateController extends Controller
 
                 ->addColumn('created_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->updated_at));
+                })
+
+                ->addColumn('total_variable', function($row){
+                    return $row->detail->count();
                 })
 
                 ->addColumn('status', function($row){
@@ -90,7 +95,8 @@ class TemplateController extends Controller
     {
         $view = 'template-detail';
         $data = Template::find($id);
-        return view('crm.template.detail.index', compact('view','data'));
+        $template_id = $id;
+        return view('crm.template.detail.index', compact('view','data','template_id'));
     }
 
     /**
@@ -134,6 +140,7 @@ class TemplateController extends Controller
      */
     public function destroy(string $id)
     {
+        TemplateDetail::where('template_id', $id)->delete();
         return Template::destroy($id);
     }
 }

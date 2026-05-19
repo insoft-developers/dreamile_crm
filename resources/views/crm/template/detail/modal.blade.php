@@ -84,7 +84,6 @@
                                             <option value="image">Image</option>
                                             <option value="name">Name</option>
                                             <option value="school">School</option>
-                                            <option value="class">Class</option>
                                             <option value="phone_number">Phone Number</option>
                                             <option value="address">Address</option>
                                             <option value="email">Email</option>

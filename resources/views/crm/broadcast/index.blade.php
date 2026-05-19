@@ -35,7 +35,6 @@
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
                                             <th>Campaign Name</th>
-                                            <th>Recipients</th>
                                             <th>Total</th>
                                             <th>Sent</th>
                                             <th>Failed</th>

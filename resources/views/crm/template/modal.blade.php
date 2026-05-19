@@ -220,10 +220,10 @@
                                             name="total_variable"
                                             placeholder="Ex: 2"
                                             value="0"
-                                            required>
+                                            readonly>
 
                                         <small class="text-muted">
-                                            Example: {{1}}, {{2}}
+                                            Example: Setup in Manage menu
                                         </small>
 
                                     </div>

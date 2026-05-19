@@ -102,6 +102,7 @@
 
                         <tr>
 
+                            <th>Contact Name</th>
                             <th>Phone</th>
 
                             <th>Status</th>
@@ -119,7 +120,9 @@
                         @foreach($details as $item)
 
                         <tr>
-
+                            <td>
+                                {{ $item->customer?->fullname ?? '' }}
+                            </td>
                             <td>
                                 {{ $item->phone }}
                             </td>
@@ -148,8 +151,8 @@
 
                             </td>
 
-                            <td>
-                                {{ $item->error }}
+                            <td style="white-space:normal;width:200px;">
+                                <span>{{ $item->error }}</span>
                             </td>
 
                             <td>

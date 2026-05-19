@@ -14,6 +14,9 @@ class TemplateDetailController extends Controller
     {
         if ($request->ajax()) {
             $data = TemplateDetail::query();
+            if ($request->template_id) {
+                $data->where('template_id', $request->template_id);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
 
@@ -69,7 +72,22 @@ class TemplateDetailController extends Controller
             'field_value' => 'required',
         ]);
 
+        $chek = TemplateDetail::where('template_id', $input['template_id'])->where('content_type', 'header')->count();
 
+        if($chek > 0 && $input['content_type'] == 'header') {
+            return response()->json([
+                "success" => false,
+                "message" => "There's only one variable allowed in header!" 
+            ]);
+        }
+
+        if($input['content_type'] == 'body' && $input['field_type'] == 'image') {
+            return response()->json([
+                "success" => false,
+                "message" => "Image can only be used in header!" 
+            ]);
+        }
+ 
         TemplateDetail::create($input);
 
         return response()->json([
@@ -91,7 +109,8 @@ class TemplateDetailController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = TemplateDetail::find($id);
+        return $data;
     }
 
     /**
@@ -99,7 +118,28 @@ class TemplateDetailController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $input = $request->all();
+
+        $validated = $request->validate([
+            'content_type' => 'required',
+            'field_type' => 'required',
+            'field_value' => 'required',
+        ]);
+
+         if($input['content_type'] == 'body' && $input['field_type'] == 'image') {
+            return response()->json([
+                "success" => false,
+                "message" => "Image can only be used in header!" 
+            ]);
+        }
+
+        $data = TemplateDetail::find($id);
+        $data->update($input);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan.',
+        ]);
     }
 
     /**
@@ -107,6 +147,6 @@ class TemplateDetailController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return TemplateDetail::destroy($id);
     }
 }
