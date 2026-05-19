@@ -49,6 +49,43 @@ class Inbox extends Component
     public $replyMessageId = null;
     public $replyPreview = null;
 
+    public $lastMessageId;
+
+    public function checkNewMessage()
+    {
+        $message = WhatsappMessage::latest()->first();
+
+        if (!$message) {
+            return;
+        }
+
+        //
+        // Pertama load jangan bunyi
+        //
+        if (!$this->lastMessageId) {
+
+            $this->lastMessageId = $message->message_id;
+
+            return;
+        }
+
+        //
+        // Ada pesan baru
+        //
+        if (
+            $message->message_id != $this->lastMessageId &&
+            $message->sender == 'customer'
+        ) {
+
+            $this->lastMessageId = $message->message_id;
+
+            //
+            // PLAY SOUND
+            //
+            $this->dispatch('new-message');
+        }
+    }
+
     public function mount()
     {
         $this->agents = User::where('position', 'agent')->get();

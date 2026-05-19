@@ -100,20 +100,21 @@
     .chat-status {
         position: relative;
         top: -14px;
-        padding: 7px;
-        left: 163px;
+        padding: 4px 12px;
+        left: 63px;
         font-size: 8px;
     }
 
     .custom-badge-number {
-        background: orangered;
         padding: 3px 8px;
         font-size: 10px;
         color: white;
-        border-radius: 7px;
+        border-radius: 13px;
         position: relative;
         top: 20px;
         right: -17px;
+        background: #25aa43;
+        border: 2px solid whitesmoke;
     }
 
     .btn-3-chat {
@@ -275,8 +276,8 @@
         right: auto;
     }
 
-    .picker-right{
-            left: -78px;
-    width: 179px;
+    .picker-right {
+        left: -78px;
+        width: 179px;
     }
 </style>

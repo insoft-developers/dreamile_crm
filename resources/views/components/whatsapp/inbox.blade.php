@@ -1,4 +1,4 @@
-<div wire:poll.2s>
+<div wire:poll.2s="checkNewMessage">
     {{-- <div> --}}
     <div class="card border-0 shadow-sm overflow-hidden">
         <div class="row g-0">
@@ -683,11 +683,11 @@
 
                                                     @if ($msg->message)
                                                         <div class="mt-1">
-                                                             {!! makeLinksClickable($msg->message) !!}
+                                                            {!! makeLinksClickable($msg->message) !!}
                                                         </div>
                                                     @endif
                                                 @else
-                                                     {!! makeLinksClickable($msg->message) !!}
+                                                    {!! makeLinksClickable($msg->message) !!}
                                                 @endif
                                             @endif
 
@@ -942,7 +942,7 @@
 
                                                         @if ($msg->message)
                                                             <div class="mt-1">
-                                                                 {!! makeLinksClickable($msg->message) !!}
+                                                                {!! makeLinksClickable($msg->message) !!}
                                                             </div>
                                                         @endif
                                                     @elseif($msg->type == 'file')
@@ -1611,6 +1611,24 @@
 </script>
 <script>
     document.addEventListener('livewire:initialized', () => {
+
+        Livewire.on('new-message', () => {
+
+            let audio = document.getElementById('notifSound');
+
+            if (audio) {
+
+                audio.currentTime = 0;
+
+                audio.play().catch(error => {
+
+                    console.log(error);
+                });
+            }
+
+        });
+
+
         Livewire.on('closeDropdown', (event) => {
 
             let button = document.getElementById(event.id);

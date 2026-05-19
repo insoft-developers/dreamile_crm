@@ -3,6 +3,7 @@
 @section('content')
 
 <main class="app-wrapper">
+    
 
     <div class="container-fluid inbox-wrapper">
 

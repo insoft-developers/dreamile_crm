@@ -43,7 +43,9 @@
 
     <!-- Begin page -->
     <div id="layout-wrapper">
-
+        <audio id="notifSound" preload="auto">
+            <source src="{{ asset('sounds/dnotif.mp3') }}" type="audio/mpeg">
+        </audio>
         <!-- Begin Header -->
         @if ($view == 'inbox')
             <button type="button" style="display: none;" class="vertical-toggle btn header-btn" id="toggleSidebar"
@@ -824,6 +826,7 @@
             <i class="ri-arrow-up-line fs-16 z-1 position-relative text-primary"></i>
         </div>
         <!-- END scroll top --> <!-- Begin Footer -->
+        
         <footer class="footer">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center gap-2">
@@ -881,8 +884,6 @@
         @endif
     @endif
     <script type="module" src="{{ asset('template/crm') }}/assets/js/app.js"></script>
-
-
     <script>
         setInterval(() => {
             fetch("{{ url('heartbeat') }}", {
