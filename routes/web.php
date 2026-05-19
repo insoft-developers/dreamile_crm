@@ -14,6 +14,7 @@ use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
 use App\Http\Controllers\CRM\TemplateController;
+use App\Http\Controllers\CRM\TemplateDetailController;
 use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Models\ContactGroup;
@@ -83,6 +84,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/broadcast_template', TemplateController::class);
     Route::get('/template_table', [TemplateController::class, 'table'])->name('template.table');
+
+    Route::resource('/template_detail', TemplateDetailController::class);
+    Route::get('/template_detail_table', [TemplateDetailController::class, 'table'])->name('template.detail.table');
 
     Route::resource('/contact_group', ContactGroupController::class);
     Route::get('/contact_group_table', [ContactGroupController::class, 'table'])->name('contact.group.table');

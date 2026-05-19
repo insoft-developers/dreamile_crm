@@ -74,29 +74,29 @@ class SendWhatsappBroadcastJob implements ShouldQueue
                                 'code' => $template->language,
                             ],
 
-                            'components' => [
-                                [
-                                    'type' => 'body',
+                            // 'components' => [
+                            //     [
+                            //         'type' => 'body',
 
-                                    'parameters' => [
-                                        [
-                                            'type' => 'text',
+                            //         'parameters' => [
+                            //             [
+                            //                 'type' => 'text',
 
-                                            'text' => 'Budi',
-                                        ],
-                                        [
-                                            'type' => 'text',
+                            //                 'text' => 'Budi',
+                            //             ],
+                            //             [
+                            //                 'type' => 'text',
 
-                                            'text' => 'Budi',
-                                        ],
-                                        [
-                                            'type' => 'text',
+                            //                 'text' => 'Budi',
+                            //             ],
+                            //             [
+                            //                 'type' => 'text',
 
-                                            'text' => 'Budi',
-                                        ],
-                                    ],
-                                ],
-                            ],
+                            //                 'text' => 'Budi',
+                            //             ],
+                            //         ],
+                            //     ],
+                            // ],
                         ],
                     ]);
 

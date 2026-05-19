@@ -143,7 +143,7 @@ class BroadcastController extends Controller
             $dataGroup = ContactGroup::where('branch_id', Auth::user()->branch_id)->get();
         }
 
-        $templates = Template::all();
+        $templates = Template::where('status','active')->get();
 
         return view('crm.broadcast.index', compact('view', 'dataContact', 'dataGroup', 'templates'));
     }
