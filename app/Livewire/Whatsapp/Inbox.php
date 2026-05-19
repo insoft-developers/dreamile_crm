@@ -63,7 +63,6 @@ class Inbox extends Component
         // Pertama load jangan bunyi
         //
         if (!$this->lastMessageId) {
-
             $this->lastMessageId = $message->message_id;
 
             return;
@@ -72,11 +71,7 @@ class Inbox extends Component
         //
         // Ada pesan baru
         //
-        if (
-            $message->message_id != $this->lastMessageId &&
-            $message->sender == 'customer'
-        ) {
-
+        if ($message->message_id != $this->lastMessageId && $message->sender == 'customer') {
             $this->lastMessageId = $message->message_id;
 
             //
@@ -86,18 +81,27 @@ class Inbox extends Component
         }
     }
 
-    public function mount()
+    public function mount($customer = null)
     {
+        
         $this->agents = User::where('position', 'agent')->get();
         if (Auth::user()->position === 'agent') {
             $this->chatFilter = 'mychat';
         }
 
         $query = Branch::query();
-        if(empty(Auth::user()->branch_id)) {
+        if (empty(Auth::user()->branch_id)) {
             $this->branches = $query->get();
         } else {
             $this->branches = $query->where('id', Auth::user()->branch_id)->get();
+        }
+
+        if ($customer) {
+            $conversation = WhatsappConversation::where('phone', $customer->phone_number)->latest()->first();
+
+            if ($conversation) {
+                $this->selectConversation($conversation->id);
+            }
         }
     }
 
@@ -330,14 +334,11 @@ class Inbox extends Component
                 });
             })
             ->orderBy('fullname');
-        if(empty(Auth::user()->branch_id)) {
+        if (empty(Auth::user()->branch_id)) {
             $contacts = $contact_query->get();
         } else {
             $contacts = $contact_query->where('branch_id', Auth::user()->branch_id)->get();
         }
-
-           
-
 
         if ($this->selectedConversation) {
             $messages = WhatsappMessage::with(['replyTo', 'reactions'])
@@ -490,7 +491,6 @@ class Inbox extends Component
             $customer->major = $this->contactMajor;
             $customer->branch_id = $this->contactBranch;
             $customer->gender = $this->contactGender;
-            
 
             // hanya saat data baru
             if (!$customer->exists) {

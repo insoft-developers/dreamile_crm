@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -14,7 +15,8 @@ class ChatController extends Controller
     public function index()
     {
         $view = 'inbox';
-        return view('crm.whatsapp.inbox.index2', compact('view'));
+        $customer = null;
+        return view('crm.whatsapp.inbox.index2', compact('view', 'customer'));
     }
 
     /**
@@ -38,7 +40,9 @@ class ChatController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $view = 'inbox';
+        $customer= Customer::find($id);
+        return view('crm.whatsapp.inbox.index2', compact('view', 'customer'));
     }
 
     /**

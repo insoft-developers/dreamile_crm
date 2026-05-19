@@ -1577,38 +1577,81 @@
     import 'https://cdn.jsdelivr.net/npm/emoji-picker-element/index.js';
 </script>
 <script>
-    function isNearBottom(container, threshold = 100) {
-        return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
-    }
 
-    function scrollChatToBottom(force = false) {
-        let chatBody = document.getElementById('chat-body');
+    let shouldAutoScroll = true;
+
+    function scrollToBottom(force = false) {
+
+        const chatBody = document.getElementById('chat-body');
 
         if (!chatBody) return;
 
-        // cek posisi user
-        let shouldScroll = isNearBottom(chatBody);
+        if (shouldAutoScroll || force) {
 
-        if (shouldScroll || force) {
-            chatBody.scrollTop = chatBody.scrollHeight;
+            requestAnimationFrame(() => {
+
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+            });
         }
     }
 
     document.addEventListener('livewire:initialized', () => {
 
-        let chatBody = document.getElementById('chat-body');
+        // pertama kali load halaman
+        setTimeout(() => {
 
-        if (chatBody) {
-            // pertama kali load → paksa scroll
-            scrollChatToBottom(true);
-        }
+            scrollToBottom(true);
 
+        }, 300);
+
+        // detect user scroll
+        document.addEventListener('scroll', () => {
+
+            const chatBody = document.getElementById('chat-body');
+
+            if (!chatBody) return;
+
+            const threshold = 100;
+
+            const isBottom =
+                chatBody.scrollHeight -
+                chatBody.scrollTop -
+                chatBody.clientHeight <
+                threshold;
+
+            shouldAutoScroll = isBottom;
+
+        }, true);
+
+        // setelah livewire update
         Livewire.hook('morph.updated', () => {
-            scrollChatToBottom(false);
+
+            setTimeout(() => {
+
+                scrollToBottom(false);
+
+            }, 50);
+
+        });
+
+        // paksa scroll saat buka conversation
+        Livewire.on('force-scroll-bottom', () => {
+
+            shouldAutoScroll = true;
+
+            setTimeout(() => {
+
+                scrollToBottom(true);
+
+            }, 100);
+
         });
 
     });
+
 </script>
+    
 <script>
     document.addEventListener('livewire:initialized', () => {
 

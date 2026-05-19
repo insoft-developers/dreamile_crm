@@ -22,7 +22,7 @@
         </div>
 
         {{-- LIVEWIRE COMPONENT --}}
-        <livewire:whatsapp.inbox />
+        <livewire:whatsapp.inbox :customer="$customer" />
 
     </div>
 

@@ -139,7 +139,10 @@ class LeadController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    $button .= '<a href="' . url('/lead/' . $row->id) . '"><button title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
+                    $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
+
+                    $button .= '<a href="' . url('/lead/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
+
                     $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
                     $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
