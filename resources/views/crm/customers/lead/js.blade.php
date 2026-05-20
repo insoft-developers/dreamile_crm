@@ -753,4 +753,37 @@
 
         });
     });
+
+
+    function convert(id) {
+        Swal.fire({
+            title: 'Are sure?',
+            text: "This lead will be converted into customer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, Convert it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('convert') }}",
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        reloadTable();
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
+                            'error');
+                    }
+                });
+            }
+        });
+    }
 </script>

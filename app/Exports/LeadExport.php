@@ -46,7 +46,9 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     */
     public function collection()
     {
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch']);
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch'])
+             ->whereNull('is_customer');
+        
 
         // FILTER TANGGAL
         if ($this->request->start_date && $this->request->end_date) {

@@ -14,6 +14,7 @@ use App\Models\LeadSource;
 use App\Models\User;
 use App\Models\VisitImage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -31,6 +32,7 @@ class LeadController extends Controller
     {
         if ($request->ajax()) {
             $data = Customer::query();
+            $data->whereNull('is_customer');
             // 🔥 FILTER TANGGAL
             if ($request->start_date && $request->end_date) {
                 $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
@@ -140,6 +142,14 @@ class LeadController extends Controller
                     $button = '';
                     $button .= '<center>';
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
+
+                    if($row->is_customer == 1) {
+                        $button .= '<button disabled style="margin-left:3px;" title="Convert to Customer" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+                    } else {
+                        $button .= '<button onclick="convert('.$row->id.')" style="margin-left:3px;" title="Convert to Customer" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+                    }
+                    
+
 
                     $button .= '<a href="' . url('/lead/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
 
@@ -492,7 +502,8 @@ class LeadController extends Controller
     {
         $company = Company::first();
 
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy']);
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy'])
+             ->whereNull('is_customer');
 
         // FILTER TANGGAL
         if ($request->start_date && $request->end_date) {
@@ -527,5 +538,22 @@ class LeadController extends Controller
         $pdf->setPaper('legal', 'landscape');
 
         return $pdf->stream('Lead_Report.pdf');
+    }
+
+
+    public function convert(Request $request)
+    {
+        $input = $request->all();
+
+        $data = Customer::find($input['id']);
+        $data->is_customer = 1;
+        $data->updated_at = Carbon::now();
+        $data->save();
+
+        return response()->json([
+            "success" => true,
+            "message" => "Success"
+        ]);
+        
     }
 }

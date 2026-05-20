@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/follow_update', [LeadController::class, 'followUpdate'])->name('follow.update');
     Route::get('/lead/export/excel', [LeadController::class, 'exportExcel']);
     Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
+    Route::post('/convert', [LeadController::class, 'convert']);
 
     Route::get('/api/province', [AdministrativeController::class, 'province']);
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);
