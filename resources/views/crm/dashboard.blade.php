@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-xxl-8">
                     <div class="row h-100">
-                        <div class="col-xl-4 col-sm-6">
+                        <div class="col-xl-3 col-sm-6">
                             <div class="card card-h-100">
                                 <div class="card-body d-flex align-items-center justify-content-around">
                                     <div
@@ -18,68 +18,128 @@
                                         <i class="bi bi-folder2-open"></i>
                                     </div>
                                     <div>
-                                        <h3>$2,647 <i class="bi bi-graph-up-arrow text-success fw-normal fs-5"></i></h3>
-                                        <span class="fs-5">Today's Sales</span>
-                                        <p class="fs-12 mb-0">Sales Increment Rate</p>
+                                        <h3>{{ number_format($totalLeads) }} </h3>
+                                        <span class="fs-5">Total Leads</span>
+                                        <p class="fs-12 mb-0">+{{ $newLeadsToday }} today</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-sm-6">
+                        <div class="col-xl-3 col-sm-6">
                             <div class="card card-h-100">
                                 <div class="card-body d-flex align-items-center justify-content-around">
                                     <div
                                         class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-bookmark"></i>
+                                        <i class="bi bi-people"></i>
                                     </div>
                                     <div>
-                                        <h3>$24,057 <i class="bi bi-graph-up-arrow text-success fw-normal fs-5"></i></h3>
-                                        <span class="fs-5">Total Purchase</span>
-                                        <p class="fs-12 mb-0"><span class="text-success">+8%</span> Completion Rate</p>
+                                        <h3>{{ number_format($activeCustomers) }} </h3>
+                                        <span class="fs-5">Active Customers</span>
+                                        <p class="fs-12 mb-0"><span class="text-success">+{{ $newCustomersThisMonth }}</span> Customer This Month</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-sm-6">
+                        
+                        <div class="col-xl-3 col-sm-6">
                             <div class="card card-h-100">
                                 <div class="card-body d-flex align-items-center justify-content-around">
                                     <div
-                                        class="h-48px w-48px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-bookmark"></i>
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-cart"></i>
                                     </div>
                                     <div>
-                                        <h3>47% <i class="bi bi-graph-up-arrow text-success fw-normal fs-5"></i></h3>
-                                        <span class="fs-5">Overall Performance</span>
-                                        <p class="fs-12 mb-0"><span class="text-success">+12%</span>Completion Rate</p>
+                                        <h3>{{ $conversionRate }}% </h3>
+                                        <span class="fs-5">Conversion Rate</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-xxl-4">
-                    <div class="card overflow-hidden bg-primary card-h-100 p-4">
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="vector-image">
-                                    <img class="img-fluid welcome-img w-200px mb-n20 mt-n5"
-                                        src="{{ asset('template/crm') }}/assets/images/dashboard/upgrade-img.png"
-                                        alt="CRM Vector">
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="text-end">
-                                    <p class="mb-5 fs-16 fw-semibold text-white">Lorem ipsum dolor <br> sit lorem ipsum <br>
-                                        dolor sit</p>
-                                    <a href="javascript:void(0)" class="btn text-white border border-white mt-1">Upgrade</a>
+                        <div class="col-xl-3 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body d-flex align-items-center justify-content-around">
+                                    <div
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-broadcast"></i>
+                                    </div>
+                                    <div>
+                                        <h3>{{ $broadcastToday }} </h3>
+                                        <span class="fs-5">Broadcast Sent</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-xl-3 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body d-flex align-items-center justify-content-around">
+                                    <div
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-chat-dots text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h3>{{ $todayChats }}</h3>
+                                        <span class="fs-5">Chat Today</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body d-flex align-items-center justify-content-around">
+                                    <div
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-arrow-down-circle text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h3>{{ $incomingChats }} </h3>
+                                        <span class="fs-5">Incoming Chat</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body d-flex align-items-center justify-content-around">
+                                    <div
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-arrow-up-circle text-info"></i>
+                                    </div>
+                                    <div>
+                                        <h3>{{ $outgoingChats }}</h3>
+                                        <span class="fs-5">Outgoing Chat</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body d-flex align-items-center justify-content-around">
+                                    <div
+                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                        <i class="bi bi-chat-left-dots-fill text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h3>{{ $unreadChats }} </h3>
+                                        <span class="fs-5">Unread Chat</span>
+                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
+                    
                 </div>
+                
             </div>
             <div class="row">
-                <div class="col-12">
+                {{-- <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h4>Latest Order</h4>
@@ -284,7 +344,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-header">
