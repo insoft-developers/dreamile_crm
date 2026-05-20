@@ -826,7 +826,7 @@
             <i class="ri-arrow-up-line fs-16 z-1 position-relative text-primary"></i>
         </div>
         <!-- END scroll top --> <!-- Begin Footer -->
-        
+
         <footer class="footer">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center gap-2">
@@ -864,7 +864,7 @@
         @if ($view == 'dashboard')
             <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
             <!-- File js -->
-            <script src="{{ asset('template/crm') }}/assets/js/dashboard/e-commerce.init.js"></script>
+            {{-- <script src="{{ asset('template/crm') }}/assets/js/dashboard/e-commerce.init.js"></script> --}}
             <!-- App js -->
         @else
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -973,6 +973,175 @@
     @livewireScripts
 
 
+    @if ($view == 'dashboard')
+        <script>
+            function renderCharts() {
+
+                var options = {
+
+                    series: [{
+                            name: "Incoming Chat",
+                            data: @json($incomingData)
+                        },
+                        {
+                            name: "Outgoing Chat",
+                            data: @json($outgoingData)
+                        }
+                    ],
+
+                    chart: {
+                        height: 380,
+                        type: "area",
+                        toolbar: {
+                            show: false
+                        }
+                    },
+
+                    colors: ["#198754", "#0d6efd"],
+
+                    dataLabels: {
+                        enabled: false
+                    },
+
+                    stroke: {
+                        curve: "smooth",
+                        width: 3
+                    },
+
+                    grid: {
+                        borderColor: "#f1f1f1",
+                    },
+
+                    xaxis: {
+                        categories: @json($dates),
+
+                        axisBorder: {
+                            show: false
+                        }
+                    },
+
+                    yaxis: {
+                        labels: {
+                            formatter: function(value) {
+                                return value.toFixed(0);
+                            }
+                        }
+                    },
+
+                    tooltip: {
+                        theme: "dark"
+                    },
+
+                    legend: {
+                        position: 'top'
+                    },
+
+                    fill: {
+                        type: "gradient",
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.4,
+                            opacityTo: 0.1,
+                        }
+                    }
+                };
+
+                var chart = new ApexCharts(
+                    document.querySelector("#average-line"),
+                    options
+                );
+
+                chart.render();
+            }
+
+            renderCharts();
+        </script>
+
+        <script>
+            function renderLeadConversionChart() {
+
+                var options = {
+
+                    series: [{
+                            name: 'Leads',
+                            data: @json($leadData)
+                        },
+                        {
+                            name: 'Customers',
+                            data: @json($customerData)
+                        }
+                    ],
+
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        toolbar: {
+                            show: false
+                        }
+                    },
+
+                    colors: ["#ffc107", "#198754"],
+
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '50%',
+                            borderRadius: 6,
+                            borderRadiusApplication: 'end'
+                        },
+                    },
+
+                    dataLabels: {
+                        enabled: false
+                    },
+
+                    stroke: {
+                        show: true,
+                        width: 2,
+                        colors: ['transparent']
+                    },
+
+                    xaxis: {
+                        categories: @json($months),
+                    },
+
+                    yaxis: {
+                        labels: {
+                            formatter: function(value) {
+                                return value.toFixed(0);
+                            }
+                        }
+                    },
+
+                    fill: {
+                        opacity: 1
+                    },
+
+                    legend: {
+                        position: 'top'
+                    },
+
+                    tooltip: {
+                        theme: 'dark'
+                    },
+
+                    grid: {
+                        borderColor: '#f1f1f1',
+                    }
+
+                };
+
+                var chart = new ApexCharts(
+                    document.querySelector("#average-bar"),
+                    options
+                );
+
+                chart.render();
+            }
+
+            renderLeadConversionChart();
+        </script>
+    @endif
 
 </body>
 

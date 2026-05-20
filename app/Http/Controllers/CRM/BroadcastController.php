@@ -21,8 +21,14 @@ class BroadcastController extends Controller
     {
         if ($request->ajax()) {
             $data = Broadcast::query();
+            if(Auth::user()->branch_id) {
+                $data->where('branch_id', Auth::user()->branch_id);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('branch_id', function($row){
+                    return $row->branch?->branch_name ?? '';
+                })
                 ->addColumn('progress', function ($row) {
                     $percent = 0;
 

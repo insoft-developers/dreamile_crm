@@ -6,40 +6,7 @@ File: E-Commerce init js
 */
 function renderCharts() {
   // Average line
-  var options = {
-    series: [
-      {
-        name: "Current Year",
-        data: [800, 850, 780, 850, 860, 880, 900, 1000, 1200, 1400,]
-      },
-      {
-        name: "Prior Year",
-        data: [880, 600, 630, 590, 660, 950, 800, 900, 1000, 1200,]
-      }
-    ],
-    chart: {
-      height: 380,
-      type: "area",
-      toolbar: { show: false }
-    },
-    colors: ["#5b66eb", "#ffc107"],
-    dataLabels: { enabled: false },
-    stroke: { curve: "smooth", width: 2 },
-    grid: { show: false },
-    xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov"],
-      axisBorder: { show: false },
-    },
-    yaxis: {
-      categories: ["$200", "$400", "$600", "$800", "$1k", "$1.2K", "$1.4K"],
-      axisBorder: { show: false },
-    },
-    tooltip: { theme: "dark" }
-  };
-
-  var chart = new ApexCharts(document.querySelector("#average-line"), options);
-  chart.render();
-
+  
 
   // Average bar
   var options = {
