@@ -6,6 +6,7 @@ use App\Http\Controllers\CRM\BroadcastController;
 use App\Http\Controllers\CRM\ChatController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\ContactGroupController;
+use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
 use App\Http\Controllers\CRM\GroupManageController;
@@ -38,17 +39,17 @@ use Svg\Tag\Group;
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', [DashboardController::class, 'index']);
-    Route::resource('/company', CompanyController::class);
+    Route::resource('/company', CompanyController::class)->middleware('super');
     Route::get('/company_table', [CompanyController::class, 'table'])->name('company.table');
-    Route::resource('/branch', BranchController::class);
+    Route::resource('/branch', BranchController::class)->middleware('super');
     Route::get('/branch_table', [BranchController::class, 'table'])->name('branch.table');
-    Route::resource('/user', UserController::class);
+    Route::resource('/user', UserController::class)->middleware('super');
     Route::get('/user_table', [UserController::class, 'table'])->name('user.table');
     Route::post('/user_activate', [UserController::class, 'activate']);
 
     // Route::resource('/position', PositionController::class);
     // Route::get('/position_table', [PositionController::class, 'table'])->name('position.table');
-    Route::resource('/level', LevelController::class);
+    Route::resource('/level', LevelController::class)->middleware('super');
     Route::get('/level_table', [LevelController::class, 'table'])->name('level.table');
 
     Route::resource('/lead_source', LeadSourceController::class);
@@ -71,6 +72,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lead/export/excel', [LeadController::class, 'exportExcel']);
     Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
     Route::post('/convert', [LeadController::class, 'convert']);
+
+    Route::resource('/customer', CustomerController::class);
+    Route::get('/customer_table', [CustomerController::class, 'table'])->name('customer.table');
+    Route::get('/customer/export/excel', [CustomerController::class, 'exportExcel']);
+    Route::get('/customer/export/pdf', [CustomerController::class, 'exportPDF']);
+    Route::post('/downgrade', [CustomerController::class, 'downgrade']);
+
+
 
     Route::get('/api/province', [AdministrativeController::class, 'province']);
     Route::get('/api/regency/{provinceCode}', [AdministrativeController::class, 'regency']);

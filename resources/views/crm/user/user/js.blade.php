@@ -33,6 +33,10 @@
                 name: 'name'
             },
             {
+                data: 'activity',
+                name: 'activity'
+            },
+            {
                 data: 'is_active',
                 name: 'is_active'
             },

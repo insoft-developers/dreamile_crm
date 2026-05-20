@@ -83,7 +83,6 @@ class Inbox extends Component
 
     public function mount($customer = null)
     {
-        
         $this->agents = User::where('position', 'agent')->get();
         if (Auth::user()->position === 'agent') {
             $this->chatFilter = 'mychat';
@@ -101,6 +100,8 @@ class Inbox extends Component
 
             if ($conversation) {
                 $this->selectConversation($conversation->id);
+            } else {
+                $this->startChatFromContact($customer->id);
             }
         }
     }

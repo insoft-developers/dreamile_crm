@@ -56,7 +56,18 @@ class UserController extends Controller
                         return 'Admin';
                     } 
                     
-                    
+                })
+
+                ->addColumn('activity', function($row){
+                    if($row->isOnline()) {
+                       return  '<span class="text-success">
+                            <strong>Online</strong>
+                        </span>';
+                    } else {
+                        return '<span class="text-danger">
+                            Offline
+                        </span>';
+                    }
                 })
                 ->addColumn('is_active', function ($row) {
                     return $row->is_active == 1 ? '<span class="badge bg-success rounded-pill">active</span>' : '<span class="badge bg-danger rounded-pill">not active</span>';
@@ -77,7 +88,7 @@ class UserController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','photo_profile','is_active'])
+                ->rawColumns(['action','photo_profile','is_active','activity'])
                 ->make(true);
         }
     }

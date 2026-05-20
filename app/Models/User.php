@@ -20,27 +20,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'position',
-        'level',
-        'branch_id',
-        'photo_profile',
-        'last_seen'
-
-    ];
+    protected $fillable = ['name', 'email', 'password', 'position', 'level', 'branch_id', 'photo_profile', 'last_seen'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * The attributes that should be cast.
@@ -50,6 +37,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_seen' => 'datetime',
     ];
 
     public function branch(): BelongsTo
@@ -66,4 +54,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Position::class, 'position', 'slug');
     }
+
+    public function isOnline()
+    {
+        return $this->last_seen && $this->last_seen->gt(now()->subMinutes(2));
+    }
+
+    
 }

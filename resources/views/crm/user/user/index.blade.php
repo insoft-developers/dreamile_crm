@@ -36,6 +36,7 @@
                                             <th class="text-center">Aksi</th>
                                             <th>Photo</th>
                                             <th>Name</th>
+                                            <th>Activity</th>
                                             <th>Status</th>
                                             <th>Email</th>
                                             <th>Branch</th>

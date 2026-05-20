@@ -22,11 +22,13 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
 {
     protected $request;
     protected $company;
+    protected $isCustomer;
 
-    public function __construct($request, $company)
+    public function __construct($request, $company, $isCustomer = null)
     {
         $this->request = $request;
         $this->company = $company;
+        $this->isCustomer = $isCustomer;
     }
 
     /*
@@ -46,8 +48,13 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     */
     public function collection()
     {
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch'])
-             ->whereNull('is_customer');
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch']);
+            if($this->isCustomer) {
+                $data->where('is_customer', 1);
+            } else {
+                $data->whereNull('is_customer');
+            }
+             
         
 
         // FILTER TANGGAL
@@ -172,9 +179,10 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     {
         $company_name = $this->company->company_name;
         $address = $this->company->address;
+        $reportTitle = $this->isCustomer ? "CUSTOMER DATA REPORT" :"LEAD DATA REPORT";
 
         return [
-            AfterSheet::class => function (AfterSheet $event) use ($company_name, $address) {
+            AfterSheet::class => function (AfterSheet $event) use ($company_name, $address, $reportTitle) {
                 $sheet = $event->sheet;
 
                 /*
@@ -194,7 +202,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
 
                 // REPORT TITLE
                 $sheet->mergeCells('A3:S3');
-                $sheet->setCellValue('A3', 'LEAD DATA REPORT');
+                $sheet->setCellValue('A3', $reportTitle);
 
                 /*
                 |--------------------------------------------------------------------------
