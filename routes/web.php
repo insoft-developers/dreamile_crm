@@ -14,6 +14,7 @@ use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
+use App\Http\Controllers\CRM\ReportController;
 use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\TemplateDetailController;
 use App\Http\Controllers\CRM\UserController;
@@ -105,6 +106,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group_manage_table', [GroupManageController::class, 'table'])->name('group.manage.table');
 
     Route::post('/heartbeat', [DashboardController::class, 'hearbeat']);
+
+
+    Route::get('/lead_report', [ReportController::class, 'lead']);
+    Route::get('/report/lead/data', [ReportController::class, 'leadReportData']);
+
+    Route::get('/chat_report', [ReportController::class, 'chat']);
+    Route::get('/broadcast_report', [ReportController::class, 'broadcast']);
+    Route::get('/followup_report', [ReportController::class, 'followup']);
+    Route::get('/conversion_report', [ReportController::class, 'conversion']);
+    Route::get('/admin_performance_report', [ReportController::class, 'admin_performance']);
 });
 
 Route::middleware('auth')->group(function () {

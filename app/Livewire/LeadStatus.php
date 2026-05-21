@@ -14,9 +14,8 @@ class LeadStatus extends Component
         if (Auth::user()->branch_id) {
             $query->where('branch_id', Auth::user()->branch_id);
         }
-        
+
         $data = $query->selectRaw('status, COUNT(*) as total')->groupBy('status')->pluck('total', 'status');
         return view('components.lead-status', compact('data'));
     }
 }
-

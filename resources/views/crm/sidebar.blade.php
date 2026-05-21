@@ -1,26 +1,24 @@
 @php
 
-$whatsappMenu =
-    request()->is('chat');
+    $whatsappMenu = request()->is('chat');
 
-$customerMenu =
-    request()->is('lead') ||
-    request()->is('customer') ||
-    request()->is('lead_source') ||
-    request()->is('event');
+    $customerMenu =
+        request()->is('lead') || request()->is('customer') || request()->is('lead_source') || request()->is('event');
 
-$broadcastMenu =
-    request()->is('broadcast') ||
-    request()->is('contact_group') ||
-    request()->is('broadcast_template');
+    $broadcastMenu =
+        request()->is('broadcast') || request()->is('contact_group') || request()->is('broadcast_template');
 
-$settingMenu =
-    request()->is('company') ||
-    request()->is('branch') ||
-    request()->is('level');
+    $settingMenu = request()->is('company') || request()->is('branch') || request()->is('level');
 
-$userMenu =
-    request()->is('user');
+    $userMenu = request()->is('user');
+
+    $reportMenu =
+        request()->is('lead_report') ||
+        request()->is('chat_report') ||
+        request()->is('broadcast_report') ||
+        request()->is('followup_report') ||
+        request()->is('conversion_report') ||
+        request()->is('admin_performance_report');
 
 @endphp
 
@@ -29,12 +27,9 @@ $userMenu =
     <div class="pe-app-sidebar-logo px-6 d-flex align-items-center position-relative">
 
         <a href="{{ url('/') }}" class="d-flex align-items-end logo-main">
-            <img height="45" width="45" class="logo-dark"
-                alt="Dark Logo"
-                src="{{ asset('images/logo_trans.png') }}">
+            <img height="45" width="45" class="logo-dark" alt="Dark Logo" src="{{ asset('images/logo_trans.png') }}">
 
-            <img height="45" width="45" class="logo-light"
-                alt="Light Logo"
+            <img height="45" width="45" class="logo-light" alt="Light Logo"
                 src="{{ asset('images/logo_trans.png') }}">
         </a>
 
@@ -44,9 +39,7 @@ $userMenu =
 
     </div>
 
-    <nav class="pe-app-sidebar-menu nav nav-pills"
-        data-simplebar
-        id="sidebar-simplebar">
+    <nav class="pe-app-sidebar-menu nav nav-pills" data-simplebar id="sidebar-simplebar">
 
         <div class="d-flex align-items-start flex-column w-100">
 
@@ -56,8 +49,7 @@ $userMenu =
                 <li class="pe-menu-title">Dashboard</li>
 
                 <li class="pe-slide pe-has-sub">
-                    <a href="{{ url('/') }}"
-                        class="pe-nav-link {{ request()->is('/') ? 'active' : '' }}">
+                    <a href="{{ url('/') }}" class="pe-nav-link {{ request()->is('/') ? 'active' : '' }}">
 
                         <i class="ri-dashboard-line pe-nav-icon"></i>
 
@@ -73,8 +65,7 @@ $userMenu =
                 <!-- Whatsapp -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapseAuth"
-                        class="pe-nav-link {{ $whatsappMenu ? 'active' : '' }}"
+                    <a href="#collapseAuth" class="pe-nav-link {{ $whatsappMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-whatsapp-line pe-nav-icon"></i>
@@ -86,8 +77,7 @@ $userMenu =
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $whatsappMenu ? 'show' : '' }}"
-                        id="collapseAuth">
+                    <ul class="pe-slide-menu collapse {{ $whatsappMenu ? 'show' : '' }}" id="collapseAuth">
 
                         <li class="slide pe-nav-content1">
                             <a href="javascript:void(0)">
@@ -110,8 +100,7 @@ $userMenu =
                 <!-- Customers -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapsePages"
-                        class="pe-nav-link {{ $customerMenu ? 'active' : '' }}"
+                    <a href="#collapsePages" class="pe-nav-link {{ $customerMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-customer-service-2-line pe-nav-icon"></i>
@@ -123,8 +112,7 @@ $userMenu =
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $customerMenu ? 'show' : '' }}"
-                        id="collapsePages">
+                    <ul class="pe-slide-menu collapse {{ $customerMenu ? 'show' : '' }}" id="collapsePages">
 
                         <li class="slide pe-nav-content1">
                             <a href="javascript:void(0)">
@@ -168,40 +156,12 @@ $userMenu =
 
                 </li>
 
-                <!-- Reports -->
-                <li class="pe-slide pe-has-sub">
-
-                    <a href="#collapseBaseUI"
-                        class="pe-nav-link"
-                        data-bs-toggle="collapse">
-
-                        <i class="ri-file-chart-line pe-nav-icon"></i>
-
-                        <span class="pe-nav-content">
-                            Reports
-                        </span>
-
-                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
-                    </a>
-
-                    <ul class="pe-slide-menu collapse"
-                        id="collapseBaseUI">
-
-                        <li class="slide pe-nav-content1">
-                            <a href="javascript:void(0)">
-                                Reports
-                            </a>
-                        </li>
-
-                    </ul>
-
-                </li>
+                
 
                 <!-- Broadcast -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapseAdvancedUI"
-                        class="pe-nav-link {{ $broadcastMenu ? 'active' : '' }}"
+                    <a href="#collapseAdvancedUI" class="pe-nav-link {{ $broadcastMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-broadcast-line pe-nav-icon"></i>
@@ -213,8 +173,7 @@ $userMenu =
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $broadcastMenu ? 'show' : '' }}"
-                        id="collapseAdvancedUI">
+                    <ul class="pe-slide-menu collapse {{ $broadcastMenu ? 'show' : '' }}" id="collapseAdvancedUI">
 
                         <li class="slide pe-nav-content1">
                             <a href="javascript:void(0)">
@@ -250,11 +209,72 @@ $userMenu =
 
                 </li>
 
+                <!-- Reports -->
+                <li class="pe-slide pe-has-sub">
+
+                    <a href="#collapseBaseUI" class="pe-nav-link" data-bs-toggle="collapse">
+
+                        <i class="ri-file-chart-line pe-nav-icon"></i>
+
+                        <span class="pe-nav-content">
+                            Reports
+                        </span>
+
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+
+                    <ul class="pe-slide-menu collapse {{ $reportMenu ? 'show' : '' }}" id="collapseBaseUI">
+
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">
+                                Reports
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('lead_report') }}"
+                                class="pe-nav-link {{ request()->is('lead_report') ? 'active' : '' }}">
+                                Lead Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('chat_report') }}"
+                                class="pe-nav-link {{ request()->is('chat_report') ? 'active' : '' }}">
+                                Chat Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('broadcast_report') }}"
+                                class="pe-nav-link {{ request()->is('broadcast_report') ? 'active' : '' }}">
+                                Broadcast Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('followup_report') }}"
+                                class="pe-nav-link {{ request()->is('followup_report') ? 'active' : '' }}">
+                                Followup Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('conversion_report') }}"
+                                class="pe-nav-link {{ request()->is('conversion_report') ? 'active' : '' }}">
+                                Conversion Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('admin_performance_report') }}"
+                                class="pe-nav-link {{ request()->is('admin_performance_report') ? 'active' : '' }}">
+                                Admin Performance Report
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
                 <!-- Users -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapseFroms"
-                        class="pe-nav-link {{ $userMenu ? 'active' : '' }}"
+                    <a href="#collapseFroms" class="pe-nav-link {{ $userMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-user-line pe-nav-icon"></i>
@@ -266,8 +286,7 @@ $userMenu =
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $userMenu ? 'show' : '' }}"
-                        id="collapseFroms">
+                    <ul class="pe-slide-menu collapse {{ $userMenu ? 'show' : '' }}" id="collapseFroms">
 
                         <li class="slide pe-nav-content1">
                             <a href="javascript:void(0)">
@@ -290,8 +309,7 @@ $userMenu =
                 <!-- Settings -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapseCharts"
-                        class="pe-nav-link {{ $settingMenu ? 'active' : '' }}"
+                    <a href="#collapseCharts" class="pe-nav-link {{ $settingMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-settings-line pe-nav-icon"></i>
@@ -303,8 +321,7 @@ $userMenu =
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $settingMenu ? 'show' : '' }}"
-                        id="collapseCharts">
+                    <ul class="pe-slide-menu collapse {{ $settingMenu ? 'show' : '' }}" id="collapseCharts">
 
                         <li class="slide pe-nav-content1">
                             <a href="#">
@@ -347,8 +364,7 @@ $userMenu =
 
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="{{ route('logout') }}"
-                        class="pe-nav-link"
+                    <a href="{{ route('logout') }}" class="pe-nav-link"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
 
                         <i class="ri-logout-circle-r-line pe-nav-icon"></i>
@@ -359,10 +375,7 @@ $userMenu =
 
                     </a>
 
-                    <form id="logout-form"
-                        action="{{ route('logout') }}"
-                        method="POST"
-                        style="display:none;">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
 
                         @csrf
                     </form>
