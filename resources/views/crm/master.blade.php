@@ -863,7 +863,6 @@
         <script src="{{ asset('template/crm') }}/assets/libs/gridjs/gridjs.umd.js" type="text/javascript"></script>
         @if ($view == 'dashboard')
             <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
-           
         @else
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"
                 integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -881,9 +880,9 @@
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         @endif
     @endif
-    
-    @if($view == 'report')
-    <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    @if ($view == 'report')
+        <script src="{{ asset('template/crm') }}/assets/libs/apexcharts/apexcharts.min.js"></script>
     @endif
     <script type="module" src="{{ asset('template/crm') }}/assets/js/app.js"></script>
     <script>
@@ -954,6 +953,15 @@
             const detik = String(d.getSeconds()).padStart(2, '0');
 
             return `${jam}:${menit}:${detik}`;
+        }
+
+        function tanggalIndo(dateString) {
+
+            let d = new Date(dateString);
+
+            return String(d.getDate()).padStart(2, '0') + '-' +
+                String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                d.getFullYear();
         }
     </script>
 

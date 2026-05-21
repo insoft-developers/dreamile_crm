@@ -82,6 +82,13 @@ class ReportController extends Controller
 
         $sources = (clone $query)->selectRaw('lead_source_id,COUNT(*) as total')->groupBy('lead_source_id')->orderByDesc('total')->take(5)->get();
 
+        $topAdmins = (clone $query)->selectRaw('created_by,COUNT(*) as total')->with('createdBy')->groupBy('created_by')->orderByDesc('total')->take(5)->get();
+
+        $recentLeads = (clone $query)->with('branch', 'createdBy')
+            ->latest()
+            ->take(10)
+            ->get();
+
         return response()->json([
             'summary' => $summary,
             'daily' => $daily,
@@ -97,6 +104,8 @@ class ReportController extends Controller
                 'labels' => $sources->pluck('lead_source_id'),
                 'data' => $sources->pluck('total'),
             ],
+            'top_admins' => $topAdmins,
+            'recent_leads' => $recentLeads,
         ]);
     }
 

@@ -261,7 +261,7 @@
                         </div>
 
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-6">
                             <div class="card shadow-sm border-0 rounded-4 mb-4">
 
@@ -305,15 +305,138 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="row g-4">
 
-                        <div class="card-body">
+                        {{-- Top Lead Sources --}}
+                        <div class="col-xl-6">
 
-                            <h5 class="fw-bold mb-4">
-                                Top Lead Sources
-                            </h5>
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
 
-                            <div id="sourceChart"></div>
+                                <div class="card-body p-4">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <div>
+
+                                            <h5 class="fw-bold mb-1">
+                                                Top Lead Sources
+                                            </h5>
+
+                                            <p class="text-muted small mb-0">
+                                                Best performing lead channels
+                                            </p>
+
+                                        </div>
+
+                                        <div class="icon-box bg-primary-subtle text-primary rounded-circle">
+
+                                            <i class="bi bi-pie-chart fs-5"></i>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div id="sourceChart"></div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {{-- Top Admin --}}
+                        <div class="col-xl-6">
+
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
+
+                                <div class="card-body p-4">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <div>
+
+                                            <h5 class="fw-bold mb-1">
+                                                Top Admin
+                                            </h5>
+
+                                            <p class="text-muted small mb-0">
+                                                Most active consultants today
+                                            </p>
+
+                                        </div>
+
+                                        <div class="icon-box bg-success-subtle text-success rounded-circle">
+
+                                            <i class="bi bi-trophy fs-5"></i>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div id="topAdmins"></div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- Recent Leads --}}
+                    <div class="card border-0 shadow-sm rounded-4 mt-4">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <div>
+
+                                    <h5 class="fw-bold mb-1">
+                                        Recent Leads
+                                    </h5>
+
+                                    <p class="text-muted small mb-0">
+                                        Latest incoming leads activity
+                                    </p>
+
+                                </div>
+
+                                <button class="btn btn-light rounded-pill px-3">
+
+                                    <i class="bi bi-filter me-1"></i>
+
+                                    Filter
+
+                                </button>
+
+                            </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table align-middle table-hover">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th class="border-0">Lead</th>
+
+                                            <th class="border-0">Status</th>
+
+                                            <th class="border-0">Admin</th>
+
+                                            <th class="border-0 text-end">Date</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="recentLeadsTable"></tbody>
+
+                                </table>
+
+                            </div>
 
                         </div>
 
@@ -322,8 +445,6 @@
                 </div>
 
             </div>
-
-        </div>
 
     </main>
     <style>

@@ -148,7 +148,7 @@
                             
                         </div>
                         <div class="card-body">
-                            <livewire:recentchats/>
+                            <livewire:RecentChats/>
                         </div>
                     </div>
                 </div>
@@ -395,7 +395,7 @@
                                     
                                 </div>
                                 <div class="card-body product-body bg-body m-4 mt-0">
-                                    <livewire:useronline/>
+                                    <livewire:UserOnline/>
                                     
                                 </div>
                             </div>
@@ -407,7 +407,7 @@
                                     
                                 </div>
                                 <div class="card-body product-body bg-body m-4 mt-0">
-                                    <livewire:leadstatus/>
+                                    <livewire:LeadStatus/>
                                     
                                 </div>
                             </div>

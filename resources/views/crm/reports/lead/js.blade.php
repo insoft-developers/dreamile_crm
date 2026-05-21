@@ -179,7 +179,9 @@
 
                 renderLeadsChart(response.chart);
                 renderStatusChart(response.status_chart);
-                renderSourceChart(response.source_chart); 
+                renderSourceChart(response.source_chart);
+                renderTopAdmins(response.top_admins);
+                renderRecentLeads(response.recent_leads);
 
 
             }
@@ -362,5 +364,69 @@
         );
 
         sourceChart.render();
+    }
+
+    function renderTopAdmins(admins) {
+        let html = '';
+
+        admins.forEach(function(admin) {
+
+            html += `
+
+            <div class="d-flex
+                        justify-content-between
+                        align-items-center
+                        mb-3">
+
+                <div>
+
+                    <h6 class="mb-0">
+                        ${admin.created_by.name}
+                    </h6>
+
+                    <small class="text-muted">
+                        Leads handled
+                    </small>
+
+                </div>
+
+                <span class="badge bg-primary">
+                    ${admin.total}
+                </span>
+
+            </div>
+
+        `;
+        });
+
+        $('#topAdmins').html(html);
+    }
+
+    function renderRecentLeads(leads) {
+        let html = '';
+        leads.forEach(function(lead) {
+            html += `
+            <tr>
+                <td>
+                    ${lead.fullname}
+                </td>
+                <td>
+                    <span class="badge bg-primary">
+                        ${lead.status}
+                    </span>
+                </td>
+                <td>
+                    ${lead.created_by
+                        ? lead.created_by.name
+                        : '-'}
+                </td>
+                <td>
+                    ${formatTgl(lead.created_at)}
+                </td>
+            </tr>
+        `;
+        });
+
+        $('#recentLeadsTable').html(html);
     }
 </script>
