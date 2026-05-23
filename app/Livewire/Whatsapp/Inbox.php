@@ -123,6 +123,12 @@ class Inbox extends Component
                 'unread_count' => 0,
             ]);
         }
+        
+
+        $this->dispatch('open-mobile-chat');
+
+
+
     }
 
     /*

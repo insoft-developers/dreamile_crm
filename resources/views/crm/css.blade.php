@@ -280,4 +280,35 @@
         left: -78px;
         width: 179px;
     }
+
+   @media (max-width: 767px) {
+
+    #list-chat-area{
+        width:100%;
+        height:100%;
+        display:block;
+    }
+
+    #content-chat-area{
+        position:fixed;
+        top:0;
+        left:100%;
+        width:100%;
+        height:100dvh;
+        background:#fff;
+        z-index:9999;
+        transition:.25s;
+    }
+
+    body.mobile-chat-open #content-chat-area{
+        left:0;
+    }
+
+    body.mobile-chat-open #list-chat-area{
+        display:none;
+    }
+
+}
+
+
 </style>

@@ -4,13 +4,17 @@
         <div class="row g-0">
 
             {{-- SIDEBAR --}}
-            <div class="col-md-3 border-end bg-white">
+
+            <div class="col-md-3 border-end bg-white" id="list-chat-area">
 
                 {{-- HEADER --}}
                 <div class="p-3 border-bottom d-flex align-items-center justify-content-between"
                     style="background:#f0f2f5;">
 
                     <div class="d-flex align-items-center">
+
+    <!-- MOBILE BACK -->
+    
 
                         <div class="
                                 rounded-circle
@@ -194,7 +198,7 @@
 
                         @forelse ($conversations as $conversation)
                             <div wire:key="conversation-{{ $conversation->id }}"
-                                wire:click="selectConversation({{ $conversation->id }})" class="border-bottom"
+                                wire:click="selectConversation({{ $conversation->id }})" onclick="openMobileChat()" class="border-bottom"
                                 style="cursor:pointer;height:78px;
                                     background: {{ optional($selectedConversation)->id == $conversation->id ? '#f0f2f5' : 'white' }};">
 
@@ -351,7 +355,14 @@
             </div>
 
             {{-- CHAT ROOM --}}
-            <div class="col-md-9">
+            <div class="col-md-9" id="content-chat-area">
+                <button
+                    class="btn btn-sm me-2 d-md-none"
+                    onclick="closeMobileChat()">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                </button>
 
                 @if ($selectedConversation)
 
@@ -1578,6 +1589,24 @@
 </script>
 <script>
 
+     function openMobileChat()
+    {
+        if(window.innerWidth < 768){
+
+            document.body.classList.add('mobile-chat-open');
+
+            localStorage.setItem('mobileChatOpen', '1');
+        }
+    }
+
+    function closeMobileChat()
+    {
+        document.body.classList.remove('mobile-chat-open');
+
+        localStorage.removeItem('mobileChatOpen');
+    }
+
+
     let shouldAutoScroll = true;
 
     function scrollToBottom(force = false) {
@@ -1595,6 +1624,9 @@
             });
         }
     }
+
+
+     
 
     document.addEventListener('livewire:initialized', () => {
 
@@ -1624,7 +1656,7 @@
 
         }, true);
 
-        // setelah livewire update
+       
         Livewire.hook('morph.updated', () => {
 
             setTimeout(() => {
@@ -1632,6 +1664,7 @@
                 scrollToBottom(false);
 
             }, 50);
+
 
         });
 
@@ -1654,6 +1687,23 @@
     
 <script>
     document.addEventListener('livewire:initialized', () => {
+
+        
+  
+
+        Livewire.hook('commit', () => {
+
+            if(localStorage.getItem('mobileChatOpen') == '1'){
+
+                document.body.classList.add('mobile-chat-open');
+
+            }
+
+        });
+
+
+
+
 
         Livewire.on('new-message', () => {
 
@@ -1761,3 +1811,6 @@
         }
     }
 </script>
+
+
+
