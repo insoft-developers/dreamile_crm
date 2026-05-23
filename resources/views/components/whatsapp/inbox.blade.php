@@ -357,7 +357,7 @@
             {{-- CHAT ROOM --}}
             <div class="col-md-9" id="content-chat-area">
                 <button
-                    class="btn btn-sm me-2 d-md-none"
+                    class="btn btn-sm me-2 d-md-none btn-back-chat"
                     onclick="closeMobileChat()">
 
                     <i class="bi bi-arrow-left"></i>
@@ -378,7 +378,7 @@
                             background:#f0f2f5;
                         ">
 
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center profile-photo">
 
                             @if (!empty($selectedConversation->customer && !empty($selectedConversation->customer->photo)))
                                 <img src="{{ asset('storage/' . $selectedConversation->customer->photo) }}"

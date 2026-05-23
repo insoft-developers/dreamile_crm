@@ -283,6 +283,15 @@
 
    @media (max-width: 767px) {
 
+    .profile-photo{ 
+        margin-left: 37px;
+    }
+    .btn-back-chat{
+        position: absolute;
+        font-size: 19px;
+        top: 16px;
+    }
+
     #list-chat-area{
         width:100%;
         height:100%;
