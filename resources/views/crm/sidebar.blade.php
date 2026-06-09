@@ -134,7 +134,7 @@
                             <a href="{{ url('customer') }}"
                                 class="pe-nav-link {{ request()->is('customer') ? 'active' : '' }}">
 
-                                Customer Data
+                                Student Data
                             </a>
                         </li>
 

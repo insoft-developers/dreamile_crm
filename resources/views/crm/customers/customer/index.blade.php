@@ -10,7 +10,7 @@
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Customers</li>
-                            <li class="breadcrumb-item active" aria-current="page">Customer Data</li>
+                            <li class="breadcrumb-item active" aria-current="page">Student Data</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> Customer Data </h5>
+                            <h5 class="card-title mb-0"> Student Data </h5>
                             <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
                                     class="bi bi-plus"></i></button>
                         </div>

@@ -124,7 +124,7 @@
         <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">
 
             <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">
-                Customer Detail Data
+                Student Detail Data
             </h2>
 
             <div class="flex-shrink-0">
@@ -142,11 +142,11 @@
                         </li>
 
                         <li class="breadcrumb-item">
-                            <a href="{{ url('lead') }}">Customer Data</a>
+                            <a href="{{ url('lead') }}">Student Data</a>
                         </li>
 
                         <li class="breadcrumb-item active">
-                            Customer Detail Data
+                            Student Detail Data
                         </li>
 
                     </ol>
@@ -166,7 +166,7 @@
                     class="btn btn-light border rounded-pill px-4 shadow-sm mb-4">
 
                     <i class="bi bi-arrow-left"></i>
-                    Back to Customer Data
+                    Back to Student Data
 
                 </button>
 
