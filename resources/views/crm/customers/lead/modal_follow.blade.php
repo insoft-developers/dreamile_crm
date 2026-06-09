@@ -232,28 +232,6 @@
 
 </style>
 
-<script>
 
-    $('#followup_image').on('change', function(e){
-
-        const file = e.target.files[0];
-
-        if(file){
-
-            const reader = new FileReader();
-
-            reader.onload = function(event){
-
-                $('#preview-follow-image').attr('src', event.target.result);
-
-                $('#follow-preview').removeClass('d-none');
-
-            }
-
-            reader.readAsDataURL(file);
-
-        }
-
-    });
 
 </script>

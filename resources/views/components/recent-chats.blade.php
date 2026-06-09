@@ -16,7 +16,7 @@
                      <tr>
                          <td>
                              <div class="form-check">
-                                 @if ($recent->customer->photo)
+                                 @if ($recent->customer?->photo)
                                      <img src="{{ asset('storage') }}/{{ $recent->customer->photo }}"
                                          class="avatar-sm rounded-2 mx-2" alt="Avatar Image">
                                  @endif

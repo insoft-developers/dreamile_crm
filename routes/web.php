@@ -14,6 +14,7 @@ use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
+use App\Http\Controllers\CRM\PresentationController;
 use App\Http\Controllers\CRM\ReportController;
 use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\TemplateDetailController;
@@ -64,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/lead', LeadController::class);
     Route::get('/lead_table', [LeadController::class, 'table'])->name('lead.table');
     Route::get('/api/event', [LeadController::class, 'event']);
+    Route::get('/api/presentation', [LeadController::class, 'presentation']);
     Route::post('/visit_add', [LeadController::class, 'visitAdd'])->name('visit.add');
     Route::get('/get_visit_data/{id}', [LeadController::class, 'visitData']);
     Route::get('/followup_data/{id}', [LeadController::class, 'followupData']);
@@ -79,6 +81,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customer/export/excel', [CustomerController::class, 'exportExcel']);
     Route::get('/customer/export/pdf', [CustomerController::class, 'exportPDF']);
     Route::post('/downgrade', [CustomerController::class, 'downgrade']);
+
+    Route::resource('/presentation', PresentationController::class);
+    Route::get('/presentation_table', [PresentationController::class, 'table'])->name('presentation.table');
 
 
 

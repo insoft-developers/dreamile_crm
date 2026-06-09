@@ -10,7 +10,7 @@ use App\Models\Customer;
 use App\Models\Event;
 use App\Models\Followup;
 use App\Models\LeadSource;
-
+use App\Models\Presentation;
 use App\Models\User;
 use App\Models\VisitImage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -335,6 +335,13 @@ class LeadController extends Controller
     {
         $events = Event::all();
         return response()->json($events);
+    }
+
+
+    public function presentation()
+    {
+        $presentations = Presentation::all();
+        return response()->json($presentations);
     }
 
     public function visitAdd(Request $request)

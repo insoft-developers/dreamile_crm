@@ -12,6 +12,8 @@
 
     $userMenu = request()->is('user');
 
+    $presentationMenu = request()->is('presentation');
+
     $reportMenu =
         request()->is('lead_report') ||
         request()->is('chat_report') ||
@@ -156,7 +158,40 @@
 
                 </li>
 
-                
+                 <!-- Users -->
+                <li class="pe-slide pe-has-sub">
+
+                    <a href="#collapseFroms" class="pe-nav-link {{ $presentationMenu ? 'active' : '' }}"
+                        data-bs-toggle="collapse">
+
+                        <i class="ri-user-line pe-nav-icon"></i>
+
+                        <span class="pe-nav-content">
+                            Presentation
+                        </span>
+
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+
+                    <ul class="pe-slide-menu collapse {{ $presentationMenu ? 'show' : '' }}" id="collapseFroms">
+
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">
+                                Presentation
+                            </a>
+                        </li>
+
+                        <li class="pe-slide-item">
+                            <a href="{{ url('presentation') }}"
+                                class="pe-nav-link {{ request()->is('presentation') ? 'active' : '' }}">
+
+                                Presentation Data
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
 
                 <!-- Broadcast -->
                 <li class="pe-slide pe-has-sub">

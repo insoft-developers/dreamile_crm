@@ -55,7 +55,8 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('lead.table') }}',
+            url: '{{ route('
+            lead.table ') }}',
             data: function(d) {
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
@@ -427,10 +428,42 @@
                 });
 
 
+        } else if (eventId === 'presentation') {
+            fetch("{{ url('/api/presentation') }}")
+                .then(res => res.json())
+                .then(data => {
+                    let optionData = '';
+                    optionData += `<option value="">- Select -</option>`;
+                    data.forEach(item => {
+                        optionData +=
+                            `<option value="${item.id}">${item.title} ( ${item.location} )</option>`;
+                    });
+
+                    let selectedPresentation = '';
+                    selectedPresentation += `
+                    <div class="card">
+                        <div class="card-body">    
+                            <div class="form-group mb-3">
+                                <label for="presentation_id" class="form-label required">Select Presentation</label>
+                                <select class="form-control" id="presentation_id" name="presentation_id">
+                                    ${optionData}
+                                </select>
+                                <small>
+                            Presentation not found? 
+                            <a href="{{ url('presentation') }}">please add presentation data</a>
+                        </small>  
+                        </div>                        
+
+                    </div>`;
+                    $("#event-container").html(selectedPresentation);
+                });
+
+
         } else {
             $("#event-container").html('');
         }
     })
+
 
     function showEventChoice(eventType, selectedEventId = null) {
         if (eventType === 'event') {
@@ -786,4 +819,31 @@
             }
         });
     }
+
+
+
+    $("#followup_image").on('change', function(e) {
+
+        const file = e.target.files[0];
+
+        if (file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+
+                $('#preview-follow-image').attr('src', event.target.result);
+
+                $('#follow-preview').removeClass('d-none');
+
+            }
+
+            reader.readAsDataURL(file);
+
+        }
+
+    });
+
+
+   
 </script>
