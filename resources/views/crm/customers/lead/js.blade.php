@@ -55,8 +55,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('
-            lead.table ') }}',
+            url: "{{ route('lead.table ') }}",
             data: function(d) {
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
@@ -845,5 +844,7 @@
     });
 
 
-   
+    $(document).on('change', '#presentation_id', function() {
+        alert($(this).find('option:selected').text());
+    });
 </script>
