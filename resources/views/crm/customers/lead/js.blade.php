@@ -844,5 +844,13 @@
     });
 
 
-   
+    $(document).on('change', '#presentation_id', function() {
+        var id = $(this).find('option:selected').val();
+        fetch("{{ url('/presentation/attribute') }}" + "?id=" + id)
+            .then(res => res.json())
+            .then(data => {
+                $("#consultant_id").val(data.consultant_id);
+            });
+
+    });
 </script>

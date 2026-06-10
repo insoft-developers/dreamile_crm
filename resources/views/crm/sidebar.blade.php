@@ -161,7 +161,7 @@
                  <!-- Users -->
                 <li class="pe-slide pe-has-sub">
 
-                    <a href="#collapseFroms" class="pe-nav-link {{ $presentationMenu ? 'active' : '' }}"
+                    <a href="#collapsePresentation" class="pe-nav-link {{ $presentationMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
                         <i class="ri-user-line pe-nav-icon"></i>
@@ -173,7 +173,7 @@
                         <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
                     </a>
 
-                    <ul class="pe-slide-menu collapse {{ $presentationMenu ? 'show' : '' }}" id="collapseFroms">
+                    <ul class="pe-slide-menu collapse {{ $presentationMenu ? 'show' : '' }}" id="collapsePresentation">
 
                         <li class="slide pe-nav-content1">
                             <a href="javascript:void(0)">

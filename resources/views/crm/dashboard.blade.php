@@ -152,6 +152,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Leads By Branch</h4>
+                            
+                        </div>
+                        <div class="card-body">
+                            <livewire:LeadsByBranch/>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header">
@@ -394,7 +406,7 @@
                                     <h4>User Online</h4>
                                     
                                 </div>
-                                <div class="card-body product-body bg-body m-4 mt-0">
+                                <div class="card-body bg-body m-4 mt-0">
                                     <livewire:UserOnline/>
                                     
                                 </div>

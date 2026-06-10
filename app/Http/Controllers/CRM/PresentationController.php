@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Exports\PresentationExport;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\Event;
 use App\Models\Level;
 use App\Models\Position;
 use App\Models\Presentation;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PresentationController extends Controller
 {
@@ -31,8 +35,26 @@ class PresentationController extends Controller
                 $data->where('branch_id', Auth::user()->branch_id);
             }
 
+            if ($request->filter_date) {
+                $data->where('date', $request->filter_date);
+            }
+
+            if ($request->filter_consultant) {
+                $data->where('consultant_id', $request->filter_consultant);
+            }
+
+            if ($request->filter_branch) {
+                $data->where('branch_id', $request->filter_branch);
+            }
+
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('deal', function($row){
+                    return $row->deals->count();
+                })
+                ->addColumn('lead', function($row){
+                    return $row->leads->count();
+                })
                 ->addColumn('consultant_id', function($row){
                     return $row->consultant?->name ?? '';
                 })
@@ -81,7 +103,12 @@ class PresentationController extends Controller
     public function index()
     {
         $view = 'presentation';
-        $consultants = User::where('is_active', 1)->where('position', 'consultant')->get();
+        $consultantsQuery = User::where('is_active', 1)->where('position', 'consultant');
+        if(! empty(Auth::user()->branch_id)) {
+            $consultantsQuery->where('branch_id', Auth::user()->branch_id);
+        }
+        
+        $consultants = $consultantsQuery->get();
 
 
         $branchesQuery = Branch::query();
@@ -213,6 +240,42 @@ class PresentationController extends Controller
 
         // hapus data user
         $data->delete();
+    }
+
+
+   public function exportExcel(Request $request)
+    {
+        $company = Company::find(1);
+        return Excel::download(new PresentationExport($request, $company), 'presentation_data_report.xlsx');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $company = Company::first();
+
+        $data = Presentation::query()->with(['consultant', 'branch', 'createdBy']);
+            
+
+        if ($request->filter_date) {
+            $data->where('date', $request->filter_date);
+        }
+
+        if ($request->filter_consultant) {
+            $data->where('consultant_id', $request->filter_consultant);
+        }
+
+        if ($request->filter_branch) {
+            $data->where('branch_id', $request->filter_branch);
+        }
+
+        $customers = $data->orderBy('id', 'desc')->get();
+
+        $pdf = Pdf::loadView('crm.presentation.pdf', compact('customers', 'company'));
+
+        // LANDSCAPE
+        $pdf->setPaper('legal', 'landscape');
+
+        return $pdf->stream('presentation_report.pdf');
     }
 
 

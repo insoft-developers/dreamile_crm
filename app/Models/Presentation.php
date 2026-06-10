@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Presentation extends Model
 {
@@ -25,5 +26,17 @@ class Presentation extends Model
     public function branch():BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
+
+    public function leads():HasMany
+    {
+        return $this->hasMany(Customer::class, 'presentation_id', 'id')
+            ->where('status', '!=', 'deal');
+    }
+
+    public function deals():HasMany
+    {
+        return $this->hasMany(Customer::class, 'presentation_id', 'id')
+            ->where('status', 'deal');
     }
 }

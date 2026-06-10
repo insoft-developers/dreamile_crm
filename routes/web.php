@@ -75,6 +75,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lead/export/excel', [LeadController::class, 'exportExcel']);
     Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
     Route::post('/convert', [LeadController::class, 'convert']);
+    Route::get('/presentation/attribute', [LeadController::class, 'presentationAttribute']);
+
+
 
     Route::resource('/customer', CustomerController::class);
     Route::get('/customer_table', [CustomerController::class, 'table'])->name('customer.table');
@@ -84,6 +87,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/presentation', PresentationController::class);
     Route::get('/presentation_table', [PresentationController::class, 'table'])->name('presentation.table');
+    Route::get('/presentation/export/excel', [PresentationController::class, 'exportExcel']);
+    Route::get('/presentation/export/pdf', [PresentationController::class, 'exportPDF']);
 
 
 

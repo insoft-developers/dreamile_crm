@@ -563,4 +563,10 @@ class LeadController extends Controller
         ]);
         
     }
+
+     public function presentationAttribute(Request $request) {
+        $input = $request->all();
+        $data = Presentation::find((int)$input['id']);
+        return response()->json($data);
+    }
 }

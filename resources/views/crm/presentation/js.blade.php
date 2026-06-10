@@ -1,8 +1,40 @@
 <script>
+    function exportExcel() {
+        let params = $('#filterForm').serialize();
+        window.open('/presentation/export/excel?' + params, '_blank');
+    }
+
+    function exportPDF() {
+        let params = $('#filterForm').serialize();
+        window.open('/presentation/export/pdf?' + params, '_blank');
+    }
+
+    function filterData() {
+        $('#list-table').DataTable().ajax.reload(null, false);
+    }
+
+    function resetFilter() {
+        // reset form
+        document.getElementById('filterForm').reset();
+
+
+
+        // reload datatable
+        $('#list-table').DataTable().ajax.reload(null, false);
+    }
+
+
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route("presentation.table") }}',
+        ajax: {
+            url: "{{ route('presentation.table') }}",
+            data: function(d) {
+                d.filter_date = $('#filter_date').val();
+                d.filter_consultant = $('#filter_consultant').val();
+                d.filter_branch = $('#filter_branch').val();
+            }
+        },
         order: [
             [0, 'desc']
         ],
@@ -119,7 +151,7 @@
                 $("#description").val(data.description);
                 $("#branch_id").val(data.branch_id);
                 $("#image").val(null);
-               
+
 
             }
         })

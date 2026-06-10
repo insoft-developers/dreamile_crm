@@ -385,11 +385,54 @@
 
                             </table>
 
-                        @elseif($data->lead_source_id == 'presentation')
+                        @elseif ($data->lead_source_id == 'presentation')
 
-                            <h5 class="fw-bold">
+                            <h5 class="fw-bold mb-4">
                                 Presentation
                             </h5>
+
+                            <table class="table table-bordered">
+
+                                <tr>
+                                    <td>
+                                        <strong>{{ $data->presentation?->title ?? '' }}</strong>
+                                    </td>
+                                </tr>
+
+                                @if (!empty($data->presentation?->image))
+
+                                    <tr>
+
+                                        <td>
+
+                                            <a href="{{ asset('storage/' . $data->presentation?->image) }}"
+                                                target="_blank">
+
+                                                <img class="img-fluid rounded-4"
+                                                    src="{{ asset('storage/' . $data->presentation?->image) }}">
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                @endif
+
+                                <tr>
+                                    <td>{{ $data->presentation?->location ?? '' }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            {{ date('d F Y', strtotime($data->presentation?->date)) ?? '' }}
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                            </table>
+
 
                         @else
 
