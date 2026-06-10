@@ -164,6 +164,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Presentation</h4>
+                            
+                        </div>
+                        <div class="card-body">
+                            <livewire:Presentation/>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header">

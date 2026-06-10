@@ -14,7 +14,7 @@ class Branch extends Model
 
     public function leads():HasMany
     {
-        return $this->hasMany(Customer::class, 'branch_id', 'id')->whereNull('is_customer');
+        return $this->hasMany(Customer::class, 'branch_id', 'id');
     }
 
 

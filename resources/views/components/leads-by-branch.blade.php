@@ -9,7 +9,8 @@
                      <th>Deal</th>
                      <th>NOK</th>
                      <th>Confirm</th>
-                 </tr>
+                     <th>Conversion</th>
+                     
              </thead>
              <tbody>
                  @foreach ($branches as $key)
@@ -20,6 +21,7 @@
                          <td>{{ $key->confirm_count }}</td>
                          <td>{{ $key->deal_count }}</td>
                          <td>{{$key->nok_count }}</td>
+                          <td>{{$key->nok_count }}</td>
                      </tr>
                  @endforeach
              </tbody>
