@@ -7,7 +7,7 @@
                      <th>Location</th>
                      <th>Branch</th>
                      <th>Date</th>
-                     <th>Total</th>
+                     <th>Audience</th>
                      <th>TR</th>
                      <th>ST</th>
                      <th>KT</th>
