@@ -1,5 +1,11 @@
 <script>
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: '{{ route('level.table') }}',
@@ -28,12 +34,12 @@
                 data: 'level_name',
                 name: 'level_name'
             },
-            
+
             {
                 data: 'updated_at',
                 name: 'updated_at'
             },
-            
+
 
         ]
     });
@@ -58,7 +64,7 @@
                 $('.modal-title').text("Edit Level Data");
                 $('#id').val(data.id);
                 $("#level_name").val(data.level_name);
-                
+
             }
         })
     }
@@ -151,6 +157,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-    
 </script>

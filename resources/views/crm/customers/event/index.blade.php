@@ -57,29 +57,29 @@
                                             </div>
 
                                             <!-- Tombol -->
-                                            <div class="col-md-12 mt-3 d-flex justify-content-between">
-                                                <div>
+                                            <div class="col-md-12 mt-3 d-flex">
+                                                
                                                     <button type="button" onclick="filterData()"
                                                         class="btn btn-primary btn-sm">
                                                         <i class="bi bi-search"></i> Filter
                                                     </button>
 
-                                                    <button type="button" onclick="resetFilter()" class="btn btn-secondary btn-sm">
+                                                    <button style="margin-left: 2px;" type="button" onclick="resetFilter()" class="btn btn-secondary btn-sm">
                                                         <i class="bi bi-arrow-clockwise"></i> Reset
                                                     </button>
-                                                </div>
+                                               
 
-                                                <div>
-                                                    <button type="button" onclick="exportExcel()"
+                                               
+                                                    <button style="margin-left: 2px;" type="button" onclick="exportExcel()"
                                                         class="btn btn-success btn-sm">
                                                         <i class="bi bi-file-earmark-excel"></i> Excel
                                                     </button>
 
-                                                    <button type="button" onclick="exportPDF()"
+                                                    <button style="margin-left: 2px;" type="button" onclick="exportPDF()"
                                                         class="btn btn-danger btn-sm">
                                                         <i class="bi bi-file-earmark-pdf"></i> PDF
                                                     </button>
-                                                </div>
+                                                
                                             </div>
 
                                         </div>

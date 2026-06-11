@@ -26,12 +26,14 @@
     getProvince();
 
 
-    $('#modal-add').on('shown.bs.modal', function() {
-        $(this).find('.select2').select2({
-            dropdownParent: $('#modal-add'),
-            width: '100%'
+    if ($(window).width() > 768) {
+        $('#modal-add').on('shown.bs.modal', function() {
+            $(this).find('.select2').select2({
+                dropdownParent: $('#modal-add'),
+                width: '100%'
+            });
         });
-    });
+    }
 
     $("#province_code").change(function() {
         var provinceCode = $(this).val();
@@ -52,6 +54,12 @@
     })
 
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: {

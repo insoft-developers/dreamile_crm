@@ -1,5 +1,11 @@
 <script>
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: '{{ route('contact.group.table') }}',
@@ -161,7 +167,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-  
-    
 </script>

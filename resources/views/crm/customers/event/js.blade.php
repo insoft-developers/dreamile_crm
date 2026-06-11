@@ -1,5 +1,4 @@
 <script>
-
     function exportExcel() {
         let params = $('#filterForm').serialize();
         window.open('/event/export/excel?' + params, '_blank');
@@ -26,6 +25,12 @@
 
 
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: {

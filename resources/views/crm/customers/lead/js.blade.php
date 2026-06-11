@@ -59,6 +59,12 @@
     })
 
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: {

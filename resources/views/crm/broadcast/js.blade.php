@@ -118,6 +118,12 @@
 
 
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: '{{ route('broadcast.table') }}',
@@ -146,7 +152,7 @@
                 data: 'name',
                 name: 'name'
             },
-            
+
             {
                 data: 'total',
                 name: 'total'

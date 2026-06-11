@@ -1,5 +1,11 @@
 <script>
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: '{{ route('branch.table') }}',
@@ -45,12 +51,12 @@
                 data: 'pic',
                 name: 'pic'
             },
-            
+
             {
                 data: 'updated_at',
                 name: 'updated_at'
             },
-            
+
 
         ]
     });
@@ -79,7 +85,7 @@
                 $("#phone_number").val(data.phone_number);
                 $("#email").val(data.email);
                 $("#pic").val(data.pic);
-                
+
             }
         })
     }
@@ -172,6 +178,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-    
 </script>

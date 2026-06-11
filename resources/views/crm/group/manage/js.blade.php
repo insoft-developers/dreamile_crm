@@ -1,6 +1,4 @@
 <script>
-
-
     $('#modal-add').on('shown.bs.modal', function() {
         $(this).find('.select2').select2({
             dropdownParent: $('#modal-add'),
@@ -10,6 +8,12 @@
 
 
     var table = $('#list-table').DataTable({
+        language: {
+            paginate: {
+                previous: '&laquo;',
+                next: '&raquo;'
+            }
+        },
         processing: true,
         serverSide: true,
         ajax: {
@@ -39,7 +43,7 @@
                 orderable: false,
                 searchable: false
             },
-           
+
             {
                 data: 'customer_id',
                 name: 'customer_id'
@@ -48,12 +52,12 @@
                 data: 'phone_number',
                 name: 'phone_number'
             },
-             {
+            {
                 data: 'contact_group_id',
                 name: 'contact_group_id'
             },
 
-            
+
         ]
     });
 
@@ -65,7 +69,7 @@
         $("#modal-add").modal("show");
     }
 
-    
+
 
 
     $("#form-add").submit(function(e) {
@@ -155,6 +159,4 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
-
-    
 </script>
