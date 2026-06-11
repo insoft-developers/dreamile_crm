@@ -505,32 +505,3 @@
     </div>
 </div>
 
-{{-- <style>
-    .form-control,
-    .select2-container .select2-selection--single {
-        min-height: 48px;
-        border-radius: 12px !important;
-    }
-
-    .form-control:focus,
-    .select2-container--default.select2-container--focus .select2-selection--single {
-        box-shadow: none;
-        border-color: #6366f1;
-    }
-
-    .card {
-        transition: all 0.2s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
-    }
-
-    textarea.form-control {
-        min-height: auto;
-    }
-
-    .modal-content {
-        background: #fff;
-    }
-</style> --}}

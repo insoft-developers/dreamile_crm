@@ -323,11 +323,10 @@
 
                                     <div class="me-3">
                                         @if (!empty($contact->photo))
-                                            <img src="{{ asset('storage/' . $contact->photo) }}" width="50"
-                                                height="50" class="rounded-circle">
+                                            <img src="{{ asset('storage/' . $contact->photo) }}" class="contact-image">
                                         @else
                                             <img src="https://ui-avatars.com/api/?background=0d6efd&color=fff&name={{ urlencode($contact->fullname) }}"
-                                                width="50" height="50" class="rounded-circle">
+                                                class="contact-image">
                                         @endif
                                     </div>
 
@@ -338,7 +337,7 @@
                                         </div>
 
                                         <div class="small text-muted">
-                                            {{ $contact->phone }}
+                                            {{ $contact->phone_number }}
                                         </div>
 
                                     </div>

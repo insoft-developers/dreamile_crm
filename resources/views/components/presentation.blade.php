@@ -7,7 +7,8 @@
                      <th>Location</th>
                      <th>Branch</th>
                      <th>Date</th>
-                     <th>Audience</th>
+                     <th>EC</th>
+                     <th>Total</th>
                      <th>TR</th>
                      <th>ST</th>
                      <th>KT</th>
@@ -22,6 +23,7 @@
                          <td>{{ $key->location }}</td>
                          <td>{{ optional($key->branch)->branch_name ?? '' }}</td>
                          <td>{{ date('d-m-Y', strtotime($key->date)) }}</td>
+                         <td>{{ optional($key->consultant)->name ?? '' }}</td>
                          <td>{{ $key->audience ?? 0 }}</td>
                          <td>{{ $key->tertarik ?? 0 }}</td>
                          <td>{{ $key->sangat_tertarik ?? 0 }}</td>

@@ -82,9 +82,9 @@ class ReportController extends Controller
 
         $sources = (clone $query)->selectRaw('lead_source_id,COUNT(*) as total')->groupBy('lead_source_id')->orderByDesc('total')->take(5)->get();
 
-        $topAdmins = (clone $query)->selectRaw('created_by,COUNT(*) as total')->with('createdBy')->groupBy('created_by')->orderByDesc('total')->take(5)->get();
+        $topAdmins = (clone $query)->selectRaw('consultant_id,COUNT(*) as total')->with('consultant')->groupBy('consultant_id')->orderByDesc('total')->take(5)->get();
 
-        $recentLeads = (clone $query)->with('branch', 'createdBy')
+        $recentLeads = (clone $query)->with('branch', 'consultant')
             ->latest()
             ->take(10)
             ->get();

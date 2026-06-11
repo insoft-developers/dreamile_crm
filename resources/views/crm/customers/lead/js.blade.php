@@ -23,16 +23,22 @@
         $('#list-table').DataTable().ajax.reload(null, false);
     }
 
-    getProvince();
+    // getProvince();
 
 
     $('#modal-add').on('shown.bs.modal', function() {
+        if ($('#province_code option').length <= 1) {
+        getProvince();
+    }
         $(this).find('.select2').select2({
             dropdownParent: $('#modal-add'),
-            width: '100%'
+            width: '100%',
+           
         });
     });
 
+    
+    
     $("#province_code").change(function() {
         var provinceCode = $(this).val();
         getRegency(provinceCode);
@@ -167,7 +173,7 @@
                 $("#photo").val(null);
                 $("#email").val(data.email);
                 $("#lead_source_id").val(data.lead_source_id);
-                showEventChoice(data.lead_source_id, data.event_id);
+                showEventChoice(data.lead_source_id, data.event_id, data.presentation_id);
                 $("#status").val(data.status);
                 $("#consultant_id").val(data.consultant_id);
                 $("#note").val(data.note);
@@ -464,22 +470,23 @@
     })
 
 
-    function showEventChoice(eventType, selectedEventId = null) {
-        if (eventType === 'event') {
+    function showEventChoice(eventType, selectedEventId = null, selectedPresentationId = null) {
+        if (eventType === 'event' || eventType === 'presentation') {
             fetch("{{ url('/api/event') }}")
                 .then(res => res.json())
                 .then(data => {
 
                     let optionData = `<option value="">- Select -</option>`;
 
-                    data.forEach(item => {
-                        optionData += `
+                    if (eventType === 'event') {
+                        data.event.forEach(item => {
+                            optionData += `
                         <option value="${item.id}">
                             ${item.event_name} (${item.event_location})
                         </option>`;
-                    });
+                        });
 
-                    let selectEvent = `
+                        let selectEvent = `
                 <div class="card">
                     <div class="card-body">    
                         <div class="form-group mb-3">
@@ -495,19 +502,54 @@
                     </div>
                 </div>`;
 
-                    // inject ke DOM
-                    $("#event-container").html(selectEvent);
+                        // inject ke DOM
+                        $("#event-container").html(selectEvent);
 
-                    // 🔥 SET VALUE SETELAH RENDER
-                    if (selectedEventId) {
-                        $('#event_id').val(selectedEventId).trigger('change');
+                        // 🔥 SET VALUE SETELAH RENDER
+                        if (selectedEventId) {
+                            $('#event_id').val(selectedEventId).trigger('change');
+                        }
+                    } else {
+                        data.presentation.forEach(item => {
+                            optionData += `
+                        <option value="${item.id}">
+                            ${item.title} (${item.location})
+                        </option>`;
+                        });
+
+                        let selectEvent = `
+                <div class="card">
+                    <div class="card-body">    
+                        <div class="form-group mb-3">
+                            <label for="presentation_id" class="form-label required">Select Presentation</label>
+                            <select class="form-control" id="presentation_id" name="presentation_id">
+                                ${optionData}
+                            </select>
+                        </div>
+                        <small>
+                            presentation not found? 
+                            <a href="{{ url('presentation') }}">please add presentation data</a>
+                        </small>                        
+                    </div>
+                </div>`;
+
+                        // inject ke DOM
+                        $("#event-container").html(selectEvent);
+
+                        // 🔥 SET VALUE SETELAH RENDER
+                        if (selectedPresentationId) {
+                            $('#presentation_id').val(selectedPresentationId).trigger('change');
+                        }
                     }
+
+
 
                 });
         } else {
             $("#event-container").html('');
         }
     }
+
 
     function visitData(id) {
         fetch("{{ url('/get_visit_data') }}" + "/" + id)

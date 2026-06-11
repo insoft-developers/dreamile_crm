@@ -1,4 +1,14 @@
 <style>
+    
+    .contact-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+        border: 2px solid whitesmoke;
+        padding: 2px;
+
+    }
+
     .table-responsive {
         overflow-y: clip !important;
 
@@ -11,8 +21,8 @@
     }
 
     .user-image {
-        width: 60px;
-        height: 63px;
+        width: 40px;
+        height: 43px;
         border-radius: 10px;
         padding: 3px;
         background: cadetblue;
@@ -281,43 +291,44 @@
         width: 179px;
     }
 
-   @media (max-width: 767px) {
+    @media (max-width: 767px) {
 
-    .profile-photo{ 
-        margin-left: 37px;
+        .profile-photo {
+            margin-left: 37px;
+        }
+
+        .btn-back-chat {
+            position: absolute;
+            font-size: 19px;
+            top: 16px;
+        }
+
+        #list-chat-area {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #content-chat-area {
+            position: fixed;
+            top: 0;
+            left: 100%;
+            width: 100%;
+            height: 100dvh;
+            background: #fff;
+            z-index: 9999;
+            transition: .25s;
+        }
+
+        body.mobile-chat-open #content-chat-area {
+            left: 0;
+        }
+
+        body.mobile-chat-open #list-chat-area {
+            display: none;
+        }
+
+       
+
     }
-    .btn-back-chat{
-        position: absolute;
-        font-size: 19px;
-        top: 16px;
-    }
-
-    #list-chat-area{
-        width:100%;
-        height:100%;
-        display:block;
-    }
-
-    #content-chat-area{
-        position:fixed;
-        top:0;
-        left:100%;
-        width:100%;
-        height:100dvh;
-        background:#fff;
-        z-index:9999;
-        transition:.25s;
-    }
-
-    body.mobile-chat-open #content-chat-area{
-        left:0;
-    }
-
-    body.mobile-chat-open #list-chat-area{
-        display:none;
-    }
-
-}
-
-
 </style>

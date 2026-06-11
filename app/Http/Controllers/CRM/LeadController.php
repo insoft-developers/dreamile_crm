@@ -206,8 +206,8 @@ class LeadController extends Controller
             'lead_source_id' => 'required',
             'status' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'event_id' => 'required_if:lead_source,event',
-            'presentation_id' => 'required_if:lead_source,presentation',
+            'event_id' => 'required_if:lead_source_id,event',
+            'presentation_id' => 'required_if:lead_source_id,presentation',
             'branch_id' => 'required',
         ]);
 
@@ -271,7 +271,7 @@ class LeadController extends Controller
             'status' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'event_id' => 'required_if:lead_source_id,event',
-            'presentation_id' => 'required_if:lead_source,presentation',
+            'presentation_id' => 'required_if:lead_source_id,presentation',
             'branch_id' => 'required',
         ]);
 
@@ -336,7 +336,11 @@ class LeadController extends Controller
     public function event()
     {
         $events = Event::all();
-        return response()->json($events);
+        $presentations = Presentation::all();
+
+        $data['event'] = $events;
+        $data['presentation'] = $presentations;
+        return response()->json($data);
     }
 
 

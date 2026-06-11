@@ -381,7 +381,7 @@
                 <div>
 
                     <h6 class="mb-0">
-                        ${admin.created_by.name}
+                        ${admin.consultant.name}
                     </h6>
 
                     <small class="text-muted">
@@ -405,19 +405,35 @@
     function renderRecentLeads(leads) {
         let html = '';
         leads.forEach(function(lead) {
+
+            let badge = '';
+            if(lead.status == 'new-lead') {
+                badge += `<span class="badge bg-success">New</span>`;
+            }
+            else if(lead.status == 'visit') {
+                badge += `<span class="badge bg-warning">Visit</span>`;
+            }
+            else if(lead.status == 'deal') {
+                badge += `<span class="badge bg-info">Deal</span>`;
+            }
+            else if(lead.status == 'nok') {
+                badge += `<span class="badge bg-danger">NOK</span>`;
+            }
+            else if(lead.status == 'confirm') {
+                badge += `<span class="badge bg-primary">Confirmation</span>`;
+            }
+
             html += `
             <tr>
                 <td>
                     ${lead.fullname}
                 </td>
                 <td>
-                    <span class="badge bg-primary">
-                        ${lead.status}
-                    </span>
+                    ${badge}
                 </td>
                 <td>
-                    ${lead.created_by
-                        ? lead.created_by.name
+                    ${lead.consultant
+                        ? lead.consultant.name
                         : '-'}
                 </td>
                 <td>

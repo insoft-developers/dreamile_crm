@@ -356,7 +356,7 @@
                                         <div>
 
                                             <h5 class="fw-bold mb-1">
-                                                Top Admin
+                                                Top Education Consultant
                                             </h5>
 
                                             <p class="text-muted small mb-0">
@@ -424,9 +424,9 @@
 
                                             <th class="border-0">Status</th>
 
-                                            <th class="border-0">Admin</th>
+                                            <th class="border-0">Consultant</th>
 
-                                            <th class="border-0 text-end">Date</th>
+                                            <th class="border-0">Date</th>
 
                                         </tr>
 
