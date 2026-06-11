@@ -1,5 +1,4 @@
 <style>
-    
     .contact-image {
         width: 30px;
         height: 30px;
@@ -47,9 +46,11 @@
         color: red;
     }
 
+
+
     .select2-container--default .select2-selection--single {
         height: 40px;
-        /* sesuaikan */
+
         padding: 7px 14px;
         border: 1px solid #ebebeb !important;
 
@@ -57,7 +58,7 @@
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         line-height: 24px;
-        /* biar text center */
+
     }
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -292,6 +293,25 @@
     }
 
     @media (max-width: 767px) {
+        .form-control {
+            height: 50px;
+            font-size: 15px;
+            border-radius: 22px !important;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .custom-card {}
+
+        .container-fluid {
+            margin-left: -10px !important;
+            margin-right: -8px !important;
+            width: auto !important;
+        }
+
 
         .profile-photo {
             margin-left: 37px;
@@ -328,7 +348,7 @@
             display: none;
         }
 
-       
+
 
     }
 </style>

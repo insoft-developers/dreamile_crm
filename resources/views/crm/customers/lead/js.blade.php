@@ -23,22 +23,23 @@
         $('#list-table').DataTable().ajax.reload(null, false);
     }
 
-    // getProvince();
+    getProvince();
 
 
-    $('#modal-add').on('shown.bs.modal', function() {
-        if ($('#province_code option').length <= 1) {
-        getProvince();
-    }
-        $(this).find('.select2').select2({
-            dropdownParent: $('#modal-add'),
-            width: '100%',
-           
+
+
+    if ($(window).width() > 768) {
+        $('#modal-add').on('shown.bs.modal', function() {
+            $(this).find('.select2').select2({
+                dropdownParent: $('#modal-add'),
+                width: '100%'
+            });
         });
-    });
+    }
 
-    
-    
+
+
+
     $("#province_code").change(function() {
         var provinceCode = $(this).val();
         getRegency(provinceCode);
