@@ -59,6 +59,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/event', EventController::class);
     Route::get('/event_table', [EventController::class, 'table'])->name('event.table');
+    Route::get('/event/export/excel', [EventController::class, 'exportExcel']);
+    Route::get('/event/export/pdf', [EventController::class, 'exportPDF']);
 
     Route::resource('/chat', ChatController::class);
 

@@ -35,8 +35,8 @@ class PresentationController extends Controller
                 $data->where('branch_id', Auth::user()->branch_id);
             }
 
-            if ($request->filter_date) {
-                $data->where('date', $request->filter_date);
+            if ($request->filter_start_date && $request->filter_end_date) {
+                $data->whereBetween('date', [$request->filter_start_date, $request->filter_end_date]);
             }
 
             if ($request->filter_consultant) {
@@ -256,8 +256,8 @@ class PresentationController extends Controller
         $data = Presentation::query()->with(['consultant', 'branch', 'createdBy']);
             
 
-        if ($request->filter_date) {
-            $data->where('date', $request->filter_date);
+        if ($request->filter_start_date && $request->filter_end_date) {
+            $data->whereBetween('date', [$request->filter_start_date, $request->filter_end_date]);
         }
 
         if ($request->filter_consultant) {

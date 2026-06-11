@@ -157,6 +157,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Leads By Branch</h4>
+                            <p style="float: right;"><a href="{{ url('lead')}}">See Detail..</a></p>
                             
                         </div>
                         <div class="card-body">
@@ -168,10 +169,23 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Recent Presentation</h4>
+                            <p style="float: right;"><a href="{{ url('presentation')}}">See Detail..</a></p>
                             
                         </div>
                         <div class="card-body">
                             <livewire:Presentation/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Events</h4>
+                            <p style="float: right;"><a href="{{ url('event')}}">See Detail..</a></p>
+                            
+                        </div>
+                        <div class="card-body">
+                            <livewire:RecentEvent/>
                         </div>
                     </div>
                 </div>

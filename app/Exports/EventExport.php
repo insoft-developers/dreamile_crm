@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\Models\Customer;
+use App\Models\Event;
+use App\Models\Presentation;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -19,17 +21,15 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 
-class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents, WithCustomStartCell,WithColumnWidths
+class EventExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents, WithCustomStartCell, WithColumnWidths
 {
     protected $request;
     protected $company;
-    protected $isCustomer;
 
-    public function __construct($request, $company, $isCustomer = null)
+    public function __construct($request, $company)
     {
         $this->request = $request;
         $this->company = $company;
-        $this->isCustomer = $isCustomer;
     }
 
     /*
@@ -49,36 +49,17 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     */
     public function collection()
     {
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch']);
-            if($this->isCustomer) {
-                $data->where('is_customer', 1);
-            } else {
-                $data->whereNull('is_customer');
-            }
-             
+        $data = Event::query()->with(['branch', 'createdBy']);
+
         if(Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);
         }
 
         // FILTER TANGGAL
-        if ($this->request->start_date && $this->request->end_date) {
-            $data->whereBetween('created_at', [$this->request->start_date . ' 00:00:00', $this->request->end_date . ' 23:59:59']);
+        if ($this->request->filter_start_date && $this->request->filter_end_date) {
+            $data->whereBetween('event_date', [$this->request->filter_start_date, $this->request->filter_end_date ]);
         }
 
-        // FILTER STATUS
-        if ($this->request->status) {
-            $data->where('status', $this->request->status);
-        }
-
-        // FILTER LEAD SOURCE
-        if ($this->request->filter_lead_source) {
-            $data->where('lead_source_id', $this->request->filter_lead_source);
-        }
-
-        // FILTER CONSULTANT
-        if ($this->request->filter_consultant) {
-            $data->where('consultant_id', $this->request->filter_consultant);
-        }
 
         // FILTER BRANCH
         if ($this->request->filter_branch) {
@@ -95,7 +76,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     */
     public function headings(): array
     {
-        return ['No', 'Full Name', 'Address', 'School', 'Class / Major', 'Phone Number', 'Email', 'Gender', 'Status', 'Consultant', 'Lead Source', 'Branch', 'Province', 'Regency', 'District', 'Village', 'Note', 'Created By', 'Created At'];
+        return ['No', 'Event Name', 'Date', 'Location', 'Branch', 'Leads', 'Deals', 'Created By', 'Created At'];
     }
 
     /*
@@ -106,15 +87,8 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     public function map($row): array
     {
         static $no = 1;
-        if ($row->lead_source_id == 'event') {
-            $lead_source = 'Event';
-        } elseif ($row->lead_source_id == 'presentation') {
-            $lead_source = 'Presentation';
-        } else {
-            $lead_source = optional($row->leadsource)->source_name ?? '-';
-        }
 
-        return [$no++, $row->fullname ?? '-', $row->full_address ?? '-', $row->school_from ?? '-', $row->class . '/' . $row->major, $row->phone_number ?? '-', $row->email ?? '-', $row->gender ?? '-', $row->status ?? '-', optional($row->consultant)->name ?? '-', $lead_source, optional($row->branch)->branch_name ?? '-', $row->province_name ?? '', $row->regency_name ?? '', $row->district_name ?? '', $row->village_name ?? '', $row->note ?? '', optional($row->createdBy)->name ?? '', $row->created_at ? date('d M Y H:i', strtotime($row->created_at)) : '-'];
+        return [$no++, $row->event_name ?? '-', $row->event_date ?? '-', $row->event_location , optional($row->branch)->branch_name ?? '-', optional($row->leads)->count() ?? '-', optional($row->deals)->count(), optional($row->createdBy)->name ?? '', $row->created_at ? date('d M Y H:i', strtotime($row->created_at)) : '-'];
     }
 
     /*
@@ -182,7 +156,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     {
         $company_name = $this->company->company_name;
         $address = $this->company->address;
-        $reportTitle = $this->isCustomer ? "CUSTOMER DATA REPORT" :"LEAD DATA REPORT";
+        $reportTitle = "EVENT DATA REPORT";
 
         return [
             AfterSheet::class => function (AfterSheet $event) use ($company_name, $address, $reportTitle) {
@@ -193,18 +167,18 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 | HEADER TITLE
                 |--------------------------------------------------------------------------
                 */
-                $sheet->getStyle('Q:Q')->getAlignment()->setWrapText(true);
+                // $sheet->getStyle('Q:Q')->getAlignment()->setWrapText(true);
 
                 // COMPANY
-                $sheet->mergeCells('A1:S1');
+                $sheet->mergeCells('A1:I1');
                 $sheet->setCellValue('A1', $company_name);
 
                 // BRANCH
-                $sheet->mergeCells('A2:S2');
+                $sheet->mergeCells('A2:I2');
                 $sheet->setCellValue('A2', $address);
 
                 // REPORT TITLE
-                $sheet->mergeCells('A3:S3');
+                $sheet->mergeCells('A3:I3');
                 $sheet->setCellValue('A3', $reportTitle);
 
                 /*
@@ -213,7 +187,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 |--------------------------------------------------------------------------
                 */
 
-                $sheet->getStyle('A1:S3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle('A1:I3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
                 /*
                 |--------------------------------------------------------------------------
@@ -235,7 +209,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 $lastRow = $sheet->getHighestRow();
 
                 $sheet
-                    ->getStyle('A5:S' . $lastRow)
+                    ->getStyle('A5:I' . $lastRow)
                     ->getBorders()
                     ->getAllBorders()
                     ->setBorderStyle(Border::BORDER_THIN);
@@ -247,7 +221,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 */
 
                 $sheet
-                    ->getStyle('A5:S' . $lastRow)
+                    ->getStyle('A5:I' . $lastRow)
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER);
 
@@ -258,7 +232,7 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 */
 
                 $sheet
-                    ->getStyle('A5:S' . $lastRow)
+                    ->getStyle('A5:I' . $lastRow)
                     ->getAlignment()
 
                     ->setWrapText(true);
@@ -267,9 +241,9 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     }
 
     public function columnWidths(): array
-{
-    return [
-        'Q' => 50,
-    ];
-}
+    {
+        return [
+            // 'Q' => 50,
+        ];
+    }
 }

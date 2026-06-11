@@ -3,7 +3,7 @@
     $whatsappMenu = request()->is('chat');
 
     $customerMenu =
-        request()->is('lead') || request()->is('customer') || request()->is('lead_source') || request()->is('event');
+        request()->is('lead') || request()->is('customer') || request()->is('lead_source') ;
 
     $broadcastMenu =
         request()->is('broadcast') || request()->is('contact_group') || request()->is('broadcast_template');
@@ -13,6 +13,7 @@
     $userMenu = request()->is('user');
 
     $presentationMenu = request()->is('presentation');
+    $eventMenu = request()->is('event');
 
     $reportMenu =
         request()->is('lead_report') ||
@@ -146,6 +147,33 @@
                             </a>
                         </li>
 
+                    </ul>
+
+                </li>
+
+                 <!-- Users -->
+                <li class="pe-slide pe-has-sub">
+
+                    <a href="#collapseEvent" class="pe-nav-link {{ $eventMenu ? 'active' : '' }}"
+                        data-bs-toggle="collapse">
+
+                        <i class="ri-calendar-event-line pe-nav-icon"></i>
+
+                        <span class="pe-nav-content">
+                            Event
+                        </span>
+
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+
+                    <ul class="pe-slide-menu collapse {{ $eventMenu ? 'show' : '' }}" id="collapseEvent">
+
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">
+                                Event
+                            </a>
+                        </li>
+
                         <li class="pe-slide-item">
                             <a href="{{ url('event') }}"
                                 class="pe-nav-link {{ request()->is('event') ? 'active' : '' }}">
@@ -157,14 +185,12 @@
                     </ul>
 
                 </li>
-
-                 <!-- Users -->
                 <li class="pe-slide pe-has-sub">
 
                     <a href="#collapsePresentation" class="pe-nav-link {{ $presentationMenu ? 'active' : '' }}"
                         data-bs-toggle="collapse">
 
-                        <i class="ri-user-line pe-nav-icon"></i>
+                        <i class="ri-slideshow-line pe-nav-icon"></i>
 
                         <span class="pe-nav-content">
                             Presentation

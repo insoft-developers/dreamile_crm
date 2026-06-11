@@ -29,6 +29,9 @@ class LeadsByBranch extends Component
                 'leads as nok_count' => function ($query) {
                     $query->where('status', 'nok');
                 },
+                'leads as student_count' => function ($query) {
+                    $query->where('is_customer', 1);
+                },
             ])
             ->get();
 

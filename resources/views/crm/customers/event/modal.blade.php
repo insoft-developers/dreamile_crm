@@ -25,7 +25,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="event_location" class="form-label">Event Location</label>
-                        <textarea class="form-control" id="event_location" name="event_location" placeholder="Event_Location"></textarea>
+                        <textarea class="form-control" id="event_location" name="event_location" placeholder="Event Location"></textarea>
                     </div>
 
 
@@ -34,6 +34,17 @@
                         <input accept=".jpg,.jpeg,.png" type="file" class="form-control" id="image"
                             name="image">
                     </div>
+
+                    <div class="form-group mb-3">
+                        <label for="branch_id" class="form-label">Branch</label>
+                        <select class="form-control" id="branch_id" name="branch_id" placeholder="Branch">
+                            <option value="">- Select -</option>
+                            @foreach($branches as $key)
+                            <option value="{{ $key->id }}">{{ $key->branch_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
 
                 </div>
                 <div class="modal-footer">

@@ -1,8 +1,41 @@
 <script>
+
+    function exportExcel() {
+        let params = $('#filterForm').serialize();
+        window.open('/event/export/excel?' + params, '_blank');
+    }
+
+    function exportPDF() {
+        let params = $('#filterForm').serialize();
+        window.open('/event/export/pdf?' + params, '_blank');
+    }
+
+    function filterData() {
+        $('#list-table').DataTable().ajax.reload(null, false);
+    }
+
+    function resetFilter() {
+        // reset form
+        document.getElementById('filterForm').reset();
+
+
+
+        // reload datatable
+        $('#list-table').DataTable().ajax.reload(null, false);
+    }
+
+
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('event.table') }}',
+        ajax: {
+            url: "{{ route('event.table') }}",
+            data: function(d) {
+                d.filter_start_date = $('#filter_start_date').val();
+                d.filter_end_date = $('#filter_end_date').val();
+                d.filter_branch = $('#filter_branch').val();
+            }
+        },
         order: [
             [0, 'desc']
         ],
@@ -41,6 +74,22 @@
                 name: 'event_location'
             },
             {
+                data: 'branch_id',
+                name: 'branch_id'
+            },
+            {
+                data: 'lead',
+                name: 'lead'
+            },
+            {
+                data: 'deal',
+                name: 'deal'
+            },
+            {
+                data: 'userid',
+                name: 'userid'
+            },
+            {
                 data: 'updated_at',
                 name: 'updated_at'
             },
@@ -72,6 +121,7 @@
                 $("#event_date").val(data.event_date);
                 $("#image").val(null);
                 $("#event_location").val(data.event_location);
+                $("#branch_id").val(data.branch_id);
 
             }
         })

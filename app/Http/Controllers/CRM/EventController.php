@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Exports\EventExport;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Company;
 use App\Models\Event;
 use App\Models\Level;
 use App\Models\Position;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EventController extends Controller
 {
@@ -25,6 +30,18 @@ class EventController extends Controller
     {
         if ($request->ajax()) {
             $data = Event::query();
+            if(! empty(Auth::user()->branch_id)) {
+                $data->where('branch_id', Auth::user()->branch_id);
+            }
+
+            if ($request->filter_start_date && $request->filter_end_date) {
+                $data->whereBetween('event_date', [$request->filter_start_date, $request->filter_end_date]);
+            }
+
+
+            if ($request->filter_branch) {
+                $data->where('branch_id', $request->filter_branch);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('image', function ($row) {
@@ -41,7 +58,24 @@ class EventController extends Controller
                     return date('d-m-Y', strtotime($row->event_date));
                 })
                 ->addColumn('event_location', function ($row) {
-                    return '<div style="white-space:normal;width:330px;">'.$row->event_location.'</div>';
+                    return '<div style="white-space:normal;width:250px;">'.$row->event_location.'</div>';
+                })
+
+                ->addColumn('branch_id',function($row){
+                    return optional($row->branch)->branch_name ?? '';
+                })
+
+                ->addColumn('deal', function($row){
+                    return optional($row->deals)->count() ?? 0;
+                })
+
+                ->addColumn('lead', function($row){
+                    return optional($row->leads)->count() ?? 0;
+                })
+
+
+                ->addColumn('userid', function($row){
+                    return optional($row->createdBy)->name ?? '';
                 })
 
                 ->addColumn('action', function ($row) {
@@ -63,8 +97,8 @@ class EventController extends Controller
     public function index()
     {
         $view = 'event';
-
-        return view('crm.customers.event.index', compact('view'));
+        $branches = Auth::user()->branch_id ? Branch::where('id', Auth::user()->branch_id) : Branch::all();
+        return view('crm.customers.event.index', compact('view','branches'));
     }
 
     /**
@@ -97,6 +131,7 @@ class EventController extends Controller
         }
 
         $input['image'] = $path;
+        $input['userid'] = Auth::user()->id;
         Event::create($input);
 
 
@@ -152,6 +187,7 @@ class EventController extends Controller
         }
 
         $input['image'] = $path;
+        $input['userid'] = Auth::user()->id;
         $input['updated_at'] = Carbon::now();
         $event->update($input);
 
@@ -175,6 +211,38 @@ class EventController extends Controller
 
         // hapus data user
         $event->delete();
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $company = Company::find(1);
+        return Excel::download(new EventExport($request, $company), 'event_data_report.xlsx');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $company = Company::first();
+
+        $data = Event::query()->with(['branch', 'createdBy']);
+            
+
+        if ($request->filter_start_date && $request->filter_end_date) {
+            $data->whereBetween('event_date', [$request->filter_start_date, $request->filter_end_date]);
+        }
+
+
+        if ($request->filter_branch) {
+            $data->where('branch_id', $request->filter_branch);
+        }
+
+        $events = $data->orderBy('id', 'desc')->get();
+
+        $pdf = Pdf::loadView('crm.customers.event.pdf', compact('events', 'company'));
+
+        // LANDSCAPE
+        $pdf->setPaper('legal', 'landscape');
+
+        return $pdf->stream('event_report.pdf');
     }
 
 

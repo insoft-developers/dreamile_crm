@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Customer;
 use App\Models\Presentation;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
@@ -48,10 +49,13 @@ class PresentationExport implements FromCollection, WithHeadings, WithMapping, S
     public function collection()
     {
         $data = Presentation::query()->with(['consultant', 'branch']);
+        if(Auth::user()->branch_id) {
+            $data->where('branch_id', Auth::user()->branch_id);
+        }
 
         // FILTER TANGGAL
-        if ($this->request->filter_date) {
-            $data->where('date', $this->request->filter_date);
+        if ($this->request->filter_start_date && $this->request->filter_end_date) {
+            $data->whereBetween('date', [$this->request->filter_start_date, $this->request->filter_end_date ]);
         }
 
         // FILTER CONSULTANT

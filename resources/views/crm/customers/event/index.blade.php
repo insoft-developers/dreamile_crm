@@ -26,6 +26,66 @@
                                     class="bi bi-plus"></i></button>
                         </div>
                         <div class="card-body">
+                         <div class="card mb-3">
+                                <div class="card-body card-color">
+                                    <form id="filterForm">
+                                        <div class="row g-2">
+
+                                            <!-- Range Tanggal -->
+                                            <div class="col-md-3">
+                                                <label>Start Date</label>
+                                                <input type="date" id="filter_start_date" name="filter_start_date"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>End Date</label>
+                                                <input type="date" id="filter_end_date" name="filter_end_date"
+                                                    class="form-control">
+                                            </div>
+
+                                            
+
+                                            <!-- Branch -->
+                                            <div class="col-md-3">
+                                                <label>Branch</label>
+                                                <select id="filter_branch" name="filter_branch" class="form-control">
+                                                    <option value="">- All -</option>
+                                                    @foreach($branches as $key)
+                                                    <option value="{{ $key->id }}">{{ $key->branch_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <!-- Tombol -->
+                                            <div class="col-md-12 mt-3 d-flex justify-content-between">
+                                                <div>
+                                                    <button type="button" onclick="filterData()"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-search"></i> Filter
+                                                    </button>
+
+                                                    <button type="button" onclick="resetFilter()" class="btn btn-secondary btn-sm">
+                                                        <i class="bi bi-arrow-clockwise"></i> Reset
+                                                    </button>
+                                                </div>
+
+                                                <div>
+                                                    <button type="button" onclick="exportExcel()"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="bi bi-file-earmark-excel"></i> Excel
+                                                    </button>
+
+                                                    <button type="button" onclick="exportPDF()"
+                                                        class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table width="100%" id="list-table"
                                     class="table table-nowrap table-striped table-bordered">
@@ -38,6 +98,10 @@
                                             <th>Event Name</th>
                                             <th>Date</th>
                                             <th>Location</th>
+                                            <th>Branch</th>
+                                            <th>Leads</th>
+                                            <th>Deals</th>
+                                            <th>Created By</th>
                                             <th>Updated At</th>
                                         </tr>
                                     </thead>

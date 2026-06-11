@@ -30,7 +30,8 @@
         ajax: {
             url: "{{ route('presentation.table') }}",
             data: function(d) {
-                d.filter_date = $('#filter_date').val();
+                d.filter_start_date = $('#filter_start_date').val();
+                d.filter_end_date = $('#filter_end_date').val();
                 d.filter_consultant = $('#filter_consultant').val();
                 d.filter_branch = $('#filter_branch').val();
             }

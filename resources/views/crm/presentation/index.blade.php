@@ -32,15 +32,20 @@
                                         <div class="row g-2">
 
                                             <!-- Range Tanggal -->
-                                            <div class="col-md-4">
-                                                <label>Date</label>
-                                                <input type="date" id="filter_date" name="filter_date"
+                                            <div class="col-md-3">
+                                                <label>Start Date</label>
+                                                <input type="date" id="filter_start_date" name="filter_start_date"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>End Date</label>
+                                                <input type="date" id="filter_end_date" name="filter_end_date"
                                                     class="form-control">
                                             </div>
 
                                             
                                             <!-- Consultant -->
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <label>Consultant</label>
                                                 <select id="filter_consultant" name="filter_consultant"
                                                     class="form-control">
@@ -52,7 +57,7 @@
                                             </div>
 
                                             <!-- Branch -->
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <label>Branch</label>
                                                 <select id="filter_branch" name="filter_branch" class="form-control">
                                                     <option value="">- All -</option>

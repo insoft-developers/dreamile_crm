@@ -207,6 +207,7 @@ class LeadController extends Controller
             'status' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'event_id' => 'required_if:lead_source,event',
+            'presentation_id' => 'required_if:lead_source,presentation',
             'branch_id' => 'required',
         ]);
 
@@ -270,6 +271,7 @@ class LeadController extends Controller
             'status' => 'required',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'event_id' => 'required_if:lead_source_id,event',
+            'presentation_id' => 'required_if:lead_source,presentation',
             'branch_id' => 'required',
         ]);
 

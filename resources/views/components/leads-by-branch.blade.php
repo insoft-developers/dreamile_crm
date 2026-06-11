@@ -21,7 +21,7 @@
                          <td>{{ $key->confirm_count }}</td>
                          <td>{{ $key->deal_count }}</td>
                          <td>{{$key->nok_count }}</td>
-                          <td>{{$key->nok_count }}</td>
+                         <td>{{$key->student_count }}</td>
                      </tr>
                  @endforeach
              </tbody>
