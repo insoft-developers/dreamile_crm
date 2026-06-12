@@ -108,6 +108,7 @@
                         @endif
 
                         {{-- UNASSIGNED --}}
+                        @if (auth()->user()->position == 'supervisor')
                         <button
                             class="flex-fill btn btn-sm
             {{ $chatFilter == 'unassigned' ? 'btn-danger text-white' : 'btn-light' }}"
@@ -118,7 +119,7 @@
                         </button>
 
                         {{-- ASSIGNED --}}
-                        @if (auth()->user()->position != 'agent')
+                        
                             <button
                                 class="flex-fill btn btn-sm
                 {{ $chatFilter == 'assigned' ? 'btn-danger text-white' : 'btn-light' }}"
@@ -216,7 +217,7 @@
 
                                     <div class="flex-grow-1 overflow-hidden">
                                         <div class="fw-semibold text-truncate">
-                                            {{ $conversation->customer->fullname ?? $conversation->phone }}
+                                            {{ optional($conversation->customer)->fullname ?? $conversation->phone }}
                                         </div>
 
                                         <div class="small text-muted text-truncate">
@@ -294,7 +295,7 @@
                                         <span class="badge rounded-pill bg-danger chat-status">Unassigned</span>
                                     @else
                                         <span
-                                            class="badge rounded-pill bg-warning chat-status">{{ \Illuminate\Support\Str::limit($conversation->agent?->name, 15) }}</span>
+                                            class="badge rounded-pill bg-warning chat-status">{{ $conversation->agent?->name }}</span>
                                     @endif
                                 @elseif($conversation->status == 'resolved')
                                     <span class="badge rounded-pill bg-success chat-status">Resolved</span>
@@ -390,7 +391,7 @@
 
                                 <div class="fw-semibold">
 
-                                    {{ $selectedConversation->customer->fullname ?? $selectedConversation->phone }}
+                                    {{ optional($selectedConversation->customer)->fullname ?? $selectedConversation->phone }}
 
                                 </div>
 
@@ -1079,16 +1080,7 @@
 
                             </div>
 
-                            @if (empty($selectedConversation->assigned_to))
-                                <button class="btn btn-sm btn-danger"
-                                    wire:click="takeThisChat({{ $selectedConversation->id }})">
-
-                                    <i class="bi bi-person-check me-2 me-1"></i>
-
-                                    Take this chat
-
-                                </button>
-                            @endif
+                           
 
                         </div>
 

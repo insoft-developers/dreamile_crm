@@ -1,4 +1,11 @@
 <script>
+
+    function uploadData() {
+        $("#modal-import-presentation").modal("show");    
+    }
+
+
+
     function exportExcel() {
         let params = $('#filterForm').serialize();
         window.open('/presentation/export/excel?' + params, '_blank');
@@ -253,4 +260,51 @@
     function resetForm() {
         $('#form-add')[0].reset();
     }
+
+
+    $("#form-import-presentation").submit(function(e){
+        e.preventDefault();
+        $('#btn-submit-import').prop('disabled', true).text('Processing....');
+        $.ajax({
+            url:"{{ route('presentation.import') }}",
+            type:"POST",
+            dataType:"JSON",
+            data: new FormData($('#modal-import-presentation form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+                    $('#modal-import-presentation').modal('hide');
+                    reloadTable();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                $('#btn-submit-import').prop('disabled', false).text('Import Data');
+            }
+        })
+    });
 </script>

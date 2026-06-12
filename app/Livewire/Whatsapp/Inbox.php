@@ -83,8 +83,8 @@ class Inbox extends Component
 
     public function mount($customer = null)
     {
-        $this->agents = User::where('position', 'agent')->get();
-        if (Auth::user()->position === 'agent') {
+        $this->agents = User::all();
+        if (Auth::user()->position !== 'supervisor') {
             $this->chatFilter = 'mychat';
         }
 
@@ -162,12 +162,7 @@ class Inbox extends Component
         $fileName = null;
 
         try {
-            /*
-    |--------------------------------------------------------------------------
-    | ATTACHMENTS
-    |--------------------------------------------------------------------------
-    */
-
+          
             if (!empty($this->attachments)) {
                 foreach ($this->attachments as $attachment) {
                     $mime = $attachment->getMimeType();

@@ -22,8 +22,13 @@
                         <!--start::card-->
                         <div class="card-header">
                             <h5 class="card-title mb-0"> Presentation Data </h5>
-                            <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
-                                    class="bi bi-plus"></i></button>
+                            <div>
+                                <button onclick="uploadData()" title="Upload Data"
+                                    class="me-0 btn  btn-primary btn-sm"><i class="bi bi-plus"> Upload Data
+                                        Presentation</i></button>
+                                <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
+                                        class="bi bi-plus"></i></button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="card mb-3">
@@ -43,14 +48,14 @@
                                                     class="form-control">
                                             </div>
 
-                                            
+
                                             <!-- Consultant -->
                                             <div class="col-md-3">
                                                 <label>Consultant</label>
                                                 <select id="filter_consultant" name="filter_consultant"
                                                     class="form-control">
                                                     <option value="">- All -</option>
-                                                    @foreach($consultants as $consult)
+                                                    @foreach ($consultants as $consult)
                                                         <option value="{{ $consult->id }}">{{ $consult->name }}</option>
                                                     @endforeach
                                                 </select>
@@ -61,36 +66,38 @@
                                                 <label>Branch</label>
                                                 <select id="filter_branch" name="filter_branch" class="form-control">
                                                     <option value="">- All -</option>
-                                                    @foreach($branches as $branch)
-                                                        <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
+                                                    @foreach ($branches as $branch)
+                                                        <option value="{{ $branch->id }}">{{ $branch->branch_name }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
 
                                             <!-- Tombol -->
                                             <div class="col-md-12 mt-3 d-flex">
-                                                
-                                                    <button type="button" onclick="filterData()"
-                                                        class="btn btn-primary btn-sm">
-                                                        <i class="bi bi-search"></i> Filter
-                                                    </button>
 
-                                                    <button style="margin-left: 2px;" type="button" onclick="resetFilter()" class="btn btn-secondary btn-sm">
-                                                        <i class="bi bi-arrow-clockwise"></i> Reset
-                                                    </button>
-                                               
+                                                <button type="button" onclick="filterData()"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-search"></i> Filter
+                                                </button>
 
-                                               
-                                                    <button style="margin-left: 2px;" type="button" onclick="exportExcel()"
-                                                        class="btn btn-success btn-sm">
-                                                        <i class="bi bi-file-earmark-excel"></i> Excel
-                                                    </button>
+                                                <button style="margin-left: 2px;" type="button" onclick="resetFilter()"
+                                                    class="btn btn-secondary btn-sm">
+                                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                                </button>
 
-                                                    <button style="margin-left: 2px;" type="button" onclick="exportPDF()"
-                                                        class="btn btn-danger btn-sm">
-                                                        <i class="bi bi-file-earmark-pdf"></i> PDF
-                                                    </button>
-                                                
+
+
+                                                <button style="margin-left: 2px;" type="button" onclick="exportExcel()"
+                                                    class="btn btn-success btn-sm">
+                                                    <i class="bi bi-file-earmark-excel"></i> Excel
+                                                </button>
+
+                                                <button style="margin-left: 2px;" type="button" onclick="exportPDF()"
+                                                    class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                                                </button>
+
                                             </div>
 
                                         </div>
@@ -136,6 +143,7 @@
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
     @include('crm.presentation.modal')
+    @include('crm.presentation.modal_upload')
 @endsection
 
 @push('scripts')

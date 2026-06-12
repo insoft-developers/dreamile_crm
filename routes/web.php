@@ -91,6 +91,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/presentation_table', [PresentationController::class, 'table'])->name('presentation.table');
     Route::get('/presentation/export/excel', [PresentationController::class, 'exportExcel']);
     Route::get('/presentation/export/pdf', [PresentationController::class, 'exportPDF']);
+    Route::get('/presentation_download_template', [PresentationController::class, 'downloadTemplate'])->name('presentation.template');
+    Route::post('/presentation_import_data', [PresentationController::class, 'import'])->name('presentation.import');
+
 
 
 

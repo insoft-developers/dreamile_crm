@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Exports\PresentationExport;
+use App\Exports\PresentationTemplateExport;
 use App\Http\Controllers\Controller;
+use App\Imports\PresentationImport;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\Event;
@@ -31,7 +33,7 @@ class PresentationController extends Controller
     {
         if ($request->ajax()) {
             $data = Presentation::query();
-            if(! empty(Auth::user()->branch_id)) {
+            if (! empty(Auth::user()->branch_id)) {
                 $data->where('branch_id', Auth::user()->branch_id);
             }
 
@@ -49,24 +51,24 @@ class PresentationController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('deal', function($row){
+                ->addColumn('deal', function ($row) {
                     return $row->deals->count();
                 })
-                ->addColumn('lead', function($row){
+                ->addColumn('lead', function ($row) {
                     return $row->leads->count();
                 })
-                ->addColumn('consultant_id', function($row){
+                ->addColumn('consultant_id', function ($row) {
                     return $row->consultant?->name ?? '';
                 })
-                ->addColumn('branch_id', function($row){
+                ->addColumn('branch_id', function ($row) {
                     return $row->branch?->branch_name ?? '';
                 })
-                ->addColumn('userid', function($row){
+                ->addColumn('userid', function ($row) {
                     return $row->createdBy?->name ?? '';
                 })
                 ->addColumn('image', function ($row) {
                     if (!empty($row->image)) {
-                        return '<a href="'.asset('/storage/'.$row->image).'" target="_blank"><img class="user-image" src="'.asset('/storage/'.$row->image).'"></a>';
+                        return '<a href="' . asset('/storage/' . $row->image) . '" target="_blank"><img class="user-image" src="' . asset('/storage/' . $row->image) . '"></a>';
                     } else {
                         return '<center> -</center>';
                     }
@@ -78,23 +80,23 @@ class PresentationController extends Controller
                     return date('d-m-Y', strtotime($row->date));
                 })
                 ->addColumn('location', function ($row) {
-                    return '<div style="white-space:normal;width:180px;">'.$row->location.'</div>';
+                    return '<div style="white-space:normal;width:180px;">' . $row->location . '</div>';
                 })
                 ->addColumn('description', function ($row) {
-                    return '<div style="white-space:normal;width:180px;">'.$row->description.'</div>';
+                    return '<div style="white-space:normal;width:180px;">' . $row->description . '</div>';
                 })
 
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
 
-                    $button .= '<button style="margin-left:3px;" onclick="editData('.$row->id.')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
-                    $button .= '<button onclick="deleteData('.$row->id.')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
+                    $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
+                    $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action','image','location', 'description'])
+                ->rawColumns(['action', 'image', 'location', 'description'])
                 ->make(true);
         }
     }
@@ -104,15 +106,15 @@ class PresentationController extends Controller
     {
         $view = 'presentation';
         $consultantsQuery = User::where('is_active', 1)->where('position', 'consultant');
-        if(! empty(Auth::user()->branch_id)) {
+        if (! empty(Auth::user()->branch_id)) {
             $consultantsQuery->where('branch_id', Auth::user()->branch_id);
         }
-        
+
         $consultants = $consultantsQuery->get();
 
 
         $branchesQuery = Branch::query();
-        if(! empty(Auth::user()->branch_id)) {
+        if (! empty(Auth::user()->branch_id)) {
             $branchesQuery->where('id', Auth::user()->branch_id);
         }
 
@@ -140,9 +142,9 @@ class PresentationController extends Controller
             'location' => 'required',
             'date' => 'required',
             'consultant_id' => 'required',
-            'audience' =>'nullable',
+            'audience' => 'nullable',
             'tertarik' => 'nullable',
-            'sangat_tertarik'=> 'nullable',
+            'sangat_tertarik' => 'nullable',
             'kurang_tertarik' => 'nullable',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
@@ -194,9 +196,9 @@ class PresentationController extends Controller
             'location' => 'required',
             'date' => 'required',
             'consultant_id' => 'required',
-            'audience' =>'nullable',
+            'audience' => 'nullable',
             'tertarik' => 'nullable',
-            'sangat_tertarik'=> 'nullable',
+            'sangat_tertarik' => 'nullable',
             'kurang_tertarik' => 'nullable',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
@@ -243,7 +245,7 @@ class PresentationController extends Controller
     }
 
 
-   public function exportExcel(Request $request)
+    public function exportExcel(Request $request)
     {
         $company = Company::find(1);
         return Excel::download(new PresentationExport($request, $company), 'presentation_data_report.xlsx');
@@ -254,7 +256,7 @@ class PresentationController extends Controller
         $company = Company::first();
 
         $data = Presentation::query()->with(['consultant', 'branch', 'createdBy']);
-            
+
 
         if ($request->filter_start_date && $request->filter_end_date) {
             $data->whereBetween('date', [$request->filter_start_date, $request->filter_end_date]);
@@ -279,4 +281,38 @@ class PresentationController extends Controller
     }
 
 
+    public function downloadTemplate()
+    {
+        return Excel::download(
+            new PresentationTemplateExport(),
+            'presentation_upload_template.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        try {
+
+            Excel::import(
+                new PresentationImport(),
+                $request->file('file')
+            );
+
+           
+            return response()->json([
+                "success" => true,
+                "message" => "Data berhasil diimport"
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
 }
