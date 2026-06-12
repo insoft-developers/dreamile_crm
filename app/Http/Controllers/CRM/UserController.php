@@ -126,6 +126,7 @@ class UserController extends Controller
             'position' => 'required',
             'password' => 'required|min:6',
             'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'phone_number' => 'required|regex:/^62[0-9]{9,11}$/|unique:users,phone_number',
 
         ]);
 
@@ -180,6 +181,7 @@ class UserController extends Controller
             'position' => 'required',
             'password' => 'nullable|string|min:6',
             'photo_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'phone_number' => 'required|regex:/^62[0-9]{9,11}$/|' . Rule::unique('users')->ignore($user->id),
 
         ]);
 

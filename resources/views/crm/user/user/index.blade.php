@@ -39,6 +39,7 @@
                                             <th>Activity</th>
                                             <th>Status</th>
                                             <th>Email</th>
+                                            <th>Phone</th>
                                             <th>Branch</th>
                                             <th>Level</th>
                                             <th>Position</th>

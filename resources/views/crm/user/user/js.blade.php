@@ -51,6 +51,10 @@
                 name: 'email'
             },
             {
+                data: 'phone_number',
+                name: 'phone_number'
+            },
+            {
                 data: 'branch_id',
                 name: 'branch_id'
             },
@@ -97,6 +101,7 @@
                 $("#branch_id").val(data.branch_id);
                 $("#level").val(data.level);
                 $("#position").val(data.position);
+                $("#phone_number").val(data.phone_number);
 
             }
         })

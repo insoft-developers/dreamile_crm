@@ -24,6 +24,11 @@
                             required>
                     </div>
                     <div class="form-group mb-3">
+                        <label for="phone_number" class="form-label">Whatsapp</label>
+                        <input type="number" class="form-control" id="phone_number" name="phone_number" placeholder="6281331221234"
+                            required>
+                    </div>
+                    <div class="form-group mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password"
                             placeholder="Password">

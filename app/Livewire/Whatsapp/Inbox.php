@@ -433,7 +433,13 @@ class Inbox extends Component
 
         $this->showAssignModal = false;
         $this->dispatch('closeDropdown');
+        
+        $user = User::find($this->assignToUser);
+
+        $message = 'Ada chat masuk yang di assign ke Anda. Mohon segera di response. Terima kasih.';
+        $response = app(WhatsappService::class)->send($user->phone_number, $message);
         session()->flash('success', 'Chat assigned');
+
     }
 
     public function reopenChat($conversationId, $dropdownId = null)
