@@ -7,22 +7,59 @@ use Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
-    public function index() {
-        $data = DB::table('users as u')
-                ->leftJoin('whatsapp_conversations as wc', 'wc.assigned_to', '=', 'u.id')
-                ->leftJoin('whatsapp_messages as wm', 'wm.conversation_id', '=', 'wc.id')
-                ->select(
-                    'u.id',
-                    'u.name',
-                    DB::raw('COUNT(DISTINCT wc.id) as assigned_chat'),
-                    DB::raw("COUNT(DISTINCT CASE WHEN wc.status='open' THEN wc.id END) as open_chat"),
-                    DB::raw("COUNT(DISTINCT CASE WHEN wc.status='resolve' THEN wc.id END) as closed_chat"),
-                    DB::raw("COUNT(CASE WHEN wm.sender='customer' THEN wm.id END) as incoming_message"),
-                    DB::raw("COUNT(CASE WHEN wm.sender='agent' THEN wm.id END) as outgoing_message")
-                )
-                ->groupBy('u.id', 'u.name')
-                ->get();
+    public function index()
+    {
+        $frtQuery = DB::table('whatsapp_conversations as wc')
+            ->join('users as u', 'u.id', '=', 'wc.assigned_to')
+            ->join('branches as br', 'br.id', '=', 'u.branch_id')
+            ->select(
+                'u.id',
+                'u.name',
+                'br.branch_name',
 
-        dd($data);
+                DB::raw("
+            TIMESTAMPDIFF(
+                SECOND,
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'customer'
+                ),
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'agent'
+                )
+            ) as frt_seconds
+        ")
+            );
+
+        $summary = DB::query()
+            ->fromSub($frtQuery, 'frt')
+            ->select(
+                'id',
+                'name',
+                'branch_name',
+
+                DB::raw('COUNT(*) as total_chat'),
+
+                DB::raw('ROUND(AVG(frt_seconds)) as avg_frt'),
+
+                DB::raw('MIN(frt_seconds) as fastest'),
+
+                DB::raw('MAX(frt_seconds) as slowest')
+            )
+            ->groupBy(
+                'id',
+                'name',
+                'branch_name'
+            )
+            ->get();
+
+        dd($summary);
     }
 }

@@ -21,7 +21,10 @@
         request()->is('broadcast_report') ||
         request()->is('followup_report') ||
         request()->is('conversion_report') ||
-        request()->is('admin_performance_report');
+        request()->is('admin_performance_report') ||
+        request()->is('agent_perform_report') ||
+        request()->is('first_response_time');
+        
 
 @endphp
 
@@ -301,6 +304,12 @@
                             <a href="{{ url('agent_perform_report') }}"
                                 class="pe-nav-link {{ request()->is('agent_perform_report') ? 'active' : '' }}">
                                 Agent Perform Report
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('first_response_time') }}"
+                                class="pe-nav-link {{ request()->is('first_response_time') ? 'active' : '' }}">
+                                First Response Time Report
                             </a>
                         </li>
                         <li class="pe-slide-item">

@@ -126,12 +126,9 @@ class Inbox extends Component
                 'unread_count' => 0,
             ]);
         }
-        
+
 
         $this->dispatch('open-mobile-chat');
-
-
-
     }
 
     /*
@@ -165,7 +162,7 @@ class Inbox extends Component
         $fileName = null;
 
         try {
-          
+
             if (!empty($this->attachments)) {
                 foreach ($this->attachments as $attachment) {
                     $mime = $attachment->getMimeType();
@@ -182,22 +179,13 @@ class Inbox extends Component
                         continue;
                     }
 
-                    /*
-            |--------------------------------------------------------------------------
-            | IMAGE
-            |--------------------------------------------------------------------------
-            */
 
                     if (str_starts_with($mime, 'image/')) {
                         $type = 'image';
 
                         $response = app(WhatsappService::class)->sendImage($phone, $mediaId, $this->message, $this->replyMessageId);
                     } else {
-                        /*
-                |--------------------------------------------------------------------------
-                | FILE
-                |--------------------------------------------------------------------------
-                */
+
 
                         $type = 'file';
 
@@ -233,11 +221,7 @@ class Inbox extends Component
                     ]);
                 }
             } else {
-                /*
-        |--------------------------------------------------------------------------
-        | TEXT ONLY
-        |--------------------------------------------------------------------------
-        */
+
 
                 $response = app(WhatsappService::class)->send($phone, $this->message, $this->replyMessageId);
 
@@ -264,21 +248,23 @@ class Inbox extends Component
                 ]);
             }
 
-            /*
-    |--------------------------------------------------------------------------
-    | UPDATE CONVERSATION
-    |--------------------------------------------------------------------------
-    */
 
-            $this->selectedConversation->update([
+            $update =[
                 'last_message_at' => now(),
-            ]);
+            ];
 
-            /*
-    |--------------------------------------------------------------------------
-    | RESET
-    |--------------------------------------------------------------------------
-    */
+            if(!$this->selectedConversation->assigned_to && !$this->selectedConversation->admin_at) {
+                $update['admin_at'] = now();
+            }
+
+            if($this->selectedConversation->assigned_to && !$this->selectedConversation->agent_at && $this->selectedConversation->assigned_to == Auth::user()->id) {
+                $update['agent_at'] = now();
+            }
+
+            $this->selectedConversation->update($update);
+
+
+
 
             $this->reset(['message', 'attachments']);
 
@@ -437,7 +423,7 @@ class Inbox extends Component
 
         $this->showAssignModal = false;
         $this->dispatch('closeDropdown');
-        
+
         $user = User::find($this->assignToUser);
 
         $token = Str::random(64);
@@ -449,14 +435,13 @@ class Inbox extends Component
             "expired_at" => now()->addMinutes(60),
         ]);
 
-        $message = 'Ada chat masuk yang di assign ke Anda. Mohon segera di response. Terima kasih. untuk login silahkan masuk ke '.url('/').'/chat-access/'.$token;
-        
-        if(! empty($user->phone_number)) {
+        $message = 'Ada chat masuk yang di assign ke Anda. Mohon segera di response. Terima kasih. untuk login silahkan masuk ke ' . url('/') . '/chat-access/' . $token;
+
+        if (! empty($user->phone_number)) {
             $response = app(WhatsappService::class)->send($user->phone_number, $message);
         }
-        
-        session()->flash('success', 'Chat assigned');
 
+        session()->flash('success', 'Chat assigned');
     }
 
     public function reopenChat($conversationId, $dropdownId = null)

@@ -11,6 +11,7 @@ use App\Http\Controllers\CRM\ContactGroupController;
 use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
+use App\Http\Controllers\CRM\FirstResponseTimeController;
 use App\Http\Controllers\CRM\GroupManageController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
@@ -144,6 +145,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/followup_report', [ReportController::class, 'followup']);
     Route::get('/conversion_report', [ReportController::class, 'conversion']);
     Route::get('/admin_performance_report', [ReportController::class, 'admin_performance']);
+
+    Route::get('/first_response_time', [FirstResponseTimeController::class, 'index']);
+    Route::get('/first_response_table', [FirstResponseTimeController::class, 'table'])->name('first.response.table');
+    Route::get('/frt/export/excel', [FirstResponseTimeController::class, 'exportExcel']);
+    Route::get('/frt/export/pdf', [FirstResponseTimeController::class, 'exportPDF']);
+
    
 
 

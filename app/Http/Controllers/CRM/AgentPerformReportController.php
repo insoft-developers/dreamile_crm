@@ -148,6 +148,6 @@ class AgentPerformReportController extends Controller
         // LANDSCAPE
         $pdf->setPaper('legal', 'landscape');
 
-        return $pdf->stream('event_report.pdf');
+        return $pdf->stream('agent_performance_report.pdf');
     }
 }
