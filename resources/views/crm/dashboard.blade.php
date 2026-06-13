@@ -406,7 +406,7 @@
                                     <h4>Lead Status</h4>
 
                                 </div>
-                                <div class="card-body product-body bg-body m-4 mt-0">
+                                <div class="card-body bg-body m-4 mt-0">
                                     <livewire:LeadStatus />
 
                                 </div>
