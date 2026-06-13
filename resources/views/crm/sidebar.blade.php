@@ -298,9 +298,9 @@
                             </a>
                         </li>
                         <li class="pe-slide-item">
-                            <a href="{{ url('chat_report') }}"
-                                class="pe-nav-link {{ request()->is('chat_report') ? 'active' : '' }}">
-                                Chat Report
+                            <a href="{{ url('agent_perform_report') }}"
+                                class="pe-nav-link {{ request()->is('agent_perform_report') ? 'active' : '' }}">
+                                Agent Perform Report
                             </a>
                         </li>
                         <li class="pe-slide-item">

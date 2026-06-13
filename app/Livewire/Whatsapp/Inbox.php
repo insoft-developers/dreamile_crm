@@ -3,15 +3,18 @@
 namespace App\Livewire\Whatsapp;
 
 use App\Models\Branch;
+use App\Models\ChatAccessToken;
 use App\Models\Customer;
 use App\Models\MessageReaction;
 use App\Models\User;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\WhatsappService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Str;
 
 class Inbox extends Component
 {
@@ -429,6 +432,7 @@ class Inbox extends Component
         WhatsappConversation::where('id', $this->selectedConversationId)->update([
             'assigned_to' => $this->assignToUser,
             'status' => 'open',
+            'assign_at' => Carbon::now()
         ]);
 
         $this->showAssignModal = false;
@@ -436,8 +440,21 @@ class Inbox extends Component
         
         $user = User::find($this->assignToUser);
 
-        $message = 'Ada chat masuk yang di assign ke Anda. Mohon segera di response. Terima kasih.';
-        $response = app(WhatsappService::class)->send($user->phone_number, $message);
+        $token = Str::random(64);
+
+        ChatAccessToken::create([
+            "userid" => $this->assignToUser,
+            "conversation_id" => $this->selectedConversationId,
+            "token" => $token,
+            "expired_at" => now()->addMinutes(60),
+        ]);
+
+        $message = 'Ada chat masuk yang di assign ke Anda. Mohon segera di response. Terima kasih. untuk login silahkan masuk ke '.url('/').'/chat-access/'.$token;
+        
+        if(! empty($user->phone_number)) {
+            $response = app(WhatsappService::class)->send($user->phone_number, $message);
+        }
+        
         session()->flash('success', 'Chat assigned');
 
     }

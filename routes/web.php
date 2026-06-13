@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\CRM\AdministrativeController;
+use App\Http\Controllers\CRM\AgentPerformReportController;
 use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\BroadcastController;
+use App\Http\Controllers\CRM\ChatAccessController;
 use App\Http\Controllers\CRM\ChatController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\ContactGroupController;
@@ -20,6 +22,7 @@ use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\TemplateDetailController;
 use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestController;
 use App\Models\ContactGroup;
 use App\Models\LeadSource;
 use App\Models\Position;
@@ -37,6 +40,10 @@ use Svg\Tag\Group;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/test_query', [TestController::class, 'index']);
+
+Route::get('/chat-access/{token}', [ChatAccessController::class, 'index']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -126,11 +133,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lead_report', [ReportController::class, 'lead']);
     Route::get('/report/lead/data', [ReportController::class, 'leadReportData']);
 
-    Route::get('/chat_report', [ReportController::class, 'chat']);
+    Route::get('/agent_perform_report', [AgentPerformReportController::class, 'index']);
+    Route::get('/agent_perform_table', [AgentPerformReportController::class, 'table'])->name('agent.perform.table');
+    Route::get('/agent_perform/export/excel', [AgentPerformReportController::class, 'exportExcel']);
+    Route::get('/agent_perform/export/pdf', [AgentPerformReportController::class, 'exportPDF']);
+
+
+
     Route::get('/broadcast_report', [ReportController::class, 'broadcast']);
     Route::get('/followup_report', [ReportController::class, 'followup']);
     Route::get('/conversion_report', [ReportController::class, 'conversion']);
     Route::get('/admin_performance_report', [ReportController::class, 'admin_performance']);
+   
+
+
+
 });
 
 Route::middleware('auth')->group(function () {
