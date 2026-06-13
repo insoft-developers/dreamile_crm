@@ -3,61 +3,31 @@
     <main class="app-wrapper">
         <div class="container-fluid">
 
-            <div class="main-breadcrumb d-flex align-items-center my-3 position-relative">
-                <h2 class="breadcrumb-title mb-0 flex-grow-1 fs-14">Dreamile International CRM Dashboard</h2>
+            <div class="main-breadcrumb my-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-2">
+                            Dreamile CRM Dashboard
+                        </h2>
 
+                        <p class="mb-0 text-light opacity-75">
+                            Monitor leads, chats, presentations, events and broadcast performance in real time.
+                        </p>
+                    </div>
+
+                    <div class="text-end">
+                        <div class="badge bg-success fs-6 px-3 py-2">
+                            {{ now()->format('d M Y') }}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
+            
+            <div class="row mb-4">
                 <div class="col-xxl-8">
                     <div class="row h-100">
-                        <div class="col-xl-3 col-sm-6">
-                            <div class="card card-h-100">
-                                <div class="card-body d-flex align-items-center justify-content-around">
-                                    <div
-                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-folder2-open"></i>
-                                    </div>
-                                    <div>
-                                        <h3>{{ number_format($totalLeads) }} </h3>
-                                        <span class="fs-5">Total Leads</span>
-                                        <p class="fs-12 mb-0">+{{ $newLeadsToday }} today</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-sm-6">
-                            <div class="card card-h-100">
-                                <div class="card-body d-flex align-items-center justify-content-around">
-                                    <div
-                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-people"></i>
-                                    </div>
-                                    <div>
-                                        <h3>{{ number_format($activeCustomers) }} </h3>
-                                        <span class="fs-5">Active Customers</span>
-                                        <p class="fs-12 mb-0"><span
-                                                class="text-success">+{{ $newCustomersThisMonth }}</span> Customer This
-                                            Month</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="col-xl-3 col-sm-6">
-                            <div class="card card-h-100">
-                                <div class="card-body d-flex align-items-center justify-content-around">
-                                    <div
-                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-cart"></i>
-                                    </div>
-                                    <div>
-                                        <h3>{{ $conversionRate }}% </h3>
-                                        <span class="fs-5">Conversion Rate</span>
-                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="col-xl-3 col-sm-6">
                             <div class="card card-h-100">
                                 <div class="card-body d-flex align-items-center justify-content-around">
@@ -74,21 +44,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-sm-6">
-                            <div class="card card-h-100">
-                                <div class="card-body d-flex align-items-center justify-content-around">
-                                    <div
-                                        class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
-                                        <i class="bi bi-chat-dots text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <h3>{{ $todayChats }}</h3>
-                                        <span class="fs-5">Chat Today</span>
-                                        <p class="fs-12 mb-0"><span class="text-success"></span> </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="col-xl-3 col-sm-6">
                             <div class="card card-h-100">
                                 <div class="card-body d-flex align-items-center justify-content-around">
@@ -140,15 +96,64 @@
                 </div>
 
             </div>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row text-center">
+
+                                <div class="col-md-3">
+                                    <h4 class="fw-bold text-primary">
+                                        {{ number_format($totalLeads) }}
+                                    </h4>
+                                    <small class="text-muted">
+                                        Total Leads
+                                    </small>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h4 class="fw-bold text-success">
+                                        {{ number_format($activeCustomers) }}
+                                    </h4>
+                                    <small class="text-muted">
+                                        Active Customers
+                                    </small>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h4 class="fw-bold text-info">
+                                        {{ number_format($todayChats) }}
+                                    </h4>
+                                    <small class="text-muted">
+                                        Chats Today
+                                    </small>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h4 class="fw-bold text-warning">
+                                        {{ $conversionRate }}%
+                                    </h4>
+                                    <small class="text-muted">
+                                        Conversion Rate
+                                    </small>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h4>Recent Chats</h4>
-                            
+
                         </div>
                         <div class="card-body">
-                            <livewire:RecentChats/>
+                            <livewire:RecentChats />
                         </div>
                     </div>
                 </div>
@@ -157,11 +162,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Leads By Branch</h4>
-                            <p style="float: right;"><a href="{{ url('lead')}}">See Detail..</a></p>
-                            
+
+                            <a href="{{ url('lead') }}" class="btn btn-sm btn-light">
+                                View All
+                            </a>
+
                         </div>
                         <div class="card-body">
-                            <livewire:LeadsByBranch/>
+                            <livewire:LeadsByBranch />
                         </div>
                     </div>
                 </div>
@@ -169,11 +177,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Recent Presentation</h4>
-                            <p style="float: right;"><a href="{{ url('presentation')}}">See Detail..</a></p>
-                            
+
+                            <a href="{{ url('presentation') }}" class="btn btn-sm btn-light">
+                                View All
+                            </a>
+
                         </div>
                         <div class="card-body">
-                            <livewire:Presentation/>
+                            <livewire:Presentation />
                         </div>
                     </div>
                 </div>
@@ -181,11 +192,14 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Recent Events</h4>
-                            <p style="float: right;"><a href="{{ url('event')}}">See Detail..</a></p>
-                            
+                            {{-- <p style="float: right;"><a href="{{ url('event') }}">See Detail..</a></p> --}}
+                            <a href="{{ url('event') }}" class="btn btn-sm btn-light">
+                                View All
+                            </a>
+
                         </div>
                         <div class="card-body">
-                            <livewire:RecentEvent/>
+                            <livewire:RecentEvent />
                         </div>
                     </div>
                 </div>
@@ -222,57 +236,6 @@
                 </div>
 
 
-                {{-- <div class="col-xxl-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <h4>Product Statistics</h4>
-                                <p class="mb-0 text-muted">Track your product sales</p>
-                            </div>
-                            <a href="javascript:void(0)" class="link">View All</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="position-relative">
-                                <div id="product-statistics"></div>
-                                <div class="product-chart text-center">
-                                    <h3>9,829</h3>
-                                    <p class="mb-0">Product Sales</p>
-                                    <span class="badge bg-success py-1 rounded-pill">+5.34%</span>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <i class="ri-ram-line fs-5 me-3"></i>
-                                    Electronic
-                                </div>
-                                <div>
-                                    <span class="text-muted me-3">2,482</span>
-                                    <span class="badge bg-primary-subtle text-primary px-2 rounded-3">+5.34%</span>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <div>
-                                    <i class="bi bi-controller fs-5 me-3"></i>
-                                    Games
-                                </div>
-                                <div>
-                                    <span class="text-muted me-3">1,828</span>
-                                    <span class="badge bg-warning-subtle text-warning px-2 rounded-3">+5.34%</span>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-lamp fs-5 me-3"></i>
-                                    Furniture
-                                </div>
-                                <div>
-                                    <span class="text-muted me-3">1,463</span>
-                                    <span class="badge bg-danger-subtle text-danger px-2 rounded-3">+5.34%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="col-xxl-4 col-lg-6">
                     <div class="card h-100">
 
@@ -429,11 +392,11 @@
                             <div class="card">
                                 <div class="card-header pb-4 mb-2">
                                     <h4>User Online</h4>
-                                    
+
                                 </div>
                                 <div class="card-body bg-body m-4 mt-0">
-                                    <livewire:UserOnline/>
-                                    
+                                    <livewire:UserOnline />
+
                                 </div>
                             </div>
                         </div>
@@ -441,22 +404,249 @@
                             <div class="card">
                                 <div class="card-header pb-4 mb-2">
                                     <h4>Lead Status</h4>
-                                    
+
                                 </div>
                                 <div class="card-body product-body bg-body m-4 mt-0">
-                                    <livewire:LeadStatus/>
-                                    
+                                    <livewire:LeadStatus />
+
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
                 </div>
-                
+
             </div>
 
         </div>
 
         <!-- Submit Section -->
     </main>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+        }
+
+        body {
+            background: #f5f7fb;
+        }
+
+        .main-breadcrumb {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 20px;
+            padding: 25px 30px;
+            color: #fff;
+            margin-bottom: 25px !important;
+        }
+
+        .main-breadcrumb h2 {
+            color: #fff;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .card {
+            border: none !important;
+            border-radius: 18px !important;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, .06) !important;
+            overflow: hidden;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            background: #fff !important;
+            border-bottom: 1px solid #eef2f7 !important;
+            padding: 18px 22px !important;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-body {
+            padding: 20px !important;
+        }
+
+        /* KPI CARD */
+        .card-h-100 {
+            height: 100%;
+        }
+
+        .card-h-100 .card-body {
+            padding: 22px !important;
+        }
+
+        .card-h-100 h3 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 3px;
+        }
+
+        .card-h-100 span.fs-5 {
+            font-size: 13px !important;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .card-h-100 p {
+            margin-top: 5px;
+            color: #94a3b8;
+        }
+
+        /* ICON */
+        .card-h-100 .h-48px {
+            width: 58px !important;
+            height: 58px !important;
+            border: none !important;
+            border-radius: 16px !important;
+            background: #eff6ff;
+            box-shadow: none !important;
+        }
+
+        .card-h-100 .bi {
+            font-size: 24px !important;
+        }
+
+        /* warna icon per card */
+        .row .col-xl-3:nth-child(1) .h-48px {
+            background: #dbeafe;
+            color: #2563eb !important;
+        }
+
+        .row .col-xl-3:nth-child(2) .h-48px {
+            background: #dcfce7;
+            color: #16a34a !important;
+        }
+
+        .row .col-xl-3:nth-child(3) .h-48px {
+            background: #fef3c7;
+            color: #d97706 !important;
+        }
+
+        .row .col-xl-3:nth-child(4) .h-48px {
+            background: #cffafe;
+            color: #0891b2 !important;
+        }
+
+        .row .col-xl-3:nth-child(5) .h-48px {
+            background: #ede9fe;
+            color: #7c3aed !important;
+        }
+
+        .row .col-xl-3:nth-child(6) .h-48px {
+            background: #dcfce7;
+            color: #16a34a !important;
+        }
+
+        .row .col-xl-3:nth-child(7) .h-48px {
+            background: #dbeafe;
+            color: #2563eb !important;
+        }
+
+        .row .col-xl-3:nth-child(8) .h-48px {
+            background: #fee2e2;
+            color: #dc2626 !important;
+        }
+
+        /* View Detail */
+        .card-header a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .card-header a:hover {
+            color: #1d4ed8;
+        }
+
+        /* Broadcast */
+        .bubble-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .bubble {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+        }
+
+        .bubble small {
+            font-size: 11px;
+        }
+
+        .bubble1 {
+            background: #2563eb;
+        }
+
+        .bubble2 {
+            background: #10b981;
+        }
+
+        .bubble3 {
+            background: #06b6d4;
+        }
+
+        .bubble4 {
+            background: #ef4444;
+        }
+
+        .progress {
+            height: 10px !important;
+            border-radius: 20px !important;
+        }
+
+        .icon-box {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Livewire section */
+        .bg-body {
+            background: #fff !important;
+            border-radius: 12px;
+        }
+
+        /* responsive */
+        @media(max-width:768px) {
+
+            .main-breadcrumb {
+                padding: 20px;
+            }
+
+            .main-breadcrumb h2 {
+                font-size: 20px;
+            }
+
+            .card-h-100 h3 {
+                font-size: 24px;
+            }
+        }
+    </style>
 @endsection
