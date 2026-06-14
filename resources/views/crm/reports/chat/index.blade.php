@@ -10,8 +10,7 @@
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
                             <li class="breadcrumb-item" aria-current="page">Reports</li>
-                            <li class="breadcrumb-item" aria-current="page"><a href="{{ url('/first_response_time') }}">First Response Time Report</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                            <li class="breadcrumb-item active" aria-current="page">Chat History Report</li>
                         </ol>
                     </nav>
                 </div>
@@ -22,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> First Response Time Report - Detail </h5>
+                            <h5 class="card-title mb-0"> Chat History Report </h5>
 
                         </div>
                         <div class="card-body">
@@ -32,20 +31,60 @@
                                         <div class="row g-2">
 
                                             <!-- Range Tanggal -->
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <label>Start Date</label>
                                                 <input type="date" id="filter_start_date" name="filter_start_date"
                                                     class="form-control">
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <label>End Date</label>
                                                 <input type="date" id="filter_end_date" name="filter_end_date"
                                                     class="form-control">
                                             </div>
 
+                                            <div class="col-md-2">
+                                                <label>Customer</label>
+                                                <select id="filter_customer" name="filter_customer" class="form-control">
+                                                    <option value="">- All -</option>
+                                                    @foreach ($customers as $key)
+                                                        <option value="{{ $key->phone_number }}">{{ $key->fullname }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
+                                            <!-- Branch -->
+                                            <div class="col-md-2">
+                                                <label>Consultant</label>
+                                                <select id="filter_consultant" name="filter_consultant"
+                                                    class="form-control">
+                                                    <option value="">- All -</option>
+                                                    @foreach ($users as $key)
+                                                        <option value="{{ $key->id }}">{{ $key->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-2">
+                                                <label>Branch</label>
+                                                <select id="filter_branch" name="filter_branch"
+                                                    class="form-control">
+                                                    <option value="">- All -</option>
+                                                    @foreach ($branches as $key)
+                                                        <option value="{{ $key->id }}">{{ $key->branch_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label>Status</label>
+                                                <select id="filter_status" name="filter_status" class="form-control">
+                                                    <option value="">- All -</option>
+                                                    <option value="open">Open</option>
+                                                    <option value="resolved">Resolved</option>
+                                                </select>
+                                            </div>
 
                                             
+
                                             <!-- Tombol -->
                                             <div class="col-md-12 mt-3 d-flex">
 
@@ -77,7 +116,6 @@
                                     </form>
                                 </div>
                             </div>
-
                             <div class="table-responsive">
                                 <table width="100%" id="list-table"
                                     class="table table-nowrap table-striped table-bordered">
@@ -85,12 +123,17 @@
                                         <tr>
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
+                                            <th>Date</th>
                                             <th>Customer</th>
+                                            <th>Phone</th>
                                             <th>Consultant</th>
                                             <th>Branch</th>
-                                            <th>Chat Masuk</th>
-                                            <th>Dibalas</th>
-                                            <th>First Response Time</th>
+                                            <th>Status</th>
+                                            <th>Last Message</th>
+                                            <th>Assign At</th>
+                                            <th>Action</th>
+                                            
+
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -109,5 +152,5 @@
 @endsection
 
 @push('scripts')
-    @include('crm.reports.frt.detail.js')
+    @include('crm.reports.chat.js')
 @endpush

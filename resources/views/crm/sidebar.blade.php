@@ -17,13 +17,14 @@
 
     $reportMenu =
         request()->is('lead_report') ||
-        request()->is('chat_report') ||
         request()->is('broadcast_report') ||
         request()->is('followup_report') ||
         request()->is('conversion_report') ||
         request()->is('admin_performance_report') ||
         request()->is('agent_perform_report') ||
-        request()->is('first_response_time');
+        request()->is('first_response_time') ||
+        request()->is('first_response_time/*') ||
+        request()->is('chat_report');
         
 
 @endphp
@@ -312,6 +313,13 @@
                                 First Response Time Report
                             </a>
                         </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('chat_report') }}"
+                                class="pe-nav-link {{ request()->is('chat_report') ? 'active' : '' }}">
+                                Chat History Report
+                            </a>
+                        </li>
+                        
                         <li class="pe-slide-item">
                             <a href="{{ url('broadcast_report') }}"
                                 class="pe-nav-link {{ request()->is('broadcast_report') ? 'active' : '' }}">
