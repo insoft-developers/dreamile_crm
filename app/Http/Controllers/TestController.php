@@ -9,15 +9,38 @@ class TestController extends Controller
 {
     public function index()
     {
-        $frtQuery = DB::table('whatsapp_conversations as wc')
-            ->join('users as u', 'u.id', '=', 'wc.assigned_to')
-            ->join('branches as br', 'br.id', '=', 'u.branch_id')
-            ->select(
-                'u.id',
-                'u.name',
-                'br.branch_name',
+        $query = DB::table('whatsapp_conversations as wc')
+                ->join('users as u', 'u.id', '=', 'wc.assigned_to')
+                ->leftJoin('branches as br', 'br.id', '=', 'u.branch_id')
+                ->leftJoin('customers as cust', 'cust.phone_number', '=', 'wc.phone')
 
-                DB::raw("
+                ->select(
+                    'wc.id',
+                    'cust.fullname',
+                    'wc.phone',
+
+                    'u.name as agent_name',
+                    'br.branch_name',
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'customer'
+            ) as first_customer_message
+        "),
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'agent'
+            ) as first_agent_message
+        "),
+
+                    DB::raw("
             TIMESTAMPDIFF(
                 SECOND,
 
@@ -36,30 +59,24 @@ class TestController extends Controller
                 )
             ) as frt_seconds
         ")
-            );
+                );
 
-        $summary = DB::query()
-            ->fromSub($frtQuery, 'frt')
-            ->select(
-                'id',
-                'name',
-                'branch_name',
+            $query->where('u.id', 2);
 
-                DB::raw('COUNT(*) as total_chat'),
+            $query->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('whatsapp_messages')
+                    ->whereColumn(
+                        'whatsapp_messages.conversation_id',
+                        'wc.id'
+                    )
+                    ->where('sender', 'agent');
+            });
 
-                DB::raw('ROUND(AVG(frt_seconds)) as avg_frt'),
+            $data = $query
+                
+                ->get();
 
-                DB::raw('MIN(frt_seconds) as fastest'),
-
-                DB::raw('MAX(frt_seconds) as slowest')
-            )
-            ->groupBy(
-                'id',
-                'name',
-                'branch_name'
-            )
-            ->get();
-
-        dd($summary);
+        dd($data);
     }
 }

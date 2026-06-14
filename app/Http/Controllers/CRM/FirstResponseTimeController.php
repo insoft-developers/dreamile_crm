@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Exports\AgentPerformExport;
+use App\Exports\FRTDetailExport;
 use App\Exports\FRTSummaryExport;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Event;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -121,7 +124,7 @@ class FirstResponseTimeController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    $button .= '<button style="margin-left:3px;" title="Detail Data" class="btn btn-insoft btn-info"><i class="bi bi-list"></i></button>';
+                    $button .= '<a href="' . url('/first_response_time/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="btn btn-insoft btn-info"><i class="bi bi-list"></i></button></a>';
 
                     $button .= '</center>';
                     return $button;
@@ -219,15 +222,214 @@ class FirstResponseTimeController extends Controller
         return $pdf->stream('first_response_time_report.pdf');
     }
 
-    // function formatDuration($seconds)
-    // {
-    //     $minutes = floor($seconds / 60);
-    //     $seconds = $seconds % 60;
+    public function show(String $id)
+    {
+        $view = 'frt-detail';
+        return view('crm.reports.frt.detail.index', compact('view'));
+    }
 
-    //     if ($minutes > 0) {
-    //         return $minutes . ' Menit ' . $seconds . ' Detik';
-    //     }
 
-    //     return $seconds . ' Detik';
-    // }
+    public function detailTable(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $query = DB::table('whatsapp_conversations as wc')
+                ->join('users as u', 'u.id', '=', 'wc.assigned_to')
+                ->leftJoin('branches as br', 'br.id', '=', 'u.branch_id')
+                ->leftJoin('customers as cust', 'cust.phone_number', '=', 'wc.phone')
+
+                ->select(
+                    'wc.id',
+                    'cust.fullname',
+                    'wc.phone',
+
+                    'u.name as agent_name',
+                    'br.branch_name',
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'customer'
+            ) as first_customer_message
+        "),
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'agent'
+            ) as first_agent_message
+        "),
+
+                    DB::raw("
+            TIMESTAMPDIFF(
+                SECOND,
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'customer'
+                ),
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'agent'
+                )
+            ) as frt_seconds
+        ")
+                );
+
+            $query->where('u.id', $request->detailId);
+
+            if ($request->filter_start_date && $request->filter_end_date) {
+
+                $query->whereBetween('wc.created_at', [
+                    $request->filter_start_date . ' 00:00:00',
+                    $request->filter_end_date . ' 23:59:59'
+                ]);
+            }
+
+
+
+            $query->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('whatsapp_messages')
+                    ->whereColumn(
+                        'whatsapp_messages.conversation_id',
+                        'wc.id'
+                    )
+                    ->where('sender', 'agent');
+            });
+
+            $data = $query
+
+                ->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('customer', function ($row) {
+                    return $row->fullname ?? '';
+                })
+                ->addColumn('consultant', function ($row) {
+                    return $row->agent_name ?? '';
+                })
+                ->addColumn('branch_name', function ($row) {
+                    return $row->branch_name ?? '';
+                })
+                ->addColumn('chat_masuk', function ($row) {
+                    return  Carbon::parse($row->first_customer_message)->format('d-m-Y H:i:s');
+                })
+                ->addColumn('dibalas', function ($row) {
+                    return  Carbon::parse($row->first_agent_message)->format('d-m-Y H:i:s');
+                })
+                ->addColumn('frt', function ($row) {
+                    return formatDuration($row->frt_seconds);
+                })
+
+                ->rawColumns([])
+                ->make(true);
+        }
+    }
+
+    public function exportDetailExcel(Request $request)
+    {
+        $company = Company::find(1);
+        return Excel::download(new FRTDetailExport($request, $company), 'first_response_detail_report.xlsx');
+    }
+
+    public function exportDetailPDF(Request $request)
+    {
+        $company = Company::first();
+
+        $query = DB::table('whatsapp_conversations as wc')
+                ->join('users as u', 'u.id', '=', 'wc.assigned_to')
+                ->leftJoin('branches as br', 'br.id', '=', 'u.branch_id')
+                ->leftJoin('customers as cust', 'cust.phone_number', '=', 'wc.phone')
+
+                ->select(
+                    'wc.id',
+                    'cust.fullname',
+                    'wc.phone',
+
+                    'u.name as agent_name',
+                    'br.branch_name',
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'customer'
+            ) as first_customer_message
+        "),
+
+                    DB::raw("
+            (
+                SELECT MIN(created_at)
+                FROM whatsapp_messages
+                WHERE conversation_id = wc.id
+                AND sender = 'agent'
+            ) as first_agent_message
+        "),
+
+                    DB::raw("
+            TIMESTAMPDIFF(
+                SECOND,
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'customer'
+                ),
+
+                (
+                    SELECT MIN(created_at)
+                    FROM whatsapp_messages
+                    WHERE conversation_id = wc.id
+                    AND sender = 'agent'
+                )
+            ) as frt_seconds
+        ")
+                );
+
+            $query->where('u.id', $request->agent_id);
+
+            if ($request->filter_start_date && $request->filter_end_date) {
+
+                $query->whereBetween('wc.created_at', [
+                    $request->filter_start_date . ' 00:00:00',
+                    $request->filter_end_date . ' 23:59:59'
+                ]);
+            }
+
+
+
+            $query->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('whatsapp_messages')
+                    ->whereColumn(
+                        'whatsapp_messages.conversation_id',
+                        'wc.id'
+                    )
+                    ->where('sender', 'agent');
+            });
+
+            $data = $query
+
+                ->get();
+
+        $pdf = Pdf::loadView('crm.reports.frt.detail.pdf', compact('data', 'company'));
+
+        // LANDSCAPE
+        $pdf->setPaper('legal', 'landscape');
+
+        return $pdf->stream('first_response_detail_report.pdf');
+    }
 }

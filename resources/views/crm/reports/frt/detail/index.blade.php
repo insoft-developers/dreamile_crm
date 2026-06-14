@@ -10,7 +10,8 @@
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
                             <li class="breadcrumb-item" aria-current="page">Reports</li>
-                            <li class="breadcrumb-item active" aria-current="page">First Response Time Report</li>
+                            <li class="breadcrumb-item" aria-current="page">First Response Time Report</li>
+                            <li class="breadcrumb-item active" aria-current="page">Detail</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +22,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> First Response Time Report </h5>
+                            <h5 class="card-title mb-0"> First Response Time Report - Detail </h5>
 
                         </div>
                         <div class="card-body">
@@ -44,28 +45,7 @@
 
 
 
-                                            <!-- Branch -->
-                                            <div class="col-md-3">
-                                                <label>Consultant</label>
-                                                <select id="filter_consultant" name="filter_consultant"
-                                                    class="form-control">
-                                                    <option value="">- All -</option>
-                                                    @foreach ($consultants as $key)
-                                                        <option value="{{ $key->id }}">{{ $key->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label>Branch</label>
-                                                <select id="filter_branch" name="filter_branch" class="form-control">
-                                                    <option value="">- All -</option>
-                                                    @foreach ($branches as $key)
-                                                        <option value="{{ $key->id }}">{{ $key->branch_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
+                                            
                                             <!-- Tombol -->
                                             <div class="col-md-12 mt-3 d-flex">
 
@@ -97,6 +77,7 @@
                                     </form>
                                 </div>
                             </div>
+
                             <div class="table-responsive">
                                 <table width="100%" id="list-table"
                                     class="table table-nowrap table-striped table-bordered">
@@ -104,15 +85,12 @@
                                         <tr>
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
-                                            <th>Consultant Name</th>
+                                            <th>Customer</th>
+                                            <th>Consultant</th>
                                             <th>Branch</th>
-                                            <th>Total Chat</th>
-                                            <th>Avg FRT</th>
-                                            <th>Fastest</th>
-                                            <th>Slowest</th>
-                                            <th>Action</th>
-
-
+                                            <th>Chat Masuk</th>
+                                            <th>Dibalas</th>
+                                            <th>First Response Time</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -131,5 +109,5 @@
 @endsection
 
 @push('scripts')
-    @include('crm.reports.frt.js')
+    @include('crm.reports.frt.detail.js')
 @endpush

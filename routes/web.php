@@ -150,6 +150,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/first_response_table', [FirstResponseTimeController::class, 'table'])->name('first.response.table');
     Route::get('/frt/export/excel', [FirstResponseTimeController::class, 'exportExcel']);
     Route::get('/frt/export/pdf', [FirstResponseTimeController::class, 'exportPDF']);
+    Route::get('/first_response_time/{id}', [FirstResponseTimeController::class, 'show']);
+    Route::get('/first_response_detail_table', [FirstResponseTimeController::class, 'detailTable'])->name('first.response.detail.table');
+    Route::get('/frt_detail/export/excel', [FirstResponseTimeController::class, 'exportDetailExcel']);
+    Route::get('/frt_detail/export/pdf', [FirstResponseTimeController::class, 'exportDetailPDF']);
 
    
 
