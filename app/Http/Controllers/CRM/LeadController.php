@@ -31,7 +31,7 @@ class LeadController extends Controller
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            $data = Customer::query();
+            $data = Customer::with('presentation');
             $data->whereNull('is_customer');
             // 🔥 FILTER TANGGAL
             if ($request->start_date && $request->end_date) {
@@ -63,6 +63,82 @@ class LeadController extends Controller
             }
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('prevent', function ($row) {
+                    $html = '';
+                    if ($row->lead_source_id == 'presentation') {
+                        $html .= '<ul>';
+                        if ($row->presentation && $row->presentation->date) {
+                            $html .= '<li>' . date('d F Y', strtotime($row->presentation?->date)) . '</li>';
+                        } else {
+                            $html .= '';
+                        }
+
+                        $audience = $row->presentation?->audience ?? 0;
+                        $tr = $row->presentation?->tertarik ?? 0;
+                        $st = $row->presentation?->sangat_tertarik ?? 0;
+                        $kt = $row->presentation?->kurang_tertarik ?? 0;
+
+                        $html .= '<li>' . $row->presentation?->title . '</li>';
+                        $html .= '<li>' . $row->presentation?->location . '</li>';
+                        $html .= '<li>' . $audience . '/' . $tr . '/' . $st . '/' . $kt . '</li>';
+
+                        $html .= '</ul>';
+                    } else if ($row->lead_source_id == 'event') {
+                        $html .= '<ul>';
+                        if ($row->events && $row->events->event_date) {
+                            $html .= '<li>' . date('d F Y', strtotime($row->events?->event_date)) . '</li>';
+                        } else {
+                            $html .= '';
+                        }
+
+
+                        $html .= '<li>' . $row->events?->event_name . '</li>';
+                        $html .= '<li>' . $row->events?->event_location . '</li>';
+
+
+                        $html .= '</ul>';
+                    } else {
+                        $html .= '<center>-</center>';
+                    }
+
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
+
+                ->addColumn('visit', function ($row) {
+                    $html = '';
+
+                    if ($row->visit_date && $row->visit_location) {
+
+
+                        $html .= '<ul>';
+                        $html .= '<li>' . date('d F Y', strtotime($row->visit_date)) . '</li>';
+                        $html .= '<li>' . $row->visit_location . '</li>';
+                        $html .= '<li>' . $row->visit_note . '</li>';
+                        $html .= '</ul>';
+                    } else {
+                        $html .= '<center>-</center>';
+                    }
+
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
+                ->addColumn('followup', function ($row) {
+                    $html = '';
+                    if ($row->followup && $row->followup->count() > 0) {
+                        $html .= '<ul>';
+                        foreach ($row->followup as $f) {
+                            $gf = '';
+                            if ($f->image) {
+                                $gf .= '<br>';
+                                $gf .= '<a href="' . asset('/storage/' . $f->image) . '" target="_blank"><img class="lead-image" src="' . asset('/storage/' . $f->image) . '"></a>';
+                            } else {
+                                $gf .= '';
+                            }
+                            $html .= '<li>( ' . $f->step . ' ) ' . date('d-m-Y H:i', strtotime($f->date)) . '<br>' . $f->note . '' . $gf . '</li>';
+                        }
+                        $html .= '</ul>';
+                    }
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
                 ->addColumn('lead_source_id', function ($row) {
                     if ($row->lead_source_id == 'facebook') {
                         return '<span style="color:blue;font-weight:bold;">Facebook</span>';
@@ -139,27 +215,52 @@ class LeadController extends Controller
                     return $row->createdBy?->name ?? '';
                 })
                 ->addColumn('action', function ($row) {
+
+                    $editRole = null;
+                    $deleteRole = null;
+                    $convertRole = null;
+                    
+
+                    if (Auth::user()->position == 'supervisor') {
+                        $editRole = '';
+                        $deleteRole = '';
+                        $convertRole = '';
+                       
+                    } else {
+                        if (Auth::user()->id == $row->created_by) {
+                            $editRole = '';
+                            $deleteRole = '';
+                        } else {
+                            $editRole = 'disabled';
+                            $deleteRole = 'disabled';
+                        }
+                        $convertRole = 'disabled';
+
+                    }
+
+
                     $button = '';
                     $button .= '<center>';
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
-                    if ($row->is_customer == 1) {
-                        $button .= '<button disabled style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
-                    } else {
-                        $button .= '<button onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
-                    }
+
+                    $button .= '<button '.$convertRole.' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+
+
 
 
 
                     $button .= '<a href="' . url('/lead/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
 
-                    $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
-                    $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
+                    $button .= '<button ' . $editRole . ' style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
+
+
+                    $button .= '<button ' . $deleteRole . ' onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup'])
                 ->make(true);
         }
     }

@@ -133,6 +133,18 @@
                 name: 'lead_source_id'
             },
             {
+                data: 'prevent',
+                name: 'prevent'
+            },
+            {
+                data: 'visit',
+                name: 'visit'
+            },
+            {
+                data: 'followup',
+                name: 'followup'
+            },
+            {
                 data: 'branch_id',
                 name: 'branch_id'
             },
