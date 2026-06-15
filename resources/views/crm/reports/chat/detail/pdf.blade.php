@@ -65,95 +65,180 @@
 
 <body>
 
-    <div class="title">
-        <div class="company">
-            {{ $company->company_name ?? '' }}
+    <!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+
+<style>
+
+    body{
+        font-family: DejaVu Sans, sans-serif;
+        font-size:12px;
+    }
+
+    .header{
+        text-align:center;
+        margin-bottom:20px;
+    }
+
+    .company{
+        font-size:20px;
+        font-weight:bold;
+    }
+
+    .address{
+        font-size:12px;
+    }
+
+    .title{
+        font-size:16px;
+        font-weight:bold;
+        margin-top:10px;
+    }
+
+    .chat{
+        margin-bottom:15px;
+        clear:both;
+    }
+
+    .customer{
+        text-align:left;
+    }
+
+    .agent{
+        text-align:right;
+    }
+
+    .bubble-customer{
+        display:inline-block;
+        max-width:70%;
+        background:#f1f1f1;
+        padding:10px;
+        border-radius:10px;
+        text-align:left;
+    }
+
+    .bubble-agent{
+        display:inline-block;
+        max-width:70%;
+        background:#DCF8C6;
+        padding:10px;
+        border-radius:10px;
+        text-align:left;
+    }
+
+    .sender{
+        font-weight:bold;
+        margin-bottom:5px;
+    }
+
+    .time{
+        font-size:10px;
+        color:#666;
+        margin-top:5px;
+    }
+
+    img{
+        max-width:250px;
+        max-height:250px;
+        margin-bottom:5px;
+    }
+
+    hr{
+        border:none;
+        border-top:1px solid #ddd;
+        margin:15px 0;
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<div class="header">
+
+
+<div class="company">
+    {{ $company->company_name }}
+</div>
+
+<div class="address">
+    {{ $company->address }}
+</div>
+
+<div class="title">
+    CHAT HISTORY DETAIL REPORT
+</div>
+
+
+</div>
+
+@foreach($data as $chat)
+
+
+@php
+
+    $isAgent = $chat->sender != 'customer';
+
+    $sender = $isAgent
+        ? ($chat->user?->name ?? 'Agent')
+        : ($chat->customer?->fullname ?? 'Customer');
+
+@endphp
+
+<div class="chat {{ $isAgent ? 'agent' : 'customer' }}">
+
+    <div class="{{ $isAgent ? 'bubble-agent' : 'bubble-customer' }}">
+
+        <div class="sender">
+            {{ $sender }}
         </div>
 
-        <div class="address">
-            {{ $company->address ?? '' }}
+        @if($chat->type == 'image' && $chat->attachment)
+
+            @php
+                $path = public_path('storage/'.$chat->attachment);
+            @endphp
+
+            @if(file_exists($path))
+                <img src="{{ $path }}">
+            @else
+                <div>[IMAGE]</div>
+            @endif
+
+        @elseif($chat->type == 'file')
+
+            <div>
+                📎 {{ $chat->file_name ?? 'Attachment' }}
+            </div>
+
+        @endif
+
+        <div>
+            {!! nl2br(e($chat->message)) !!}
         </div>
 
-        <div class="report-title">
-            CHAT HISTORY REPORT
+        <div class="time">
+            {{ date('d-m-Y H:i', strtotime($chat->created_at)) }}
         </div>
+
     </div>
 
-    <table>
+</div>
 
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Consultant</th>
-                <th>Branch</th>
-                <th>Status</th>
-                <th>Last Message</th>
-                <th>Assign At</th>
-                
-               
-            </tr>
-        </thead>
 
-        <tbody>
-            {{-- $row->created_at,
-            $row->customer?->fullname ?? '',
-            $row->phone ?? '',
-            $row->agent?->name ??'',
-            $row->agent?->branch?->branch_name ?? '',
-            $row->status ?? '',
-            $row->last_message_at,
-            $row->assign_at --}}
+@endforeach
 
-            @foreach($data as $item)
+</body>
 
-            <tr>
+</html>
 
-                <td class="text-center">
-                    {{ $loop->iteration }}
-                </td>
-
-                <td>
-                    {{ $item->created_at ?? '-' }}
-                </td>
-
-                <td>
-                    {{ $item->customer?->fullname ?? '' }}
-                </td>
-
-                <td>
-                    {{ $item->phone ?? '' }}
-                </td>
-                <td>
-                    {{ $item->agent?->name ?? '' }}
-                </td>
-
-                <td>
-                    {{ $item->agent?->branch?->branch_name ?? '' }}
-                </td>
-
-               <td>
-                    {{ $item->status }}
-                </td>
-
-               <td>
-                    {{ $item->last_message_at ?? '' }}
-                </td>
-               
-
-                <td>
-                    {{ $item->assign_at ?? '' }}
-                </td>
-
-            </tr>
-
-            @endforeach
-
-        </tbody>
-
-    </table>
 
 </body>
 

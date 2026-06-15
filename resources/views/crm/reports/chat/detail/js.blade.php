@@ -1,12 +1,18 @@
 <script>
     function exportExcel() {
+        let filterId = window.location.pathname.split('/').pop();
         let params = $('#filterForm').serialize();
-        window.open('/chat/export/excel?' + params, '_blank');
+        params += '&filter_id=' + filterId;
+        window.open('/chat_detail/export/excel?' + params, '_blank');
+
+
     }
 
     function exportPDF() {
+        let filterId = window.location.pathname.split('/').pop();
         let params = $('#filterForm').serialize();
-        window.open('/chat/export/pdf?' + params, '_blank');
+        params += '&filter_id=' + filterId;
+        window.open('/chat_detail/export/pdf?' + params, '_blank');
     }
 
     function filterData() {
@@ -68,20 +74,18 @@
                 data: 'chat_content',
                 name: 'chat_content',
             },
-            
+
             {
                 data: 'status',
                 name: 'status',
             },
-            
+
         ]
     });
 
-    
+
 
     function reloadTable() {
         table.ajax.reload(null, false);
     }
-
-   
 </script>
