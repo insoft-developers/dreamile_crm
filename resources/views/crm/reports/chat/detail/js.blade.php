@@ -1,16 +1,12 @@
 <script>
     function exportExcel() {
-        let agentId = window.location.pathname.split('/').pop();
         let params = $('#filterForm').serialize();
-        params += '&agent_id=' + agentId;
-        window.open('/frt_detail/export/excel?' + params, '_blank');
+        window.open('/chat/export/excel?' + params, '_blank');
     }
 
     function exportPDF() {
-        let agentId = window.location.pathname.split('/').pop();
         let params = $('#filterForm').serialize();
-        params += '&agent_id=' + agentId;
-        window.open('/frt_detail/export/pdf?' + params, '_blank');
+        window.open('/chat/export/pdf?' + params, '_blank');
     }
 
     function filterData() {
@@ -38,15 +34,15 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('first.response.detail.table') }}",
+            url: "{{ route('chat.detail.table') }}",
             data: function(d) {
-                d.detailId = window.location.pathname.split('/').pop();
-                d.filter_start_date = $("#filter_start_date").val();
-                d.filter_end_date = $("#filter_end_date").val();
+                d.filter_start_date = $('#filter_start_date').val();
+                d.filter_end_date = $('#filter_end_date').val();
+                d.filter_id = window.location.pathname.split('/').pop();
             }
         },
         order: [
-            [0, 'asc']
+            [0, 'desc']
         ],
         columns: [{
                 data: 'id',
@@ -61,37 +57,31 @@
                 searchable: false
             },
             {
-                data: 'customer',
-                name: 'customer',
+                data: 'created_at',
+                name: 'created_at',
             },
             {
-                data: 'consultant',
-                name: 'consultant',
+                data: 'sender',
+                name: 'sender',
             },
             {
-                data: 'branch_name',
-                name: 'branch_name',
+                data: 'chat_content',
+                name: 'chat_content',
             },
+            
             {
-                data: 'chat_masuk',
-                name: 'chat_masuk',
+                data: 'status',
+                name: 'status',
             },
-            {
-                data: 'dibalas',
-                name: 'dibalas',
-            },
-            {
-                data: 'frt',
-                name: 'frt',
-            },
-
-
+            
         ]
     });
 
-
+    
 
     function reloadTable() {
         table.ajax.reload(null, false);
     }
+
+   
 </script>

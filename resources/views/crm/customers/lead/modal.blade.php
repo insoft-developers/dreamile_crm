@@ -251,6 +251,29 @@
 
                                     </div>
 
+                                    <!-- Branch -->
+                                    <div class="form-group mb-3">
+
+                                        <label for="branch_id" class="form-label fw-semibold">
+                                            Branch
+                                        </label>
+
+                                        <select class="form-control"
+                                            id="branch_id"
+                                            name="branch_id">
+
+                                            <option value="">- Select Branch -</option>
+
+                                            @foreach($branches as $branch)
+                                                <option value="{{ $branch->id }}">
+                                                    {{ $branch->branch_name }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
+
+                                    </div>
+
                                     <!-- Lead Source -->
                                     <div class="form-group mb-3">
 
@@ -367,34 +390,13 @@
                                             </h6>
 
                                             <small class="text-muted">
-                                                Branch and regional data
+                                                Regional data
                                             </small>
                                         </div>
 
                                     </div>
 
-                                    <!-- Branch -->
-                                    <div class="form-group mb-3">
-
-                                        <label for="branch_id" class="form-label fw-semibold">
-                                            Branch
-                                        </label>
-
-                                        <select class="form-control"
-                                            id="branch_id"
-                                            name="branch_id">
-
-                                            <option value="">- Select Branch -</option>
-
-                                            @foreach($branches as $branch)
-                                                <option value="{{ $branch->id }}">
-                                                    {{ $branch->branch_name }}
-                                                </option>
-                                            @endforeach
-
-                                        </select>
-
-                                    </div>
+                                    
 
                                     <!-- Province -->
                                     <div class="form-group mb-3">

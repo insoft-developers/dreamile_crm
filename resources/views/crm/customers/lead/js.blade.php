@@ -441,7 +441,8 @@
 
 
         } else if (eventId === 'presentation') {
-            fetch("{{ url('/api/presentation') }}")
+            var branchId = $("#branch_id").val();
+            fetch("{{ url('/api/presentation?branchId=') }}"+branchId)
                 .then(res => res.json())
                 .then(data => {
                     let optionData = '';
@@ -902,4 +903,6 @@
             });
 
     });
+
+    
 </script>

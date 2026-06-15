@@ -344,9 +344,15 @@ class LeadController extends Controller
     }
 
 
-    public function presentation()
+    public function presentation(Request $request)
     {
-        $presentations = Presentation::all();
+        
+        $query = Presentation::query();
+        if($request->branchId) {
+            $query->where('branch_id', $request->branchId);
+        }
+
+        $presentations = $query->get();
         return response()->json($presentations);
     }
 

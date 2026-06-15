@@ -1,4 +1,12 @@
 <style>
+    .chat-image {
+        width: 100px;
+        height: auto;
+        border-radius: 5px;
+        border: 2px solid whitesmoke;
+        padding: 2px;
+        object-fit: cover;
+    }
     .contact-image {
         width: 30px;
         height: 30px;

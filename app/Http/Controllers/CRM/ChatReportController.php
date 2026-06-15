@@ -88,7 +88,7 @@ class ChatReportController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '';
                     $button .= '<center>';
-                    $button .= '<a href="' . url('/first_response_time/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="btn btn-insoft btn-info"><i class="bi bi-list"></i></button></a>';
+                    $button .= '<a href="' . url('/chat_detail_report/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="btn btn-insoft btn-info"><i class="bi bi-list"></i></button></a>';
 
                     $button .= '</center>';
                     return $button;

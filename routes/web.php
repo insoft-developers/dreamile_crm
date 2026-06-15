@@ -6,6 +6,7 @@ use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\BroadcastController;
 use App\Http\Controllers\CRM\ChatAccessController;
 use App\Http\Controllers\CRM\ChatController;
+use App\Http\Controllers\CRM\ChatHistoryDetailController;
 use App\Http\Controllers\CRM\ChatReportController;
 use App\Http\Controllers\CRM\CompanyController;
 use App\Http\Controllers\CRM\ContactGroupController;
@@ -160,6 +161,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat_report_table', [ChatReportController::class, 'table'])->name('chat.report.table');
     Route::get('/chat/export/excel', [ChatReportController::class, 'exportExcel']);
     Route::get('/chat/export/pdf', [ChatReportController::class, 'exportPDF']);
+
+    Route::get('/chat_detail_report/{id}', [ChatHistoryDetailController::class, 'index']);
+    Route::get('/chat_detail_table', [ChatHistoryDetailController::class, 'table'])->name('chat.detail.table');
 });
 
 Route::middleware('auth')->group(function () {

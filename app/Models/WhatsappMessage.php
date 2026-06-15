@@ -32,4 +32,9 @@ class WhatsappMessage extends Model
     {
         return $this->hasMany(MessageReaction::class, 'message_id', 'id');
     }
+
+    public function customer():BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'phone', 'phone_number');
+    }
 }
