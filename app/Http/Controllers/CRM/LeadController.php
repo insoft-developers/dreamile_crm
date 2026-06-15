@@ -632,7 +632,7 @@ class LeadController extends Controller
     {
         $company = Company::first();
 
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy'])
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy','presentation', 'events', 'followup'])
             ->whereNull('is_customer');
 
         // FILTER TANGGAL
@@ -665,7 +665,7 @@ class LeadController extends Controller
         $pdf = Pdf::loadView('crm.customers.lead.pdf', compact('customers', 'company'));
 
         // LANDSCAPE
-        $pdf->setPaper('legal', 'landscape');
+        $pdf->setPaper([0, 0, 900, 2000], 'landscape');
 
         return $pdf->stream('Lead_Report.pdf');
     }
