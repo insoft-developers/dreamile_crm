@@ -58,7 +58,7 @@ class LeadController extends Controller
                 $data->where('branch_id', $request->filter_branch);
             }
 
-            if(!empty(Auth::user()->branch_id)) {
+            if (!empty(Auth::user()->branch_id)) {
                 $data->where('branch_id', Auth::user()->branch_id);
             }
             return DataTables::of($data)
@@ -143,12 +143,12 @@ class LeadController extends Controller
                     $button .= '<center>';
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
-                    if($row->is_customer == 1) {
+                    if ($row->is_customer == 1) {
                         $button .= '<button disabled style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
                     } else {
-                        $button .= '<button onclick="convert('.$row->id.')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+                        $button .= '<button onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
                     }
-                    
+
 
 
                     $button .= '<a href="' . url('/lead/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
@@ -333,10 +333,20 @@ class LeadController extends Controller
         $customer->delete();
     }
 
-    public function event()
+    public function event(Request $request)
     {
-        $events = Event::all();
-        $presentations = Presentation::all();
+
+
+        $queryEvents = Event::query();
+        if ($request->branchId) {
+            $queryEvents->where('branch_id', $request->branchId);
+        }
+        $events = $queryEvents->get();
+        $queryPresentations = Presentation::query();
+        if ($request->branchId) {
+            $queryPresentations->where('branch_id', $request->branchId);
+        }
+        $presentations = $queryPresentations->get();
 
         $data['event'] = $events;
         $data['presentation'] = $presentations;
@@ -346,9 +356,9 @@ class LeadController extends Controller
 
     public function presentation(Request $request)
     {
-        
+
         $query = Presentation::query();
-        if($request->branchId) {
+        if ($request->branchId) {
             $query->where('branch_id', $request->branchId);
         }
 
@@ -522,7 +532,7 @@ class LeadController extends Controller
         $company = Company::first();
 
         $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy'])
-             ->whereNull('is_customer');
+            ->whereNull('is_customer');
 
         // FILTER TANGGAL
         if ($request->start_date && $request->end_date) {
@@ -573,10 +583,10 @@ class LeadController extends Controller
             "success" => true,
             "message" => "Success"
         ]);
-        
     }
 
-     public function presentationAttribute(Request $request) {
+    public function presentationAttribute(Request $request)
+    {
         $input = $request->all();
         $data = Presentation::find((int)$input['id']);
         return response()->json($data);

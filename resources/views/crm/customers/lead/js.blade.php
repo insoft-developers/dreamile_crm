@@ -180,7 +180,7 @@
                 $("#photo").val(null);
                 $("#email").val(data.email);
                 $("#lead_source_id").val(data.lead_source_id);
-                showEventChoice(data.lead_source_id, data.event_id, data.presentation_id);
+                showEventChoice(data.lead_source_id, data.event_id, data.presentation_id, data.branch_id);
                 $("#status").val(data.status);
                 $("#consultant_id").val(data.consultant_id);
                 $("#note").val(data.note);
@@ -409,12 +409,13 @@
     $("#lead_source_id").change(function() {
         const eventId = $(this).val();
         if (eventId === 'event') {
-            fetch("{{ url('/api/event') }}")
+            var branchId = $("#branch_id").val();
+            fetch("{{ url('/api/event?branchId=') }}"+branchId)
                 .then(res => res.json())
                 .then(data => {
                     let optionData = '';
                     optionData += `<option value="">- Select -</option>`;
-                    data.forEach(item => {
+                    data.event.forEach(item => {
                         optionData +=
                             `<option value="${item.id}">${item.event_name} ( ${item.event_location} )</option>`;
                     });
@@ -478,9 +479,9 @@
     })
 
 
-    function showEventChoice(eventType, selectedEventId = null, selectedPresentationId = null) {
+    function showEventChoice(eventType, selectedEventId = null, selectedPresentationId = null, selectedBranchId) {
         if (eventType === 'event' || eventType === 'presentation') {
-            fetch("{{ url('/api/event') }}")
+            fetch("{{ url('/api/event?branchId=') }}"+selectedBranchId)
                 .then(res => res.json())
                 .then(data => {
 
@@ -904,5 +905,8 @@
 
     });
 
-    
+    $("#branch_id").change(function(){
+        $("#lead_source_id").val("");
+        $("#event-container").html('');
+    });
 </script>
