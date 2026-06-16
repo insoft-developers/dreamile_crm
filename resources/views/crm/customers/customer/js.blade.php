@@ -26,6 +26,8 @@
     getProvince();
 
 
+
+
     if ($(window).width() > 768) {
         $('#modal-add').on('shown.bs.modal', function() {
             $(this).find('.select2').select2({
@@ -34,6 +36,9 @@
             });
         });
     }
+
+
+
 
     $("#province_code").change(function() {
         var provinceCode = $(this).val();
@@ -63,7 +68,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route('customer.table') }}',
+            url: "{{ route('customer.table') }}",
             data: function(d) {
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
@@ -128,6 +133,18 @@
                 name: 'lead_source_id'
             },
             {
+                data: 'prevent',
+                name: 'prevent'
+            },
+            {
+                data: 'visit',
+                name: 'visit'
+            },
+            {
+                data: 'followup',
+                name: 'followup'
+            },
+            {
                 data: 'branch_id',
                 name: 'branch_id'
             },
@@ -148,7 +165,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Customer Data");
+        $(".modal-title").text("Add Leads Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -163,7 +180,7 @@
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Customer Data");
+                $('.modal-title').text("Edit Leads Data");
                 $('#id').val(data.id);
                 $("#fullname").val(data.fullname);
                 $("#full_address").val(data.full_address);
@@ -175,7 +192,7 @@
                 $("#photo").val(null);
                 $("#email").val(data.email);
                 $("#lead_source_id").val(data.lead_source_id);
-                showEventChoice(data.lead_source_id, data.event_id);
+                showEventChoice(data.lead_source_id, data.event_id, data.presentation_id, data.branch_id);
                 $("#status").val(data.status);
                 $("#consultant_id").val(data.consultant_id);
                 $("#note").val(data.note);
@@ -404,12 +421,13 @@
     $("#lead_source_id").change(function() {
         const eventId = $(this).val();
         if (eventId === 'event') {
-            fetch("{{ url('/api/event') }}")
+            var branchId = $("#branch_id").val();
+            fetch("{{ url('/api/event?branchId=') }}"+branchId)
                 .then(res => res.json())
                 .then(data => {
                     let optionData = '';
                     optionData += `<option value="">- Select -</option>`;
-                    data.forEach(item => {
+                    data.event.forEach(item => {
                         optionData +=
                             `<option value="${item.id}">${item.event_name} ( ${item.event_location} )</option>`;
                     });
@@ -435,27 +453,61 @@
                 });
 
 
+        } else if (eventId === 'presentation') {
+            var branchId = $("#branch_id").val();
+            fetch("{{ url('/api/presentation?branchId=') }}"+branchId)
+                .then(res => res.json())
+                .then(data => {
+                    let optionData = '';
+                    optionData += `<option value="">- Select -</option>`;
+                    data.forEach(item => {
+                        optionData +=
+                            `<option value="${item.id}">${item.title} ( ${item.location} )</option>`;
+                    });
+
+                    let selectedPresentation = '';
+                    selectedPresentation += `
+                    <div class="card">
+                        <div class="card-body">    
+                            <div class="form-group mb-3">
+                                <label for="presentation_id" class="form-label required">Select Presentation</label>
+                                <select class="form-control" id="presentation_id" name="presentation_id">
+                                    ${optionData}
+                                </select>
+                                <small>
+                            Presentation not found? 
+                            <a href="{{ url('presentation') }}">please add presentation data</a>
+                        </small>  
+                        </div>                        
+
+                    </div>`;
+                    $("#event-container").html(selectedPresentation);
+                });
+
+
         } else {
             $("#event-container").html('');
         }
     })
 
-    function showEventChoice(eventType, selectedEventId = null) {
-        if (eventType === 'event') {
-            fetch("{{ url('/api/event') }}")
+
+    function showEventChoice(eventType, selectedEventId = null, selectedPresentationId = null, selectedBranchId) {
+        if (eventType === 'event' || eventType === 'presentation') {
+            fetch("{{ url('/api/event?branchId=') }}"+selectedBranchId)
                 .then(res => res.json())
                 .then(data => {
 
                     let optionData = `<option value="">- Select -</option>`;
 
-                    data.forEach(item => {
-                        optionData += `
+                    if (eventType === 'event') {
+                        data.event.forEach(item => {
+                            optionData += `
                         <option value="${item.id}">
                             ${item.event_name} (${item.event_location})
                         </option>`;
-                    });
+                        });
 
-                    let selectEvent = `
+                        let selectEvent = `
                 <div class="card">
                     <div class="card-body">    
                         <div class="form-group mb-3">
@@ -471,13 +523,47 @@
                     </div>
                 </div>`;
 
-                    // inject ke DOM
-                    $("#event-container").html(selectEvent);
+                        // inject ke DOM
+                        $("#event-container").html(selectEvent);
 
-                    // 🔥 SET VALUE SETELAH RENDER
-                    if (selectedEventId) {
-                        $('#event_id').val(selectedEventId).trigger('change');
+                        // 🔥 SET VALUE SETELAH RENDER
+                        if (selectedEventId) {
+                            $('#event_id').val(selectedEventId).trigger('change');
+                        }
+                    } else {
+                        data.presentation.forEach(item => {
+                            optionData += `
+                        <option value="${item.id}">
+                            ${item.title} (${item.location})
+                        </option>`;
+                        });
+
+                        let selectEvent = `
+                <div class="card">
+                    <div class="card-body">    
+                        <div class="form-group mb-3">
+                            <label for="presentation_id" class="form-label required">Select Presentation</label>
+                            <select class="form-control" id="presentation_id" name="presentation_id">
+                                ${optionData}
+                            </select>
+                        </div>
+                        <small>
+                            presentation not found? 
+                            <a href="{{ url('presentation') }}">please add presentation data</a>
+                        </small>                        
+                    </div>
+                </div>`;
+
+                        // inject ke DOM
+                        $("#event-container").html(selectEvent);
+
+                        // 🔥 SET VALUE SETELAH RENDER
+                        if (selectedPresentationId) {
+                            $('#presentation_id').val(selectedPresentationId).trigger('change');
+                        }
                     }
+
+
 
                 });
         } else {
@@ -486,10 +572,288 @@
     }
 
 
+    function visitData(id) {
+        fetch("{{ url('/get_visit_data') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+
+                $("#modal-visit").modal('show');
+                $(".modal-title").text('Visit Detail Data');
+                $("#visit_customer_id").val(id);
+                $("#visit_date").val(data.data.visit_date);
+                $("#visit_location").val(data.data.visit_location);
+                $("#visit_status").val(data.data.visit_status);
+                $("#visit_note").val(data.data.visit_note);
+
+                $("#preview").html('');
+                let prevImage = '';
+                if (data.images.length > 0) {
+                    data.images.forEach(item => {
+                        prevImage +=
+                            `<img style="Object-fit:cover;" src="{{ asset('storage') }}/${item.image}" width="100" height="100" class="rounded border border-success">`;
+                    });
+
+                    $("#preview").html(prevImage);
+                }
+
+
+            });
+
+
+    }
+</script>
+
+
+<script>
+    document.getElementById('photos').addEventListener('change', function(event) {
+        let preview = document.getElementById('preview');
+        preview.innerHTML = '';
+
+        Array.from(event.target.files).forEach(file => {
+            let reader = new FileReader();
+
+            reader.onload = function(e) {
+                let img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                img.style.border = '2px solid green';
+                img.classList.add('rounded');
+                img.style.marginBottom = '12px';
+
+                preview.appendChild(img);
+            }
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+    $("#form-visit").submit(function(e) {
+        e.preventDefault();
+        loading("btn-save-visit");
+        $.ajax({
+            url: "{{ route('visit.add') }}",
+            type: "POST",
+            data: new FormData($('#modal-visit form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+                    reloadTable();
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                $('#btn-save-visit').prop('disabled', false).text('Save');
+            }
+
+        });
+    });
+
+    function addFollowup() {
+        $('#form-follow')[0].reset();
+        const step = $("#followup-step").val();
+        $("#step").val(step);
+        $("#aksi").val("tambah");
+        $(".modal-title").text(`Follow Up ${step}`);
+        $("#modal-follow").modal('show');
+        $("#modal-follow-list").modal('hide');
+
+    }
+
+
+    function followup_edit(id) {
+        fetch("{{ url('/followup_edit') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+
+                $("#aksi").val("edit");
+                $("#follow_id").val(data.id);
+                $("#customer_follow_id").val(data.customer_id);
+                $("#step").val(data.step);
+                $("#followup_date").val(data.date);
+                $("#followup_note").val(data.note);
+                $("#followup_image").val(null);
+                $("#modal-follow").modal("show");
+                $("#modal-follow-list").modal('hide');
+                $(".modal-title").text(`Edit Followup ${data.step}`);
+            });
+    }
+
+    function followup_delete(id) {
+        alert(id);
+    }
+
+    function followup(id) {
+        $("#customer_follow_id").val(id);
+        fetch("{{ url('/followup_data') }}" + "/" + id)
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.length == 0) {
+                    $('#form-follow')[0].reset();
+                    $(".modal-title").text('Follow Up 1');
+                    $("#step").val(1);
+                    $("#aksi").val("tambah");
+                    $("#modal-follow").modal('show');
+                } else {
+                    $(".modal-title").text('Follow Lists');
+                    initFollowupData(data);
+                }
+
+            });
+    }
+
+    function initFollowupData(data) {
+        let tcontent = '';
+        let angka = 1;
+        data.forEach(item => {
+
+            let gambar = '';
+            if (item.image != null) {
+                gambar +=
+                    `<a href="{{ asset('storage') }}/${item.image}" target="_blank"><img class="lead-image" src="{{ asset('storage') }}/${item.image}"></a>`;
+            } else {
+                gambar += '-';
+            }
+
+            tcontent += `
+                            <tr>
+                                <td>${angka++}</td>
+                                <td>Followup ${item.step}</td>
+                                <td>${item.date}</td>
+                                <td style="width:280px;"><span style="white-space:normal;">${item.note}</span></td>
+                                <td>${gambar}</td>
+                                <td><span onclick="followup_edit(${item.id})" class="text-edit">Edit</span></td>
+                            </tr>`;
+        });
+
+        let ft = '';
+        ft += `<table class="table table-stripped table-bordered table-nowrap">
+                            <thead>
+                                <th>No</th>
+                                <th>Step</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                ${tcontent}
+                            </tbody>
+                          </table>`;
+
+
+        $("#table-follow-container").html(ft);
+        $("#followup-list-id").val(id);
+        let newStep = parseInt(data[0].step) + 1;
+        $("#followup-step").val(newStep);
+        $("#modal-follow-list").modal('show');
+        if (newStep > 3) {
+            $("#add-followup-btn").prop("disabled", true);
+        } else {
+            $("#add-followup-btn").prop("disabled", false);
+        }
+    }
+
+
+    $("#form-follow").submit(function(e) {
+        e.preventDefault();
+        loading("btn-save-follow");
+        const aksi = $("#aksi").val();
+        let url;
+        if (aksi == 'tambah') {
+            url = "{{ route('follow.add') }}";
+        } else {
+            url = "{{ route('follow.update') }}";
+        }
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: new FormData($('#modal-follow form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+                    initFollowupData(data.data);
+                    reloadTable();
+                    $("#modal-follow").modal('hide');
+                    $("#modal-follow-list").modal('show');
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                $('#btn-save-follow').prop('disabled', false).text('Save');
+            }
+
+        });
+    });
+
+
     function convert(id) {
         Swal.fire({
             title: 'Are sure?',
-            text: "This customer will be downgraded into lead",
+            text: "This lead will be downgrade into leads",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -517,4 +881,44 @@
             }
         });
     }
+
+
+
+    $("#followup_image").on('change', function(e) {
+
+        const file = e.target.files[0];
+
+        if (file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+
+                $('#preview-follow-image').attr('src', event.target.result);
+
+                $('#follow-preview').removeClass('d-none');
+
+            }
+
+            reader.readAsDataURL(file);
+
+        }
+
+    });
+
+
+    $(document).on('change', '#presentation_id', function() {
+        var id = $(this).find('option:selected').val();
+        fetch("{{ url('/presentation/attribute') }}" + "?id=" + id)
+            .then(res => res.json())
+            .then(data => {
+                $("#consultant_id").val(data.consultant_id);
+            });
+
+    });
+
+    $("#branch_id").change(function(){
+        $("#lead_source_id").val("");
+        $("#event-container").html('');
+    });
 </script>

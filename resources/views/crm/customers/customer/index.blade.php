@@ -141,6 +141,9 @@
                                             <th>Status</th>
                                             <th>Consultant</th>
                                             <th>Lead Source</th>
+                                            <th>Presentation/Event</th>
+                                            <th>Visit</th>
+                                            <th>Followup</th>
                                             <th>Branch</th>
                                             <th>Created By</th>
                                             <th>Created At</th>

@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <table>
+   <table>
 
         <thead>
             <tr>
@@ -94,6 +94,9 @@
                 <th>Status</th>
                 <th>Consultant</th>
                 <th>Lead Source</th>
+                <th>Presentation/Event</th>
+                <th>Visit</th>
+                <th>Followup</th>
                 <th>Branch</th>
                 <th>Province</th>
                 <th>Regency</th>
@@ -107,100 +110,180 @@
 
         <tbody>
 
-            @foreach($customers as $item)
+            @foreach ($customers as $item)
+                @php
 
-            @php
+                    if ($item->lead_source_id == 'event') {
+                        $lead_source = 'Event';
+                    } elseif ($item->lead_source_id == 'presentation') {
+                        $lead_source = 'Presentation';
+                    } else {
+                        $lead_source = optional($item->leadsource)->source_name ?? '-';
+                    }
 
-            if ($item->lead_source_id == 'event') {
-                $lead_source = 'Event';
-            } elseif ($item->lead_source_id == 'presentation') {
-                $lead_source = 'Presentation';
-            } else {
-                $lead_source = optional($item->leadsource)->source_name ?? '-';
-            }
+                    $prevent = '';
+                    if ($item->lead_source_id == 'presentation') {
+                        $prevent .= '<ul>';
+                        if ($item->presentation && $item->presentation->date) {
+                            $prevent .= '<li>' . date('d F Y', strtotime($item->presentation?->date)) . '</li>';
+                        } else {
+                            $prevent .= '';
+                        }
 
-            @endphp
+                        $audience = $item->presentation?->audience ?? 0;
+                        $tr = $item->presentation?->tertarik ?? 0;
+                        $st = $item->presentation?->sangat_tertarik ?? 0;
+                        $kt = $item->presentation?->kurang_tertarik ?? 0;
 
-            <tr>
+                        $prevent .= '<li>' . $item->presentation?->title . '</li>';
+                        $prevent .= '<li>' . $item->presentation?->location . '</li>';
+                        $prevent .= '<li>' . $audience . '/' . $tr . '/' . $st . '/' . $kt . '</li>';
 
-                <td class="text-center">
-                    {{ $loop->iteration }}
-                </td>
+                        $prevent .= '</ul>';
+                    } elseif ($item->lead_source_id == 'event') {
+                        $prevent .= '<ul>';
+                        if ($item->events && $item->events->event_date) {
+                            $prevent .= '<li>' . date('d F Y', strtotime($item->events?->event_date)) . '</li>';
+                        } else {
+                            $prevent .= '';
+                        }
 
-                <td>
-                    {{ $item->fullname ?? '-' }}
-                </td>
+                        $prevent .= '<li>' . $item->events?->event_name . '</li>';
+                        $prevent .= '<li>' . $item->events?->event_location . '</li>';
 
-                <td>
-                    {{ $item->full_address ?? '-' }}
-                </td>
+                        $prevent .= '</ul>';
+                    } else {
+                        $prevent .= '<center>-</center>';
+                    }
 
-                <td>
-                    {{ $item->school_from ?? '-' }}
-                </td>
+                    $visite = '';
 
-                <td>
-                    {{ $item->class }}/{{ $item->major }}
-                </td>
+                    if ($item->visit_date && $item->visit_location) {
+                        $visite .= '<ul>';
+                        $visite .= '<li>' . date('d F Y', strtotime($item->visit_date)) . '</li>';
+                        $visite .= '<li>' . $item->visit_location . '</li>';
+                        $visite .= '<li>' . $item->visit_note . '</li>';
+                        $visite .= '</ul>';
+                    } else {
+                        $visite .= '<center>-</center>';
+                    }
 
-                <td>
-                    {{ $item->phone_number ?? '-' }}
-                </td>
+                    $followup = '';
 
-                <td>
-                    {{ $item->email ?? '-' }}
-                </td>
+                    if ($item->followup && $item->followup->count() > 0) {
+                        foreach ($item->followup as $f) {
+                            $followup .= '<div style="margin-bottom:15px;">';
 
-                <td>
-                    {{ $item->gender ?? '-' }}
-                </td>
+                            $followup .= '<strong>(' . $f->step . ')</strong> ';
+                            $followup .= date('d-m-Y H:i', strtotime($f->date));
 
-                <td>
-                    {{ $item->status ?? '-' }}
-                </td>
+                            $followup .= '<br>';
+                            $followup .= nl2br($f->note);
 
-                <td>
-                    {{ optional($item->consultant)->name ?? '-' }}
-                </td>
+                            if ($f->image) {
+                                $path = public_path('storage/' . $f->image);
 
-                <td>
-                    {{ $lead_source }}
-                </td>
+                                if (file_exists($path)) {
+                                    $followup .=
+                                        '<br><img src="' . $path . '" style="max-width:80px;max-height:80px;">';
+                                }
+                            }
 
-                <td>
-                    {{ optional($item->branch)->branch_name ?? '-' }}
-                </td>
+                            $followup .= '</div>';
+                        }
+                    }
 
-                <td>
-                    {{ $item->province_name ?? '' }}
-                </td>
+                @endphp
 
-                <td>
-                    {{ $item->regency_name ?? '' }}
-                </td>
+                <tr>
 
-                <td>
-                    {{ $item->district_name ?? '' }}
-                </td>
+                    <td class="text-center">
+                        {{ $loop->iteration }}
+                    </td>
 
-                <td>
-                    {{ $item->village_name ?? '' }}
-                </td>
+                    <td>
+                        {{ $item->fullname ?? '-' }}
+                    </td>
 
-                <td class="note">
-                    {{ $item->note ?? '' }}
-                </td>
+                    <td>
+                        {{ $item->full_address ?? '-' }}
+                    </td>
 
-                <td>
-                    {{ optional($item->createdBy)->name ?? '' }}
-                </td>
+                    <td>
+                        {{ $item->school_from ?? '-' }}
+                    </td>
 
-                <td>
-                    {{ date('d M Y H:i', strtotime($item->created_at)) }}
-                </td>
+                    <td>
+                        {{ $item->class }}/{{ $item->major }}
+                    </td>
 
-            </tr>
+                    <td>
+                        {{ $item->phone_number ?? '-' }}
+                    </td>
 
+                    <td>
+                        {{ $item->email ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ $item->gender ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ $item->status ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ optional($item->consultant)->name ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ $lead_source }}
+                    </td>
+                    <td>
+                        <?= $prevent ?>
+                    </td>
+                    <td>
+                        <?= $visite ?>
+                    </td>
+                    <td>
+                        <?= $followup ?>
+                    </td>
+
+
+                    <td>
+                        {{ optional($item->branch)->branch_name ?? '-' }}
+                    </td>
+
+                    <td>
+                        {{ $item->province_name ?? '' }}
+                    </td>
+
+                    <td>
+                        {{ $item->regency_name ?? '' }}
+                    </td>
+
+                    <td>
+                        {{ $item->district_name ?? '' }}
+                    </td>
+
+                    <td>
+                        {{ $item->village_name ?? '' }}
+                    </td>
+
+                    <td class="note">
+                        {{ $item->note ?? '' }}
+                    </td>
+
+                    <td>
+                        {{ optional($item->createdBy)->name ?? '' }}
+                    </td>
+
+                    <td>
+                        {{ date('d M Y H:i', strtotime($item->created_at)) }}
+                    </td>
+
+                </tr>
             @endforeach
 
         </tbody>

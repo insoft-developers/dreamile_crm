@@ -56,6 +56,82 @@ class CustomerController extends Controller
             }
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('prevent', function ($row) {
+                    $html = '';
+                    if ($row->lead_source_id == 'presentation') {
+                        $html .= '<ul>';
+                        if ($row->presentation && $row->presentation->date) {
+                            $html .= '<li>' . date('d F Y', strtotime($row->presentation?->date)) . '</li>';
+                        } else {
+                            $html .= '';
+                        }
+
+                        $audience = $row->presentation?->audience ?? 0;
+                        $tr = $row->presentation?->tertarik ?? 0;
+                        $st = $row->presentation?->sangat_tertarik ?? 0;
+                        $kt = $row->presentation?->kurang_tertarik ?? 0;
+
+                        $html .= '<li>' . $row->presentation?->title . '</li>';
+                        $html .= '<li>' . $row->presentation?->location . '</li>';
+                        $html .= '<li>' . $audience . '/' . $tr . '/' . $st . '/' . $kt . '</li>';
+
+                        $html .= '</ul>';
+                    } else if ($row->lead_source_id == 'event') {
+                        $html .= '<ul>';
+                        if ($row->events && $row->events->event_date) {
+                            $html .= '<li>' . date('d F Y', strtotime($row->events?->event_date)) . '</li>';
+                        } else {
+                            $html .= '';
+                        }
+
+
+                        $html .= '<li>' . $row->events?->event_name . '</li>';
+                        $html .= '<li>' . $row->events?->event_location . '</li>';
+
+
+                        $html .= '</ul>';
+                    } else {
+                        $html .= '<center>-</center>';
+                    }
+
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
+
+                ->addColumn('visit', function ($row) {
+                    $html = '';
+
+                    if ($row->visit_date && $row->visit_location) {
+
+
+                        $html .= '<ul>';
+                        $html .= '<li>' . date('d F Y', strtotime($row->visit_date)) . '</li>';
+                        $html .= '<li>' . $row->visit_location . '</li>';
+                        $html .= '<li>' . $row->visit_note . '</li>';
+                        $html .= '</ul>';
+                    } else {
+                        $html .= '<center>-</center>';
+                    }
+
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
+                ->addColumn('followup', function ($row) {
+                    $html = '';
+                    if ($row->followup && $row->followup->count() > 0) {
+                        $html .= '<ul>';
+                        foreach ($row->followup as $f) {
+                            $gf = '';
+                            if ($f->image) {
+                                $gf .= '<br>';
+                                $gf .= '<a href="' . asset('/storage/' . $f->image) . '" target="_blank"><img class="lead-image" src="' . asset('/storage/' . $f->image) . '"></a>';
+                            } else {
+                                $gf .= '';
+                            }
+                            $html .= '<li>( ' . $f->step . ' ) ' . date('d-m-Y H:i', strtotime($f->date)) . '<br>' . $f->note . '' . $gf . '</li>';
+                        }
+                        $html .= '</ul>';
+                    }
+                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                })
                 ->addColumn('lead_source_id', function ($row) {
                     if ($row->lead_source_id == 'facebook') {
                         return '<span style="color:blue;font-weight:bold;">Facebook</span>';
@@ -91,14 +167,43 @@ class CustomerController extends Controller
                     if ($row->status === 'new-lead') {
                         $status = '<span class="badge rounded-pill bg-success">New</span>';
                     } elseif ($row->status === 'visit') {
+
+                        $canVisit =
+                            Auth::user()->position == 'supervisor'
+                            || Auth::id() == $row->created_by;
+
+                        $onclick = $canVisit
+                            ? 'onclick="visitData(' . $row->id . ')"'
+                            : '';
+
+                        $class = $canVisit
+                            ? 'badge rounded-pill bg-warning tombol'
+                            : 'badge rounded-pill bg-secondary';
+
                         if ($row->visit_status === 'scheduled') {
-                            $status = '<span title="Visit Scheduled" class="badge rounded-pill bg-warning">Visit <i class="ri-calendar-line
-"></i></span>';
+
+                            $status =
+                                '<span title="Visit Scheduled" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit <i class="ri-calendar-line"></i>
+            </span>';
                         } elseif ($row->visit_status === 'done') {
-                            $status = '<span title="visit done" class="badge rounded-pill bg-warning">Visit <i class="ri-check-line
-"></i></span>';
+
+                            $status =
+                                '<span title="Visit Done" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit <i class="ri-check-line"></i>
+            </span>';
                         } else {
-                            $status = '<span title="visit not settled" class="badge rounded-pill bg-warning">Visit</span>';
+
+                            $status =
+                                '<span title="Visit Not Settled" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit
+            </span>';
                         }
                     } elseif ($row->status === 'deal') {
                         $status = '<span class="badge rounded-pill bg-info">Deal <i class="ri-check-line
@@ -109,7 +214,23 @@ class CustomerController extends Controller
                     } elseif ($row->status === 'confirm') {
                         $followup = $row->followup->count();
 
-                        $status = '<span class="badge rounded-pill bg-primary">Confirm (' . $followup . ')</span>';
+                        $canFollowup =
+                            Auth::user()->position == 'supervisor'
+                            || Auth::id() == $row->created_by;
+
+                        $onclick = $canFollowup
+                            ? 'onclick="followup(' . $row->id . ')"'
+                            : '';
+
+                        $class = $canFollowup
+                            ? 'badge rounded-pill bg-primary tombol'
+                            : 'badge rounded-pill bg-secondary';
+
+                        $status =
+                            '<span ' . $onclick . '
+        class="' . $class . '">
+        Confirm (' . $followup . ')
+    </span>';
                     }
                     return $status;
                 })
@@ -126,25 +247,49 @@ class CustomerController extends Controller
                     return $row->createdBy?->name ?? '';
                 })
                 ->addColumn('action', function ($row) {
-                    $button = '';
+
+                    $editRole = null;
+                    $deleteRole = null;
+                    $convertRole = null;
+
+
+                    if (Auth::user()->position == 'supervisor') {
+                        $editRole = '';
+                        $deleteRole = '';
+                        $convertRole = '';
+                    } else {
+                        if (Auth::user()->id == $row->created_by) {
+                            $editRole = '';
+                            $deleteRole = '';
+                        } else {
+                            $editRole = 'disabled';
+                            $deleteRole = 'disabled';
+                        }
+                        $convertRole = 'disabled';
+                    }
+
+                     $button = '';
                     $button .= '<center>';
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
-                    $button .= '<button onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Downgrade to Lead" class="me-0 btn btn-insoft btn-light"><i class="bi bi-arrow-repeat"></i></button>';
+
+                    $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Downgrade to Leads" class="me-0 btn btn-insoft btn-light"><i class="bi bi-arrow-repeat"></i></button>';
+
+
+
+
 
                     $button .= '<a href="' . url('/customer/' . $row->id) . '"><button style="margin-left:3px;" title="Detail Data" class="me-0 btn btn-insoft btn-info"><i class="bi bi-file-earmark-post"></i></button></a>';
 
-                    $button .= '<button style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
-                    if (Auth::user()->position == 'supervisor') {
-                        $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
-                    } else {
-                        $button .= '<button disabled style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
-                    }
+                    $button .= '<button ' . $editRole . ' style="margin-left:3px;" onclick="editData(' . $row->id . ')" title="Edit Data" class="me-0 btn btn-insoft btn-warning"><i class="bi bi-pencil-square"></i></button>';
+
+
+                    $button .= '<button ' . $deleteRole . ' onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup'])
                 ->make(true);
         }
     }
@@ -328,16 +473,19 @@ class CustomerController extends Controller
     public function exportExcel(Request $request)
     {
         $company = Company::find(1);
-        return Excel::download(new LeadExport($request, $company, 'customer'), 'Customer_data_report.xlsx');
+        return Excel::download(new LeadExport($request, $company, 'customer'), 'student_data_report.xlsx');
     }
 
     public function exportPDF(Request $request)
     {
         $company = Company::first();
 
-        $data = Customer::query()
-            ->with(['leadsource', 'consultant', 'branch', 'createdBy'])
-            ->where('is_customer', 1);
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup'])
+            ->whereNull('is_customer');
+
+        if (Auth::user()->branch_id) {
+            $data->where('branch_id', Auth::user()->branch_id);
+        }
 
         // FILTER TANGGAL
         if ($request->start_date && $request->end_date) {
@@ -369,9 +517,9 @@ class CustomerController extends Controller
         $pdf = Pdf::loadView('crm.customers.customer.pdf', compact('customers', 'company'));
 
         // LANDSCAPE
-        $pdf->setPaper('legal', 'landscape');
+        $pdf->setPaper([0, 0, 900, 2000], 'landscape');
 
-        return $pdf->stream('Customer_Report.pdf');
+        return $pdf->stream('student_data_report.pdf');
     }
 
     public function downgrade(Request $request)
