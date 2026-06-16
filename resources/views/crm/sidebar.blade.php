@@ -3,10 +3,10 @@
     $whatsappMenu = request()->is('chat');
 
     $customerMenu =
-        request()->is('lead') || request()->is('customer') || request()->is('lead_source') ;
+        request()->is('lead') || request()->is('lead/*') || request()->is('customer')  || request()->is('customer/*') || request()->is('lead_source') ;
 
     $broadcastMenu =
-        request()->is('broadcast') || request()->is('contact_group') || request()->is('broadcast_template');
+        request()->is('broadcast') || request()->is('broadcast/*') || request()->is('contact_group') || request()->is('broadcast_template');
 
     $settingMenu = request()->is('company') || request()->is('branch') || request()->is('level');
 
@@ -18,13 +18,15 @@
     $reportMenu =
         request()->is('lead_report') ||
         request()->is('broadcast_report') ||
+        request()->is('broadcast_detail_report/*') ||
         request()->is('followup_report') ||
-        request()->is('conversion_report') ||
+        request()->is('visit_report') ||
         request()->is('admin_performance_report') ||
         request()->is('agent_perform_report') ||
         request()->is('first_response_time') ||
         request()->is('first_response_time/*') ||
-        request()->is('chat_report');
+        request()->is('message_report') || 
+        request()->is('message_detail_report/*');
         
 
 @endphp
@@ -129,7 +131,7 @@
 
                         <li class="pe-slide-item">
                             <a href="{{ url('lead') }}"
-                                class="pe-nav-link {{ request()->is('lead') ? 'active' : '' }}">
+                                class="pe-nav-link {{ request()->is('lead') || request()->is('lead/*') ? 'active' : '' }}">
 
                                 Leads Data
                             </a>
@@ -137,7 +139,7 @@
 
                         <li class="pe-slide-item">
                             <a href="{{ url('customer') }}"
-                                class="pe-nav-link {{ request()->is('customer') ? 'active' : '' }}">
+                                class="pe-nav-link {{ request()->is('customer') || request()->is('customer/*') ? 'active' : '' }}">
 
                                 Student Data
                             </a>
@@ -248,7 +250,7 @@
 
                         <li class="pe-slide-item">
                             <a href="{{ url('broadcast') }}"
-                                class="pe-nav-link {{ request()->is('broadcast') ? 'active' : '' }}">
+                                class="pe-nav-link {{ request()->is('broadcast') || request()->is('broadcast/*')  ? 'active' : '' }}">
 
                                 Broadcast
                             </a>
@@ -309,20 +311,20 @@
                         </li>
                         <li class="pe-slide-item">
                             <a href="{{ url('first_response_time') }}"
-                                class="pe-nav-link {{ request()->is('first_response_time') ? 'active' : '' }}">
+                                class="pe-nav-link {{ request()->is('first_response_time/*') || request()->is('first_response_time') ? 'active' : '' }}">
                                 First Response Time Report
                             </a>
                         </li>
                         <li class="pe-slide-item">
-                            <a href="{{ url('chat_report') }}"
-                                class="pe-nav-link {{ request()->is('chat_report') ? 'active' : '' }}">
+                            <a href="{{ url('message_report') }}"
+                                class="pe-nav-link {{ request()->is('message_report') || request()->is('message_detail_report/*') ? 'active' : '' }}">
                                 Chat History Report
                             </a>
                         </li>
                         
                         <li class="pe-slide-item">
                             <a href="{{ url('broadcast_report') }}"
-                                class="pe-nav-link {{ request()->is('broadcast_report') ? 'active' : '' }}">
+                                class="pe-nav-link {{ request()->is('broadcast_report') || request()->is('broadcast_detail_report/*') ? 'active' : '' }}">
                                 Broadcast Report
                             </a>
                         </li>
@@ -333,17 +335,12 @@
                             </a>
                         </li>
                         <li class="pe-slide-item">
-                            <a href="{{ url('conversion_report') }}"
-                                class="pe-nav-link {{ request()->is('conversion_report') ? 'active' : '' }}">
-                                Conversion Report
+                            <a href="{{ url('visit_report') }}"
+                                class="pe-nav-link {{ request()->is('visit_report') ? 'active' : '' }}">
+                                Visit Report
                             </a>
                         </li>
-                        <li class="pe-slide-item">
-                            <a href="{{ url('admin_performance_report') }}"
-                                class="pe-nav-link {{ request()->is('admin_performance_report') ? 'active' : '' }}">
-                                Admin Performance Report
-                            </a>
-                        </li>
+                       
 
                     </ul>
 

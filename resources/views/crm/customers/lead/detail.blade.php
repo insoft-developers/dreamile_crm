@@ -170,6 +170,15 @@
 
                 </button>
 
+
+                <a href="{{ url('lead_detail/pdf/'.$data->id) }}"><button 
+                    class="btn push-right btn-danger border rounded-pill px-4 shadow-sm mb-4">
+
+                    <i class="bi bi-printer"></i>
+                    Print PDF
+
+                </button></a>
+
                 <div class="d-flex justify-content-between flex-wrap align-items-center gap-4">
 
                     <!-- Left -->

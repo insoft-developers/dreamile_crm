@@ -733,4 +733,31 @@ class LeadController extends Controller
         $data = Presentation::find((int)$input['id']);
         return response()->json($data);
     }
+
+    public function exportDetailPdf($id)
+    {
+        $company = Company::first();
+
+        $data = Customer::with([
+            'leadsource',
+            'consultant',
+            'branch',
+            'presentation',
+            'events',
+            'followup',
+            'visitImages',
+            'createdBy'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'crm.customers.lead.pdf_detail',
+            compact('company', 'data')
+        );
+
+        $pdf->setPaper('legal', 'portrait');
+
+        return $pdf->stream(
+            'lead-detail-' . $data->fullname . '.pdf'
+        );
+    }
 }

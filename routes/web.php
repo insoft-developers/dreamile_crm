@@ -90,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lead/export/pdf', [LeadController::class, 'exportPDF']);
     Route::post('/convert', [LeadController::class, 'convert']);
     Route::get('/presentation/attribute', [LeadController::class, 'presentationAttribute']);
+    Route::get('lead_detail/pdf/{id}', [LeadController::class, 'exportDetailPdf']);
 
 
 
@@ -159,12 +160,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/frt_detail/export/excel', [FirstResponseTimeController::class, 'exportDetailExcel']);
     Route::get('/frt_detail/export/pdf', [FirstResponseTimeController::class, 'exportDetailPDF']);
 
-    Route::get('/chat_report', [ChatReportController::class, 'index']);
+    Route::get('/message_report', [ChatReportController::class, 'index']);
     Route::get('/chat_report_table', [ChatReportController::class, 'table'])->name('chat.report.table');
     Route::get('/chat/export/excel', [ChatReportController::class, 'exportExcel']);
     Route::get('/chat/export/pdf', [ChatReportController::class, 'exportPDF']);
 
-    Route::get('/chat_detail_report/{id}', [ChatHistoryDetailController::class, 'index']);
+    Route::get('/message_detail_report/{id}', [ChatHistoryDetailController::class, 'index']);
     Route::get('/chat_detail_table', [ChatHistoryDetailController::class, 'table'])->name('chat.detail.table');
     Route::get('/chat_detail/export/excel', [ChatHistoryDetailController::class, 'exportExcel']);
     Route::get('/chat_detail/export/pdf', [ChatHistoryDetailController::class, 'exportPDF']);
