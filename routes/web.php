@@ -4,6 +4,8 @@ use App\Http\Controllers\CRM\AdministrativeController;
 use App\Http\Controllers\CRM\AgentPerformReportController;
 use App\Http\Controllers\CRM\BranchController;
 use App\Http\Controllers\CRM\BroadcastController;
+use App\Http\Controllers\CRM\BroadcastDetailController;
+use App\Http\Controllers\CRM\BroadcastReportController;
 use App\Http\Controllers\CRM\ChatAccessController;
 use App\Http\Controllers\CRM\ChatController;
 use App\Http\Controllers\CRM\ChatHistoryDetailController;
@@ -166,6 +168,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat_detail_table', [ChatHistoryDetailController::class, 'table'])->name('chat.detail.table');
     Route::get('/chat_detail/export/excel', [ChatHistoryDetailController::class, 'exportExcel']);
     Route::get('/chat_detail/export/pdf', [ChatHistoryDetailController::class, 'exportPDF']);
+
+
+    Route::get('/broadcast_report', [BroadcastReportController::class, 'index']);
+    Route::get('/broadcast_report_table', [BroadcastReportController::class, 'table'])->name('broadcast.report.table');
+    Route::get('/broadcast_report/export/excel', [BroadcastReportController::class, 'exportExcel']);
+    Route::get('/broadcast_report/export/pdf', [BroadcastReportController::class, 'exportPDF']);
+    
+    Route::get('/broadcast_detail_report/{id}', [BroadcastDetailController::class, 'index']);
+    Route::get('/broadcast_detail_report_table', [BroadcastDetailController::class, 'table'])->name('broadcast.detail.report.table');
+    Route::get('/broadcast_detail_report/export/excel', [BroadcastDetailController::class, 'exportExcel']);
+    Route::get('/broadcast_detail_report/export/pdf', [BroadcastDetailController::class, 'exportPDF']);
 });
 
 Route::middleware('auth')->group(function () {

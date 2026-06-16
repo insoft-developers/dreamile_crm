@@ -18,7 +18,7 @@ class ChatReportController extends Controller
 {
     public function index()
     {
-        $view = 'chat-report';
+        $view = 'chatting-report';
         $customers = Customer::all();
         $users = User::all();
         $branches = Branch::all();
@@ -28,7 +28,7 @@ class ChatReportController extends Controller
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            // $data = User::query();
+            
 
             $data = WhatsappConversation::with('agent');
             if ($request->filter_start_date && $request->filter_end_date) {

@@ -13,13 +13,18 @@ class Broadcast extends Model
 
     protected $guarded = ['id'];
 
-    public function items():HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(BroadcastItem::class, 'broadcast_id');
     }
 
-    public function branch():BelongsTo
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'userid', 'id');
     }
 }

@@ -174,20 +174,43 @@ class LeadController extends Controller
                     if ($row->status === 'new-lead') {
                         $status = '<span class="badge rounded-pill bg-success">New</span>';
                     } elseif ($row->status === 'visit') {
+
+                        $canVisit =
+                            Auth::user()->position == 'supervisor'
+                            || Auth::id() == $row->created_by;
+
+                        $onclick = $canVisit
+                            ? 'onclick="visitData(' . $row->id . ')"'
+                            : '';
+
+                        $class = $canVisit
+                            ? 'badge rounded-pill bg-warning tombol'
+                            : 'badge rounded-pill bg-secondary';
+
                         if ($row->visit_status === 'scheduled') {
+
                             $status =
-                                '<span title="Visit Scheduled" onclick="visitData(' .
-                                $row->id .
-                                ')" class="badge rounded-pill bg-warning tombol">Visit <i class="ri-calendar-line
-"></i></span>';
+                                '<span title="Visit Scheduled" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit <i class="ri-calendar-line"></i>
+            </span>';
                         } elseif ($row->visit_status === 'done') {
+
                             $status =
-                                '<span title="visit done" onclick="visitData(' .
-                                $row->id .
-                                ')" class="badge rounded-pill bg-warning tombol">Visit <i class="ri-check-line
-"></i></span>';
+                                '<span title="Visit Done" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit <i class="ri-check-line"></i>
+            </span>';
                         } else {
-                            $status = '<span title="visit not settled" onclick="visitData(' . $row->id . ')" class="badge rounded-pill bg-warning tombol">Visit</span>';
+
+                            $status =
+                                '<span title="Visit Not Settled" '
+                                . $onclick .
+                                ' class="' . $class . '">
+                Visit
+            </span>';
                         }
                     } elseif ($row->status === 'deal') {
                         $status = '<span class="badge rounded-pill bg-info">Deal <i class="ri-check-line
@@ -198,7 +221,23 @@ class LeadController extends Controller
                     } elseif ($row->status === 'confirm') {
                         $followup = $row->followup->count();
 
-                        $status = '<span onclick="followup(' . $row->id . ')" class="badge rounded-pill bg-primary tombol">Confirm (' . $followup . ')</span>';
+                        $canFollowup =
+                            Auth::user()->position == 'supervisor'
+                            || Auth::id() == $row->created_by;
+
+                        $onclick = $canFollowup
+                            ? 'onclick="followup(' . $row->id . ')"'
+                            : '';
+
+                        $class = $canFollowup
+                            ? 'badge rounded-pill bg-primary tombol'
+                            : 'badge rounded-pill bg-secondary';
+
+                        $status =
+                            '<span ' . $onclick . '
+        class="' . $class . '">
+        Confirm (' . $followup . ')
+    </span>';
                     }
                     return $status;
                 })
@@ -219,13 +258,12 @@ class LeadController extends Controller
                     $editRole = null;
                     $deleteRole = null;
                     $convertRole = null;
-                    
+
 
                     if (Auth::user()->position == 'supervisor') {
                         $editRole = '';
                         $deleteRole = '';
                         $convertRole = '';
-                       
                     } else {
                         if (Auth::user()->id == $row->created_by) {
                             $editRole = '';
@@ -235,7 +273,6 @@ class LeadController extends Controller
                             $deleteRole = 'disabled';
                         }
                         $convertRole = 'disabled';
-
                     }
 
 
@@ -244,7 +281,7 @@ class LeadController extends Controller
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
 
-                    $button .= '<button '.$convertRole.' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+                    $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
 
 
 
@@ -632,8 +669,12 @@ class LeadController extends Controller
     {
         $company = Company::first();
 
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy','presentation', 'events', 'followup'])
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup'])
             ->whereNull('is_customer');
+
+        if (Auth::user()->branch_id) {
+            $data->where('branch_id', Auth::user()->branch_id);
+        }
 
         // FILTER TANGGAL
         if ($request->start_date && $request->end_date) {

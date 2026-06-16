@@ -17,4 +17,9 @@ class BroadcastItem extends Model
     {
         return $this->belongsTo(Customer::class, 'phone', 'phone_number');
     }
+
+    public function broadcasts():BelongsTo
+    {
+        return $this->belongsTo(Broadcast::class, 'broadcast_id', 'id');
+    }
 }
