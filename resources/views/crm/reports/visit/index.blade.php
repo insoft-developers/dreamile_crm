@@ -10,7 +10,7 @@
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
                             <li class="breadcrumb-item" aria-current="page">Reports</li>
-                            <li class="breadcrumb-item active" aria-current="page">Broadcast Report</li>
+                            <li class="breadcrumb-item active" aria-current="page">Visit Report</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> Broadcast Report </h5>
+                            <h5 class="card-title mb-0"> Visit Report </h5>
                             
                         </div>
                         <div class="card-body">
@@ -43,6 +43,16 @@
                                             </div>
 
                                             <div class="col-md-2">
+                                                <label>Consultant</label>
+                                                <select id="filter_consultant" name="filter_consultant" class="form-control">
+                                                    <option value="">- All -</option>
+                                                    @foreach($consultants as $key)
+                                                    <option value="{{ $key->id }}">{{ $key->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-2">
                                                 <label>Branch</label>
                                                 <select id="filter_branch" name="filter_branch" class="form-control">
                                                     <option value="">- All -</option>
@@ -56,10 +66,9 @@
                                                 <label>Status</label>
                                                 <select id="filter_status" name="filter_status" class="form-control">
                                                     <option value="">- All -</option>
-                                                    <option value="draft">Draft</option>
-                                                    <option value="processing">Processing</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="failed">Failed</option>
+                                                    <option value="done">Done</option>
+                                                    <option value="scheduled">Scheduled</option>
+                                                    
                                                 </select>
                                             </div>
                                             <!-- Branch -->
@@ -111,18 +120,15 @@
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
                                             <th>Date</th>
-                                            <th>Broadcast Name</th>
-                                            <th>Message</th>
-                                            <th>Template</th>
-                                            <th>Total</th>
-                                            <th>Sent</th>
-                                            <th>Failed</th>
-                                            <th>(%)Sent</th>
-                                            <th>(%)Failed</th>
-                                            <th>Status</th>
+                                            <th>Customer</th>
+                                            <th>Consultant</th>
+                                            <th>Location</th>
                                             <th>Branch</th>
+                                            <th>Status</th>
+                                            <th>Visit Images</th>
+                                            <th>Note</th>
                                             <th>Created By</th>
-                                            <th>Action</th>
+                                            
 
 
                                         </tr>
@@ -144,5 +150,5 @@
 @endsection
 
 @push('scripts')
-    @include('crm.reports.broadcast.js')
+    @include('crm.reports.visit.js')
 @endpush

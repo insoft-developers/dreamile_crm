@@ -27,6 +27,7 @@ use App\Http\Controllers\CRM\ReportController;
 use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\TemplateDetailController;
 use App\Http\Controllers\CRM\UserController;
+use App\Http\Controllers\CRM\VisitReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TestController;
 use App\Models\ContactGroup;
@@ -186,6 +187,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/followup_report_table', [FollowupReportController::class, 'table'] )->name('followup.report.table');
     Route::get('/followup_report/export/excel', [FollowupReportController::class, 'exportExcel']);
     Route::get('/followup_report/export/pdf', [FollowupReportController::class, 'exportPDF']);
+
+    Route::get('/visit_report', [VisitReportController::class, 'index']);
+    Route::get('/visit_report_table', [VisitReportController::class, 'table'])->name('visit.report.table');
+    Route::get('/visit_report/export/excel', [VisitReportController::class, 'exportExcel']);
+    Route::get('/visit_report/export/pdf', [VisitReportController::class, 'exportPDF']);
 });
 
 Route::middleware('auth')->group(function () {
