@@ -66,6 +66,18 @@
                 name: 'branch_id',
             },
             {
+                data: 'leads',
+                name: 'leads',
+            },
+            {
+                data: 'deal',
+                name: 'deal',
+            },
+            {
+                data: 'nok',
+                name: 'nok',
+            },
+            {
                 data: 'assigned_chat',
                 name: 'assigned_chat',
             },

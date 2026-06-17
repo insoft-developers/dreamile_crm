@@ -104,6 +104,9 @@
                                             <th class="text-center" width="5%">No</th>
                                             <th>Consultant Name</th>
                                             <th>Branch</th>
+                                            <th>Leads</th>
+                                            <th>Deal</th>
+                                            <th>NOK</th>
                                             <th>Assigned Chat</th>
                                             <th>Open</th>
                                             <th>Closed</th>
