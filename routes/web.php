@@ -16,6 +16,7 @@ use App\Http\Controllers\CRM\CustomerController;
 use App\Http\Controllers\CRM\DashboardController;
 use App\Http\Controllers\CRM\EventController;
 use App\Http\Controllers\CRM\FirstResponseTimeController;
+use App\Http\Controllers\CRM\FollowupReportController;
 use App\Http\Controllers\CRM\GroupManageController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
@@ -180,6 +181,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/broadcast_detail_report_table', [BroadcastDetailController::class, 'table'])->name('broadcast.detail.report.table');
     Route::get('/broadcast_detail_report/export/excel', [BroadcastDetailController::class, 'exportExcel']);
     Route::get('/broadcast_detail_report/export/pdf', [BroadcastDetailController::class, 'exportPDF']);
+
+    Route::get('/followup_report', [FollowupReportController::class, 'index']);
+    Route::get('/followup_report_table', [FollowupReportController::class, 'table'] )->name('followup.report.table');
+    Route::get('/followup_report/export/excel', [FollowupReportController::class, 'exportExcel']);
+    Route::get('/followup_report/export/pdf', [FollowupReportController::class, 'exportPDF']);
 });
 
 Route::middleware('auth')->group(function () {

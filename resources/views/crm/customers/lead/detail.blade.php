@@ -171,7 +171,7 @@
                 </button>
 
 
-                <a href="{{ url('lead_detail/pdf/'.$data->id) }}"><button 
+                <a href="{{ url('lead_detail/pdf/'.$data->id) }}" target="_blank"><button 
                     class="btn push-right btn-danger border rounded-pill px-4 shadow-sm mb-4">
 
                     <i class="bi bi-printer"></i>
