@@ -86,10 +86,10 @@
                 <th>No</th>
                 <th>Consultant Name</th>
                 <th>Branch</th>
-                <th>Assigned Chat</th>
                 <th>Leads</th>
                 <th>Deal</th>
                 <th>NOK</th>
+                <th>Assigned Chat</th>
                 <th>Open Chat</th>
                 <th>Closed Chat</th>
                 <th>Incoming Chat</th>
