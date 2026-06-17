@@ -23,12 +23,13 @@ use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
 use App\Http\Controllers\CRM\PositionController;
 use App\Http\Controllers\CRM\PresentationController;
+use App\Http\Controllers\CRM\ProfileController;
 use App\Http\Controllers\CRM\ReportController;
 use App\Http\Controllers\CRM\TemplateController;
 use App\Http\Controllers\CRM\TemplateDetailController;
 use App\Http\Controllers\CRM\UserController;
 use App\Http\Controllers\CRM\VisitReportController;
-use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\TestController;
 use App\Models\ContactGroup;
 use App\Models\LeadSource;
@@ -192,12 +193,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/visit_report_table', [VisitReportController::class, 'table'])->name('visit.report.table');
     Route::get('/visit_report/export/excel', [VisitReportController::class, 'exportExcel']);
     Route::get('/visit_report/export/pdf', [VisitReportController::class, 'exportPDF']);
+
+    Route::get('/view_profile', [ProfileController::class, 'index']);
+    Route::post('/user_profile_update', [ProfileController::class, 'update'])->name('user.profile.update');
+
+
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__ . '/auth.php';

@@ -256,10 +256,9 @@
                                         </div>
                                     </div>
                                     <ul class="list-unstyled mb-1 border-bottom pb-1">
-                                        <li><a class="dropdown-item" href="pages-profile.html"><i
+                                        <li><a class="dropdown-item" href="{{ url('view_profile') }}"><i
                                                     class="bi bi-person me-2"></i> View Profile</a></li>
-                                        <li><a class="dropdown-item" href="pages-profile.html"><i
-                                                    class="bi bi-gear me-2"></i> Settings</a></li>
+                                        
 
                                     </ul>
 
