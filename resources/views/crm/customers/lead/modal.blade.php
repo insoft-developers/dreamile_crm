@@ -19,10 +19,7 @@
                         </p>
                     </div>
 
-                    <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
 
                 </div>
@@ -68,12 +65,8 @@
                                             Full Name
                                         </label>
 
-                                        <input type="text"
-                                            class="form-control"
-                                            id="fullname"
-                                            name="fullname"
-                                            placeholder="Ex: John Doe"
-                                            required>
+                                        <input type="text" class="form-control" id="fullname" name="fullname"
+                                            placeholder="Ex: John Doe" required>
                                     </div>
 
                                     <!-- Address -->
@@ -83,15 +76,34 @@
                                             Full Address
                                         </label>
 
-                                        <textarea
-                                            class="form-control"
-                                            id="full_address"
-                                            name="full_address"
-                                            rows="4"
-                                            style="resize:none;"
-                                            placeholder="Input full address..."
-                                            required></textarea>
+                                        <textarea class="form-control" id="full_address" name="full_address" rows="4" style="resize:none;"
+                                            placeholder="Input full address..." required></textarea>
 
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="rt" class="form-label fw-semibold">
+                                                    RT
+                                                </label>
+
+                                                <input type="text" class="form-control" id="rt"
+                                                    name="rt" placeholder="Ex: 002" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="rw" class="form-label fw-semibold">
+                                                    RW
+                                                </label>
+
+                                                <input type="text" class="form-control" id="rw"
+                                                    name="rw" placeholder="Ex: 005" required>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- School -->
@@ -101,12 +113,8 @@
                                             School From
                                         </label>
 
-                                        <input type="text"
-                                            class="form-control"
-                                            id="school_from"
-                                            name="school_from"
-                                            placeholder="Ex: SMA 1 Medan"
-                                            required>
+                                        <input type="text" class="form-control" id="school_from" name="school_from"
+                                            placeholder="Ex: SMA 1 Medan" required>
                                     </div>
 
                                     <!-- Class & Major -->
@@ -120,12 +128,8 @@
                                                     Class
                                                 </label>
 
-                                                <input type="text"
-                                                    class="form-control"
-                                                    id="class"
-                                                    name="class"
-                                                    placeholder="Ex: 12"
-                                                    required>
+                                                <input type="text" class="form-control" id="class" name="class"
+                                                    placeholder="Ex: 12" required>
 
                                             </div>
 
@@ -139,12 +143,8 @@
                                                     Major
                                                 </label>
 
-                                                <input type="text"
-                                                    class="form-control"
-                                                    id="major"
-                                                    name="major"
-                                                    placeholder="IPA / IPS"
-                                                    required>
+                                                <input type="text" class="form-control" id="major" name="major"
+                                                    placeholder="IPA / IPS" required>
 
                                             </div>
 
@@ -159,12 +159,8 @@
                                             Phone Number
                                         </label>
 
-                                        <input type="text"
-                                            class="form-control"
-                                            id="phone_number"
-                                            name="phone_number"
-                                            placeholder="628123456789"
-                                            required>
+                                        <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                            placeholder="628123456789" required>
 
                                     </div>
 
@@ -175,10 +171,7 @@
                                             Gender
                                         </label>
 
-                                        <select class="form-control"
-                                            id="gender"
-                                            name="gender"
-                                            required>
+                                        <select class="form-control" id="gender" name="gender" required>
 
                                             <option value="">- Select Gender -</option>
                                             <option value="male">Male</option>
@@ -228,11 +221,8 @@
                                             Photo (Optional)
                                         </label>
 
-                                        <input accept=".jpg,.jpeg,.png"
-                                            type="file"
-                                            class="form-control"
-                                            id="photo"
-                                            name="photo">
+                                        <input accept=".jpg,.jpeg,.png" type="file" class="form-control"
+                                            id="photo" name="photo">
 
                                     </div>
 
@@ -243,10 +233,7 @@
                                             Email (Optional)
                                         </label>
 
-                                        <input type="email"
-                                            class="form-control"
-                                            id="email"
-                                            name="email"
+                                        <input type="email" class="form-control" id="email" name="email"
                                             placeholder="user@mail.com">
 
                                     </div>
@@ -258,13 +245,11 @@
                                             Branch
                                         </label>
 
-                                        <select class="form-control"
-                                            id="branch_id"
-                                            name="branch_id">
+                                        <select class="form-control" id="branch_id" name="branch_id">
 
                                             <option value="">- Select Branch -</option>
 
-                                            @foreach($branches as $branch)
+                                            @foreach ($branches as $branch)
                                                 <option value="{{ $branch->id }}">
                                                     {{ $branch->branch_name }}
                                                 </option>
@@ -281,9 +266,7 @@
                                             Lead Source
                                         </label>
 
-                                        <select class="form-control"
-                                            id="lead_source_id"
-                                            name="lead_source_id">
+                                        <select class="form-control" id="lead_source_id" name="lead_source_id">
 
                                             <option value="">- Select Source -</option>
 
@@ -309,9 +292,7 @@
                                             Status
                                         </label>
 
-                                        <select class="form-control"
-                                            id="status"
-                                            name="status">
+                                        <select class="form-control" id="status" name="status">
 
                                             <option value="new-lead">New Lead</option>
                                             <option value="visit">Visit</option>
@@ -330,9 +311,7 @@
                                             Consultant
                                         </label>
 
-                                        <select class="form-control"
-                                            id="consultant_id"
-                                            name="consultant_id">
+                                        <select class="form-control" id="consultant_id" name="consultant_id">
 
                                             <option value="">- Select Consultant -</option>
 
@@ -353,12 +332,7 @@
                                             Note
                                         </label>
 
-                                        <textarea
-                                            class="form-control"
-                                            id="note"
-                                            name="note"
-                                            rows="4"
-                                            style="resize:none;"
+                                        <textarea class="form-control" id="note" name="note" rows="4" style="resize:none;"
                                             placeholder="Write additional notes..."></textarea>
 
                                     </div>
@@ -396,7 +370,7 @@
 
                                     </div>
 
-                                    
+
 
                                     <!-- Province -->
                                     <div class="form-group mb-3">
@@ -405,9 +379,7 @@
                                             Province
                                         </label>
 
-                                        <select class="form-control select2"
-                                            id="province_code"
-                                            name="province_code"
+                                        <select class="form-control select2" id="province_code" name="province_code"
                                             style="width:100%;">
 
                                             <option value="">- Select Province -</option>
@@ -423,9 +395,7 @@
                                             Regency / City
                                         </label>
 
-                                        <select class="form-control select2"
-                                            id="regency_code"
-                                            name="regency_code"
+                                        <select class="form-control select2" id="regency_code" name="regency_code"
                                             style="width:100%;">
 
                                             <option value="">- Select Regency -</option>
@@ -441,9 +411,7 @@
                                             District
                                         </label>
 
-                                        <select class="form-control select2"
-                                            id="district_code"
-                                            name="district_code"
+                                        <select class="form-control select2" id="district_code" name="district_code"
                                             style="width:100%;">
 
                                             <option value="">- Select District -</option>
@@ -459,9 +427,7 @@
                                             Village
                                         </label>
 
-                                        <select class="form-control select2"
-                                            id="village_code"
-                                            name="village_code"
+                                        <select class="form-control select2" id="village_code" name="village_code"
                                             style="width:100%;">
 
                                             <option value="">- Select Village -</option>
@@ -482,17 +448,13 @@
                 <!-- Modal Footer -->
                 <div class="modal-footer border-0 px-4 pb-4 pt-0">
 
-                    <button type="button"
-                        class="btn btn-light rounded-pill px-4"
-                        data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
 
                         Close
 
                     </button>
 
-                    <button id="btn-save-data"
-                        type="submit"
-                        class="btn btn-primary rounded-pill px-4 shadow-sm">
+                    <button id="btn-save-data" type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
 
                         <i class="ri-save-line me-1"></i>
                         Save Data
@@ -506,6 +468,3 @@
         </div>
     </div>
 </div>
-
-
-

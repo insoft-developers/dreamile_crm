@@ -196,10 +196,15 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
                 ->implode("\n\n--------------------\n\n");
         }
 
+        $rt = $row->rt ?? '';
+        $rw = $row->rw ?? '';
+
+        $alamat = $row->full_address.' RT '.$rw.'/RW '.$rw; 
+
         return [
             $no++,
             $row->fullname ?? '-',
-            $row->full_address ?? '-',
+            $alamat,
             $row->school_from ?? '-',
             $row->class . '/' . $row->major,
             $row->phone_number ?? '-',

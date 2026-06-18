@@ -193,6 +193,10 @@
                         }
                     }
 
+                    $rt = $item->rt ?? '';
+                    $rw = $item->rw ?? '';
+                    $address = $item->full_address.' RT '.$rt.'/ RW '.$item->rw;
+
                 @endphp
 
                 <tr>
@@ -206,7 +210,7 @@
                     </td>
 
                     <td>
-                        {{ $item->full_address ?? '-' }}
+                        {{ $address }}
                     </td>
 
                     <td>

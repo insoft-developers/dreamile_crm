@@ -135,6 +135,7 @@
                                             <th class="text-center">Aksi</th>
                                             <th>Photo</th>
                                             <th>Full Name</th>
+                                            <th>Address</th>
                                             <th>School</th>
                                             <th>Class/Major</th>
                                             <th>Phone Number</th>

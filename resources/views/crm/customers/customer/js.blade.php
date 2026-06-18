@@ -108,6 +108,10 @@
                 name: 'fullname'
             },
             {
+                data: 'address',
+                name: 'address'
+            },
+            {
                 data: 'school_from',
                 name: 'school_from'
             },
@@ -198,6 +202,8 @@
                 $("#note").val(data.note);
                 $("#branch_id").val(data.branch_id);
                 $("#province_code").val(data.province_code);
+                $("#rt").val(data.rt);
+                $("#rw").val(data.rw);
                 getRegency(data.province_code, data.regency_code, data.district_code, data.village_code);
 
 

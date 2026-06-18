@@ -94,6 +94,31 @@
 
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="rt" class="form-label fw-semibold">
+                                                    RT
+                                                </label>
+
+                                                <input type="text" class="form-control" id="rt"
+                                                    name="rt" placeholder="Ex: 002" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="rw" class="form-label fw-semibold">
+                                                    RW
+                                                </label>
+
+                                                <input type="text" class="form-control" id="rw"
+                                                    name="rw" placeholder="Ex: 005" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- School -->
                                     <div class="form-group mb-3">
 

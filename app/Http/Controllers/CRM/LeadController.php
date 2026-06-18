@@ -63,6 +63,11 @@ class LeadController extends Controller
             }
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('address', function($row){
+                    $rt = $row->rt ?? '-';
+                    $rw = $row->rw ??'';
+                    return '<div style="white-space:normal;width:160px;">'.$row->full_address.' RT '.$rt.'/ RW '.$rw.'</div>';
+                })
                 ->addColumn('prevent', function ($row) {
                     $html = '';
                     if ($row->lead_source_id == 'presentation') {
@@ -297,7 +302,7 @@ class LeadController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup','address'])
                 ->make(true);
         }
     }
@@ -347,6 +352,8 @@ class LeadController extends Controller
             'event_id' => 'required_if:lead_source_id,event',
             'presentation_id' => 'required_if:lead_source_id,presentation',
             'branch_id' => 'required',
+            'rt' => 'required',
+            'rw' => 'required'
         ]);
 
         $path = null;
@@ -411,6 +418,8 @@ class LeadController extends Controller
             'event_id' => 'required_if:lead_source_id,event',
             'presentation_id' => 'required_if:lead_source_id,presentation',
             'branch_id' => 'required',
+            'rt' => 'required',
+            'rw' => 'required'
         ]);
 
         $path = $customer->photo;
