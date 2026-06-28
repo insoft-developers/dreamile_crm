@@ -32,7 +32,7 @@ class WhatsappService
         }
 
         return Http::withToken($token)
-            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
+            ->post("https://graph.facebook.com/v25.0/{$phoneNumberId}/messages", $payload)
             ->json();
     }
 
@@ -56,7 +56,7 @@ class WhatsappService
         ];
 
         return Http::withToken($token)
-            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
+            ->post("https://graph.facebook.com/v25.0/{$phoneNumberId}/messages", $payload)
             ->json();
     }
 
@@ -71,7 +71,7 @@ class WhatsappService
 
             ->attach('file', fopen(storage_path('app/public/' . $filePath), 'r'), basename($filePath))
 
-            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/media", [
+            ->post("https://graph.facebook.com/v25.0/{$phoneNumberId}/media", [
                 'messaging_product' => 'whatsapp',
                 'type' => $mimeType,
             ]);
@@ -106,7 +106,7 @@ class WhatsappService
         }
 
         return Http::withToken($token)
-            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
+            ->post("https://graph.facebook.com/v25.0/{$phoneNumberId}/messages", $payload)
             ->json();
     }
 
@@ -136,7 +136,7 @@ class WhatsappService
         }
 
         return Http::withToken($token)
-            ->post("https://graph.facebook.com/v22.0/{$phoneNumberId}/messages", $payload)
+            ->post("https://graph.facebook.com/v25.0/{$phoneNumberId}/messages", $payload)
             ->json();
     }
 
@@ -145,7 +145,7 @@ class WhatsappService
         $token = env('WHATSAPP_TOKEN');
 
         return Http::withToken($token)
-            ->get("https://graph.facebook.com/v22.0/{$mediaId}")
+            ->get("https://graph.facebook.com/v25.0/{$mediaId}")
             ->json();
     }
 

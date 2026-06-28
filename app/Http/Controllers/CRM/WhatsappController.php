@@ -39,6 +39,7 @@ class WhatsappController extends Controller
 
     public function receive(Request $request)
     {
+
         try {
             $data = $request->all();
 
