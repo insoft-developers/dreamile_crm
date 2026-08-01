@@ -59,83 +59,24 @@ class CustomerController extends Controller
                 ->addColumn('address', function($row){
                     $rt = $row->rt ?? '-';
                     $rw = $row->rw ??'';
-                    return '<div style="white-space:normal;width:160px;">'.$row->full_address.' RT '.$rt.'/ RW '.$rw.'</div>';
+                    $kodepos = !empty($row->kode_pos) ? '- KODE POS '.$row->kode_pos : '-';
+                    return '<div style="white-space:normal;width:160px;">'.$row->full_address.' RT '.$rt.'/ RW '.$rw.''.$kodepos.'</div>';
                 })
-                ->addColumn('prevent', function ($row) {
-                    $html = '';
-                    if ($row->lead_source_id == 'presentation') {
-                        $html .= '<ul>';
-                        if ($row->presentation && $row->presentation->date) {
-                            $html .= '<li>' . date('d F Y', strtotime($row->presentation?->date)) . '</li>';
-                        } else {
-                            $html .= '';
-                        }
+                ->addColumn('tempat_lahir', function($row){
+                    $tanggal = !empty($row->tanggal_lahir) ? ', '.date('d-m-Y', strtotime($row->tanggal_lahir)) : '';
 
-                        $audience = $row->presentation?->audience ?? 0;
-                        $tr = $row->presentation?->tertarik ?? 0;
-                        $st = $row->presentation?->sangat_tertarik ?? 0;
-                        $kt = $row->presentation?->kurang_tertarik ?? 0;
+                    $tempat = $row->tempat_lahir ?? '';
+                    return $tempat.$tanggal;
 
-                        $html .= '<li>' . $row->presentation?->title . '</li>';
-                        $html .= '<li>' . $row->presentation?->location . '</li>';
-                        $html .= '<li>' . $audience . '/' . $tr . '/' . $st . '/' . $kt . '</li>';
-
-                        $html .= '</ul>';
-                    } else if ($row->lead_source_id == 'event') {
-                        $html .= '<ul>';
-                        if ($row->events && $row->events->event_date) {
-                            $html .= '<li>' . date('d F Y', strtotime($row->events?->event_date)) . '</li>';
-                        } else {
-                            $html .= '';
-                        }
-
-
-                        $html .= '<li>' . $row->events?->event_name . '</li>';
-                        $html .= '<li>' . $row->events?->event_location . '</li>';
-
-
-                        $html .= '</ul>';
-                    } else {
-                        $html .= '<center>-</center>';
-                    }
-
-                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
                 })
-
-                ->addColumn('visit', function ($row) {
-                    $html = '';
-
-                    if ($row->visit_date && $row->visit_location) {
-
-
-                        $html .= '<ul>';
-                        $html .= '<li>' . date('d F Y', strtotime($row->visit_date)) . '</li>';
-                        $html .= '<li>' . $row->visit_location . '</li>';
-                        $html .= '<li>' . $row->visit_note . '</li>';
-                        $html .= '</ul>';
-                    } else {
-                        $html .= '<center>-</center>';
-                    }
-
-                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                ->addColumn('register_cost', function($row){
+                    return number_format($row->register_cost);
                 })
-                ->addColumn('followup', function ($row) {
-                    $html = '';
-                    if ($row->followup && $row->followup->count() > 0) {
-                        $html .= '<ul>';
-                        foreach ($row->followup as $f) {
-                            $gf = '';
-                            if ($f->image) {
-                                $gf .= '<br>';
-                                $gf .= '<a href="' . asset('/storage/' . $f->image) . '" target="_blank"><img class="lead-image" src="' . asset('/storage/' . $f->image) . '"></a>';
-                            } else {
-                                $gf .= '';
-                            }
-                            $html .= '<li>( ' . $f->step . ' ) ' . date('d-m-Y H:i', strtotime($f->date)) . '<br>' . $f->note . '' . $gf . '</li>';
-                        }
-                        $html .= '</ul>';
-                    }
-                    return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
+                ->addColumn('payment', function($row){
+                    return number_format($row->payment);
+                })
+                ->addColumn('out_payment', function($row){
+                    return number_format($row->out_payment);
                 })
                 ->addColumn('lead_source_id', function ($row) {
                     if ($row->lead_source_id == 'facebook') {
@@ -278,7 +219,7 @@ class CustomerController extends Controller
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
 
-                    $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Downgrade to Leads" class="me-0 btn btn-insoft btn-light"><i class="bi bi-arrow-repeat"></i></button>';
+                    // $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Downgrade to Leads" class="me-0 btn btn-insoft btn-light"><i class="bi bi-arrow-repeat"></i></button>';
 
 
 
@@ -294,7 +235,7 @@ class CustomerController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup','address'])
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'address'])
                 ->make(true);
         }
     }
@@ -445,6 +386,12 @@ class CustomerController extends Controller
         if (!empty($request->village_name)) {
             $input['village_name'] = $request->village_name;
         }
+
+
+        $oldPayment = (int)$customer->payment; 
+        $outstanding = (int)$request->register_cost - $oldPayment;
+        $input['out_payment'] = $outstanding;
+
 
         $customer->update($input);
 

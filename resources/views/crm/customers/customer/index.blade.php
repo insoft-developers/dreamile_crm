@@ -135,17 +135,20 @@
                                             <th class="text-center">Aksi</th>
                                             <th>Photo</th>
                                             <th>Full Name</th>
+                                            <th>P/D ofBirth</th>
                                             <th>Address</th>
                                             <th>School</th>
                                             <th>Class/Major</th>
                                             <th>Phone Number</th>
+                                            <th>Ayah</th>
+                                            <th>Ibu</th>
                                             <th>Status</th>
                                             <th>Consultant</th>
                                             <th>Lead Source</th>
-                                            <th>Presentation/Event</th>
-                                            <th>Visit</th>
-                                            <th>Followup</th>
                                             <th>Branch</th>
+                                            <th>RCost</th>
+                                            <th>Payment</th>
+                                            <th>Outstand</th>
                                             <th>Created By</th>
                                             <th>Created At</th>
                                         </tr>

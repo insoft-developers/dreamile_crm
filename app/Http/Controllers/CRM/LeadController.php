@@ -286,7 +286,7 @@ class LeadController extends Controller
                     $button .= '<a href="' . url('/chat/' . $row->id) . '"><button title="Open Chat" class="me-0 btn btn-insoft btn-success"><i class="bi bi-whatsapp"></i></button></a>';
 
 
-                    $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
+                    // $button .= '<button ' . $convertRole . ' onclick="convert(' . $row->id . ')" style="margin-left:3px;" title="Convert to Student" class="me-0 btn btn-insoft btn-primary"><i class="bi bi-person-check"></i></button>';
 
 
 

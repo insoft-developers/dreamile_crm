@@ -108,6 +108,10 @@
                 name: 'fullname'
             },
             {
+                data: 'tempat_lahir',
+                name: 'tempat_lahir'
+            },
+            {
                 data: 'address',
                 name: 'address'
             },
@@ -124,6 +128,14 @@
                 name: 'phone_number'
             },
             {
+                data: 'nama_ayah',
+                name: 'nama_ayah'
+            },
+            {
+                data: 'nama_ibu',
+                name: 'nama_ibu'
+            },
+            {
                 data: 'status',
                 name: 'status'
             },
@@ -136,21 +148,23 @@
                 data: 'lead_source_id',
                 name: 'lead_source_id'
             },
-            {
-                data: 'prevent',
-                name: 'prevent'
-            },
-            {
-                data: 'visit',
-                name: 'visit'
-            },
-            {
-                data: 'followup',
-                name: 'followup'
-            },
+            
+            
             {
                 data: 'branch_id',
                 name: 'branch_id'
+            },
+            {
+                data: 'register_cost',
+                name: 'register_cost'
+            },
+            {
+                data: 'payment',
+                name: 'payment'
+            },
+            {
+                data: 'out_payment',
+                name: 'out_payment'
             },
 
             {
@@ -169,7 +183,7 @@
     function addData() {
         save_method = "add";
         $('input[name=_method]').val('POST');
-        $(".modal-title").text("Add Leads Data");
+        $(".modal-title").text("Add Student Data");
         resetForm();
         $("#modal-add").modal("show");
     }
@@ -184,7 +198,7 @@
             dataType: "JSON",
             success: function(data) {
                 $('#modal-add').modal("show");
-                $('.modal-title').text("Edit Leads Data");
+                $('.modal-title').text("Edit Student Data");
                 $('#id').val(data.id);
                 $("#fullname").val(data.fullname);
                 $("#full_address").val(data.full_address);
@@ -204,6 +218,12 @@
                 $("#province_code").val(data.province_code);
                 $("#rt").val(data.rt);
                 $("#rw").val(data.rw);
+                $("#tempat_lahir").val(data.tempat_lahir);
+                $("#tanggal_lahir").val(data.tanggal_lahir);
+                $("#kode_pos").val(data.kode_pos);
+                $("#nama_ayah").val(data.nama_ayah);
+                $("#nama_ibu").val(data.nama_ibu);
+                $("#register_cost").val(data.register_cost);
                 getRegency(data.province_code, data.regency_code, data.district_code, data.village_code);
 
 
