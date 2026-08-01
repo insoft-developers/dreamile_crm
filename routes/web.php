@@ -94,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/convert', [LeadController::class, 'convert']);
     Route::get('/presentation/attribute', [LeadController::class, 'presentationAttribute']);
     Route::get('lead_detail/pdf/{id}', [LeadController::class, 'exportDetailPdf']);
+    
 
 
 
@@ -102,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/customer/export/excel', [CustomerController::class, 'exportExcel']);
     Route::get('/customer/export/pdf', [CustomerController::class, 'exportPDF']);
     Route::post('/downgrade', [CustomerController::class, 'downgrade']);
+    Route::get('customer_detail/pdf/{id}', [CustomerController::class, 'exportDetailPdf']);
 
     Route::resource('/presentation', PresentationController::class);
     Route::get('/presentation_table', [PresentationController::class, 'table'])->name('presentation.table');

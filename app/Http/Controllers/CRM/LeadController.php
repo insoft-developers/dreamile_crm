@@ -32,7 +32,7 @@ class LeadController extends Controller
     {
         if ($request->ajax()) {
             $data = Customer::with('presentation');
-            $data->whereNull('is_customer');
+            
             // 🔥 FILTER TANGGAL
             if ($request->start_date && $request->end_date) {
                 $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
@@ -678,8 +678,8 @@ class LeadController extends Controller
     {
         $company = Company::first();
 
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup'])
-            ->whereNull('is_customer');
+        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup']);
+            
 
         if (Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);

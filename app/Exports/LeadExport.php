@@ -51,10 +51,8 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     {
         $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'followup', 'events', 'presentation']);
         if ($this->isCustomer) {
-            $data->where('is_customer', 1);
-        } else {
-            $data->whereNull('is_customer');
-        }
+            $data->where('status', 'deal');
+        } 
 
         if (Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);

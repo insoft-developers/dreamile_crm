@@ -25,7 +25,7 @@ class CustomerController extends Controller
     {
         if ($request->ajax()) {
             $data = Customer::query();
-            $data->where('is_customer', 1);
+            $data->where('status', 'deal');
             // 🔥 FILTER TANGGAL
             if ($request->start_date && $request->end_date) {
                 $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
@@ -486,7 +486,7 @@ class CustomerController extends Controller
         $company = Company::first();
 
         $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup'])
-            ->whereNull('is_customer');
+            ->where('status', 'deal');
 
         if (Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);
@@ -540,5 +540,33 @@ class CustomerController extends Controller
             'success' => true,
             'message' => 'Success',
         ]);
+    }
+
+
+    public function exportDetailPdf($id)
+    {
+        $company = Company::first();
+
+        $data = Customer::with([
+            'leadsource',
+            'consultant',
+            'branch',
+            'presentation',
+            'events',
+            'followup',
+            'visitImages',
+            'createdBy'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'crm.customers.customer.pdf_detail',
+            compact('company', 'data')
+        );
+
+        $pdf->setPaper('legal', 'portrait');
+
+        return $pdf->stream(
+            'customer-detail-' . $data->fullname . '.pdf'
+        );
     }
 }
