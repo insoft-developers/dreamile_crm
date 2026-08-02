@@ -85,19 +85,22 @@
             <tr>
                 <th>No</th>
                 <th>Full Name</th>
+                <th>P/D of Birth</th>
                 <th>Address</th>
                 <th>School</th>
                 <th>Class/Major</th>
                 <th>Phone</th>
+                <th>Ayah</th>
+                <th>Ibu</th>
                 <th>Email</th>
                 <th>Gender</th>
                 <th>Status</th>
                 <th>Consultant</th>
                 <th>Lead Source</th>
-                <th>Presentation/Event</th>
-                <th>Visit</th>
-                <th>Followup</th>
                 <th>Branch</th>
+                <th>Reg Cost</th>
+                <th>Payment</th>
+                <th>Outstand</th>
                 <th>Province</th>
                 <th>Regency</th>
                 <th>District</th>
@@ -121,78 +124,8 @@
                         $lead_source = optional($item->leadsource)->source_name ?? '-';
                     }
 
-                    $prevent = '';
-                    if ($item->lead_source_id == 'presentation') {
-                        $prevent .= '<ul>';
-                        if ($item->presentation && $item->presentation->date) {
-                            $prevent .= '<li>' . date('d F Y', strtotime($item->presentation?->date)) . '</li>';
-                        } else {
-                            $prevent .= '';
-                        }
-
-                        $audience = $item->presentation?->audience ?? 0;
-                        $tr = $item->presentation?->tertarik ?? 0;
-                        $st = $item->presentation?->sangat_tertarik ?? 0;
-                        $kt = $item->presentation?->kurang_tertarik ?? 0;
-
-                        $prevent .= '<li>' . $item->presentation?->title . '</li>';
-                        $prevent .= '<li>' . $item->presentation?->location . '</li>';
-                        $prevent .= '<li>' . $audience . '/' . $tr . '/' . $st . '/' . $kt . '</li>';
-
-                        $prevent .= '</ul>';
-                    } elseif ($item->lead_source_id == 'event') {
-                        $prevent .= '<ul>';
-                        if ($item->events && $item->events->event_date) {
-                            $prevent .= '<li>' . date('d F Y', strtotime($item->events?->event_date)) . '</li>';
-                        } else {
-                            $prevent .= '';
-                        }
-
-                        $prevent .= '<li>' . $item->events?->event_name . '</li>';
-                        $prevent .= '<li>' . $item->events?->event_location . '</li>';
-
-                        $prevent .= '</ul>';
-                    } else {
-                        $prevent .= '<center>-</center>';
-                    }
-
-                    $visite = '';
-
-                    if ($item->visit_date && $item->visit_location) {
-                        $visite .= '<ul>';
-                        $visite .= '<li>' . date('d F Y', strtotime($item->visit_date)) . '</li>';
-                        $visite .= '<li>' . $item->visit_location . '</li>';
-                        $visite .= '<li>' . $item->visit_note . '</li>';
-                        $visite .= '</ul>';
-                    } else {
-                        $visite .= '<center>-</center>';
-                    }
-
-                    $followup = '';
-
-                    if ($item->followup && $item->followup->count() > 0) {
-                        foreach ($item->followup as $f) {
-                            $followup .= '<div style="margin-bottom:15px;">';
-
-                            $followup .= '<strong>(' . $f->step . ')</strong> ';
-                            $followup .= date('d-m-Y H:i', strtotime($f->date));
-
-                            $followup .= '<br>';
-                            $followup .= nl2br($f->note);
-
-                            if ($f->image) {
-                                $path = public_path('storage/' . $f->image);
-
-                                if (file_exists($path)) {
-                                    $followup .=
-                                        '<br><img src="' . $path . '" style="max-width:80px;max-height:80px;">';
-                                }
-                            }
-
-                            $followup .= '</div>';
-                        }
-                    }
-
+                   
+                
                     $rt = $item->rt ?? '';
                     $rw = $item->rw ?? '';
                     $address = $item->full_address.' RT '.$rt.'/ RW '.$item->rw;
@@ -208,9 +141,12 @@
                     <td>
                         {{ $item->fullname ?? '-' }}
                     </td>
-
                     <td>
-                        {{ $address }}
+                        {{ $item->tempat_lahir && $item->tanggal_lahir ? $item->tempat_lahir.', '. date('d-m-Y', strtotime($item->tanggal_lahir)) : '' }}
+                    </td>
+
+                    <td style="white-space: normal;width:180px;">
+                        {{ $address }} - {{ $item->kode_pos }}
                     </td>
 
                     <td>
@@ -223,6 +159,12 @@
 
                     <td>
                         {{ $item->phone_number ?? '-' }}
+                    </td>
+                    <td>
+                        {{ $item->nama_ayah ?? '-' }}
+                    </td>
+                    <td>
+                        {{ $item->nama_ibu ?? '-' }}
                     </td>
 
                     <td>
@@ -244,19 +186,19 @@
                     <td>
                         {{ $lead_source }}
                     </td>
-                    <td>
-                        <?= $prevent ?>
-                    </td>
-                    <td>
-                        <?= $visite ?>
-                    </td>
-                    <td>
-                        <?= $followup ?>
-                    </td>
-
+                    
 
                     <td>
                         {{ optional($item->branch)->branch_name ?? '-' }}
+                    </td>
+                    <td>
+                        {{ $item->register_cost ? number_format($item->register_cost) : '-' }}
+                    </td>
+                    <td>
+                        {{ $item->payment ? number_format($item->payment) : '-' }}
+                    </td>
+                    <td>
+                        {{ $item->out_payment ? number_format($item->out_payment) : '-' }}
                     </td>
 
                     <td>

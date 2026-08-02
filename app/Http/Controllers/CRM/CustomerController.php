@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CRM;
 
+use App\Exports\CustomerExport;
 use App\Exports\LeadExport;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
@@ -425,7 +426,7 @@ class CustomerController extends Controller
     public function exportExcel(Request $request)
     {
         $company = Company::find(1);
-        return Excel::download(new LeadExport($request, $company, 'customer'), 'student_data_report.xlsx');
+        return Excel::download(new CustomerExport($request, $company, 'customer'), 'student_data_report.xlsx');
     }
 
     public function exportPDF(Request $request)
