@@ -176,6 +176,21 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <h4>Education Consultant Performance Report</h4>
+
+                            <a href="{{ url('presentation') }}" class="btn btn-sm btn-light">
+                                View All
+                            </a>
+
+                        </div>
+                        <div class="card-body">
+                            <livewire:Performance />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
                             <h4>Recent Presentation</h4>
 
                             <a href="{{ url('presentation') }}" class="btn btn-sm btn-light">

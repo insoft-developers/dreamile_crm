@@ -1,6 +1,6 @@
 <div wire:poll.2s>
     <div class="table-responsive">
-        <table class="table recent-chat-table align-middle mb-0">
+        <table class="table table-bordered table-striped mb-0">
             <thead>
                 <tr>
                     <th width="280">Customer</th>

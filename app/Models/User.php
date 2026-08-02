@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Payments;
 
 class User extends Authenticatable
 {
@@ -59,6 +61,13 @@ class User extends Authenticatable
     {
         return $this->last_seen && $this->last_seen->gt(now()->subMinutes(2));
     }
+
+    public function customers():HasMany
+    {
+        return $this->hasMany(Customer::class, 'consultant_id', 'id');
+    }
+
+    
 
     
 }

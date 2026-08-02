@@ -1,6 +1,6 @@
 <div wire:poll.5s>
     <div class="table-responsive">
-        <table class="table presentation-table align-middle mb-0">
+        <table class="table table-bordered table-striped mb-0">
 
             <thead>
                 <tr>
