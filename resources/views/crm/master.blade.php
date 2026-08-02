@@ -258,7 +258,7 @@
                                     <ul class="list-unstyled mb-1 border-bottom pb-1">
                                         <li><a class="dropdown-item" href="{{ url('view_profile') }}"><i
                                                     class="bi bi-person me-2"></i> View Profile</a></li>
-                                        
+
 
                                     </ul>
 
@@ -877,6 +877,7 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.5"></script>
         @endif
     @endif
 
@@ -895,7 +896,12 @@
             });
         }, 30000); // 30 detik
     </script>
+
+
     <script>
+
+       
+
         function formatRupiah(angka) {
             return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
         }
@@ -1151,7 +1157,7 @@
             renderLeadConversionChart();
         </script>
     @endif
-   
+
 
 </body>
 

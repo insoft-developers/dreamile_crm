@@ -9,8 +9,8 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-end mb-0">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Customers</li>
-                            <li class="breadcrumb-item active" aria-current="page">Event Data</li>
+                            <li class="breadcrumb-item" aria-current="page">Payments</li>
+                            <li class="breadcrumb-item active" aria-current="page">Payments</li>
                         </ol>
                     </nav>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="card">
                         <!--start::card-->
                         <div class="card-header">
-                            <h5 class="card-title mb-0"> Event Data </h5>
+                            <h5 class="card-title mb-0"> Payments </h5>
                             <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
                                     class="bi bi-plus"></i></button>
                         </div>
@@ -44,14 +44,13 @@
                                             </div>
 
 
-
                                             <!-- Branch -->
                                             <div class="col-md-3">
-                                                <label>Branch</label>
-                                                <select id="filter_branch" name="filter_branch" class="form-control">
+                                                <label>Student</label>
+                                                <select id="filter_student" name="filter_student" class="form-control">
                                                     <option value="">- All -</option>
-                                                    @foreach ($branches as $key)
-                                                        <option value="{{ $key->id }}">{{ $key->branch_name }}</option>
+                                                    @foreach ($customers as $key)
+                                                        <option value="{{ $key->id }}">{{ $key->fullname }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -95,15 +94,18 @@
                                             <th>ID</th>
                                             <th class="text-center" width="5%">No</th>
                                             <th class="text-center">Aksi</th>
-                                            <th>Photo</th>
-                                            <th>Event Name</th>
                                             <th>Date</th>
-                                            <th>Location</th>
+                                            <th>Invoice</th>
+                                            <th>Student Name</th>
+                                            <th>Whatsapp</th>
                                             <th>Branch</th>
-                                            <th>Leads</th>
-                                            <th>Deals</th>
+                                            <th>Consultant</th>
+                                            <th>Bills</th>
+                                            <th>Payment</th>
+                                            <th>Outstanding</th>
+                                            <th>Keterangan</th>
                                             <th>Created By</th>
-                                            <th>Updated At</th>
+                                            <th>Created At</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -119,9 +121,9 @@
             </div><!--End row-->
         </div><!--End container-fluid-->
     </main><!--End app-wrapper-->
-    @include('crm.customers.event.modal')
+    @include('crm.customers.payment.modal')
 @endsection
 
 @push('scripts')
-    @include('crm.customers.event.js')
+    @include('crm.customers.payment.js')
 @endpush

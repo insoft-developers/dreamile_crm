@@ -21,6 +21,7 @@ use App\Http\Controllers\CRM\GroupManageController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
+use App\Http\Controllers\CRM\PaymentController;
 use App\Http\Controllers\CRM\PositionController;
 use App\Http\Controllers\CRM\PresentationController;
 use App\Http\Controllers\CRM\ProfileController;
@@ -199,6 +200,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/view_profile', [ProfileController::class, 'index']);
     Route::post('/user_profile_update', [ProfileController::class, 'update'])->name('user.profile.update');
 
+    Route::resource('/payment', PaymentController::class);
+    Route::get('/payment_table', [PaymentController::class, 'table'])->name('payment.table');
+    Route::get('/select_student', [PaymentController::class, 'selectStudent']);
+    Route::get('/payment/{id}/print', [PaymentController::class, 'printData'])
+    ->name('payment.print');
+    Route::get('/payment/export/excel', [PaymentController::class, 'exportExcel']);
+    Route::get('/payment/export/pdf', [PaymentController::class, 'exportPDF']);
 
 });
 

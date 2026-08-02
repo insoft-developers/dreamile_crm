@@ -3,7 +3,7 @@
     $whatsappMenu = request()->is('chat');
 
     $customerMenu =
-        request()->is('lead') || request()->is('lead/*') || request()->is('customer')  || request()->is('customer/*') || request()->is('lead_source') ;
+        request()->is('payment') ||request()->is('lead') || request()->is('lead/*') || request()->is('customer')  || request()->is('customer/*') || request()->is('lead_source') ;
 
     $broadcastMenu =
         request()->is('broadcast') || request()->is('broadcast/*') || request()->is('contact_group') || request()->is('broadcast_template');
@@ -142,6 +142,13 @@
                                 class="pe-nav-link {{ request()->is('customer') || request()->is('customer/*') ? 'active' : '' }}">
 
                                 Student Data
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{{ url('payment') }}"
+                                class="pe-nav-link {{ request()->is('payment') || request()->is('payment/*') ? 'active' : '' }}">
+
+                                Payments
                             </a>
                         </li>
 
