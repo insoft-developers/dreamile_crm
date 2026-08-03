@@ -1,4 +1,4 @@
-<div wire:poll.2s>
+<div wire:poll.60s>
 
     <div class="lead-status-list">
 

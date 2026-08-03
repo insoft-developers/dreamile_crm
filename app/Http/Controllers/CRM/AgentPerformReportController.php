@@ -38,7 +38,8 @@ class AgentPerformReportController extends Controller
                     'consultant_id',
                     DB::raw('COUNT(*) as total_leads'),
                     DB::raw("SUM(CASE WHEN status = 'deal' THEN 1 ELSE 0 END) as total_deals"),
-                    DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok")
+                    DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok"),
+                    DB::raw("SUM(CASE WHEN status = 'confirm' THEN 1 ELSE 0 END) as total_confirm")
                 );
 
             if ($request->filter_start_date && $request->filter_end_date) {
@@ -49,6 +50,28 @@ class AgentPerformReportController extends Controller
             }
 
             $customerSub->groupBy('consultant_id');
+
+
+            $paymentSub = DB::table('payments as p')
+                ->join('customers as c', 'c.id', '=', 'p.customer_id')
+                ->select(
+                    'c.consultant_id',
+
+                    DB::raw('COUNT(DISTINCT p.id) as total_payment_transactions'),
+
+                    DB::raw('COALESCE(SUM(p.payment_amount), 0) as total_payment')
+                );
+
+            if ($request->filter_start_date && $request->filter_end_date) {
+                $paymentSub->whereBetween('p.payment_date', [
+                    $request->filter_start_date . ' 00:00:00',
+                    $request->filter_end_date . ' 23:59:59'
+                ]);
+            }
+
+
+
+            $paymentSub->groupBy('c.consultant_id');
 
 
             $query = DB::table('users as u')
@@ -66,11 +89,17 @@ class AgentPerformReportController extends Controller
                     }
                 })
 
+
+
                 ->leftJoin('whatsapp_messages as wm', 'wm.conversation_id', '=', 'wc.id')
                 ->leftJoin('branches as br', 'u.branch_id', '=', 'br.id')
 
                 ->leftJoinSub($customerSub, 'cs', function ($join) {
                     $join->on('cs.consultant_id', '=', 'u.id');
+                })
+
+                ->leftJoinSub($paymentSub, 'ps', function ($join) {
+                    $join->on('ps.consultant_id', '=', 'u.id');
                 });
 
 
@@ -130,9 +159,24 @@ class AgentPerformReportController extends Controller
             ) as outgoing_message
         "),
 
+
                     DB::raw('COALESCE(MAX(cs.total_leads),0) as total_leads'),
                     DB::raw('COALESCE(MAX(cs.total_deals),0) as total_deals'),
-                    DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok')
+                    DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok'),
+                    DB::raw('COALESCE(MAX(cs.total_confirm),0) as total_confirm'),
+                    DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment_transactions),
+                                0
+                            ) as total_payment_transactions
+                        "),
+
+                    DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment),
+                                0
+                            ) as total_payment
+                        ")
                 )
                 ->groupBy(
                     'u.id',
@@ -153,6 +197,13 @@ class AgentPerformReportController extends Controller
                 ->addColumn('nok', function ($row) {
                     return $row->total_nok;
                 })
+                ->addColumn('confirm', function ($row) {
+                    return $row->total_confirm;
+                })
+                ->addColumn('omset', function ($row) {
+                    return number_format($row->total_payment);
+                })
+
 
                 ->addColumn('consultant', function ($row) {
                     return $row->name ?? '';
@@ -198,7 +249,8 @@ class AgentPerformReportController extends Controller
                 'consultant_id',
                 DB::raw('COUNT(*) as total_leads'),
                 DB::raw("SUM(CASE WHEN status = 'deal' THEN 1 ELSE 0 END) as total_deals"),
-                DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok")
+                DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok"),
+                DB::raw("SUM(CASE WHEN status = 'confirm' THEN 1 ELSE 0 END) as total_confirm")
             );
 
         if ($request->filter_start_date && $request->filter_end_date) {
@@ -209,6 +261,28 @@ class AgentPerformReportController extends Controller
         }
 
         $customerSub->groupBy('consultant_id');
+
+
+        $paymentSub = DB::table('payments as p')
+            ->join('customers as c', 'c.id', '=', 'p.customer_id')
+            ->select(
+                'c.consultant_id',
+
+                DB::raw('COUNT(DISTINCT p.id) as total_payment_transactions'),
+
+                DB::raw('COALESCE(SUM(p.payment_amount), 0) as total_payment')
+            );
+
+        if ($request->filter_start_date && $request->filter_end_date) {
+            $paymentSub->whereBetween('p.payment_date', [
+                $request->filter_start_date . ' 00:00:00',
+                $request->filter_end_date . ' 23:59:59'
+            ]);
+        }
+
+
+
+        $paymentSub->groupBy('c.consultant_id');
 
 
         $query = DB::table('users as u')
@@ -226,11 +300,17 @@ class AgentPerformReportController extends Controller
                 }
             })
 
+
+
             ->leftJoin('whatsapp_messages as wm', 'wm.conversation_id', '=', 'wc.id')
             ->leftJoin('branches as br', 'u.branch_id', '=', 'br.id')
 
             ->leftJoinSub($customerSub, 'cs', function ($join) {
                 $join->on('cs.consultant_id', '=', 'u.id');
+            })
+
+            ->leftJoinSub($paymentSub, 'ps', function ($join) {
+                $join->on('ps.consultant_id', '=', 'u.id');
             });
 
 
@@ -290,9 +370,24 @@ class AgentPerformReportController extends Controller
             ) as outgoing_message
         "),
 
+
                 DB::raw('COALESCE(MAX(cs.total_leads),0) as total_leads'),
                 DB::raw('COALESCE(MAX(cs.total_deals),0) as total_deals'),
-                DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok')
+                DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok'),
+                DB::raw('COALESCE(MAX(cs.total_confirm),0) as total_confirm'),
+                DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment_transactions),
+                                0
+                            ) as total_payment_transactions
+                        "),
+
+                DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment),
+                                0
+                            ) as total_payment
+                        ")
             )
             ->groupBy(
                 'u.id',

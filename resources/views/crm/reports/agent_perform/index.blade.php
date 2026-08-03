@@ -107,6 +107,8 @@
                                             <th>Leads</th>
                                             <th>Deal</th>
                                             <th>NOK</th>
+                                            <th>Confirm</th>
+                                            <th>Omset</th>
                                             <th>Assigned Chat</th>
                                             <th>Open</th>
                                             <th>Closed</th>

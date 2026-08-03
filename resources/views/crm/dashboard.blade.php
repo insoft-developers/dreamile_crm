@@ -178,7 +178,7 @@
                         <div class="card-header">
                             <h4>Education Consultant Performance Report</h4>
 
-                            <a href="{{ url('presentation') }}" class="btn btn-sm btn-light">
+                            <a href="{{ url('agent_perform_report') }}" class="btn btn-sm btn-light">
                                 View All
                             </a>
 

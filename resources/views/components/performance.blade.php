@@ -1,4 +1,4 @@
-<div wire:poll.10s>
+<div wire:poll.60s>
     <div class="table-responsive">
         <table class="table table-bordered table-striped mb-0">
 

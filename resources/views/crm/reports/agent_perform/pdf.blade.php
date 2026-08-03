@@ -89,6 +89,8 @@
                 <th>Leads</th>
                 <th>Deal</th>
                 <th>NOK</th>
+                <th>Confirm</th>
+                <th>Omset</th>
                 <th>Assigned Chat</th>
                 <th>Open Chat</th>
                 <th>Closed Chat</th>
@@ -123,6 +125,12 @@
                 </td>
                  <td>
                     {{ $item->total_nok ?? '-' }}
+                </td>
+                <td>
+                    {{ $item->total_confirm ?? '-' }}
+                </td>
+                <td>
+                    {{ number_format($item->total_payment) ?? '-' }}
                 </td>
 
                 <td>

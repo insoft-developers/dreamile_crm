@@ -78,6 +78,14 @@
                 name: 'nok',
             },
             {
+                data: 'confirm',
+                name: 'confirm',
+            },
+            {
+                data: 'omset',
+                name: 'omset',
+            },
+            {
                 data: 'assigned_chat',
                 name: 'assigned_chat',
             },

@@ -55,7 +55,8 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 'consultant_id',
                 DB::raw('COUNT(*) as total_leads'),
                 DB::raw("SUM(CASE WHEN status = 'deal' THEN 1 ELSE 0 END) as total_deals"),
-                DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok")
+                DB::raw("SUM(CASE WHEN status = 'nok' THEN 1 ELSE 0 END) as total_nok"),
+                DB::raw("SUM(CASE WHEN status = 'confirm' THEN 1 ELSE 0 END) as total_confirm")
             );
 
         if ($this->request->filter_start_date && $this->request->filter_end_date) {
@@ -66,6 +67,27 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
         }
 
         $customerSub->groupBy('consultant_id');
+
+        $paymentSub = DB::table('payments as p')
+            ->join('customers as c', 'c.id', '=', 'p.customer_id')
+            ->select(
+                'c.consultant_id',
+
+                DB::raw('COUNT(DISTINCT p.id) as total_payment_transactions'),
+
+                DB::raw('COALESCE(SUM(p.payment_amount), 0) as total_payment')
+            );
+
+        if ($this->request->filter_start_date && $this->request->filter_end_date) {
+            $paymentSub->whereBetween('p.payment_date', [
+                $this->request->filter_start_date . ' 00:00:00',
+                $this->request->filter_end_date . ' 23:59:59'
+            ]);
+        }
+
+
+
+        $paymentSub->groupBy('c.consultant_id');
 
 
         $query = DB::table('users as u')
@@ -88,6 +110,9 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
 
             ->leftJoinSub($customerSub, 'cs', function ($join) {
                 $join->on('cs.consultant_id', '=', 'u.id');
+            })
+            ->leftJoinSub($paymentSub, 'ps', function ($join) {
+                $join->on('ps.consultant_id', '=', 'u.id');
             });
 
 
@@ -149,7 +174,21 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
 
                 DB::raw('COALESCE(MAX(cs.total_leads),0) as total_leads'),
                 DB::raw('COALESCE(MAX(cs.total_deals),0) as total_deals'),
-                DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok')
+                DB::raw('COALESCE(MAX(cs.total_nok),0) as total_nok'),
+                DB::raw('COALESCE(MAX(cs.total_confirm),0) as total_confirm'),
+                DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment_transactions),
+                                0
+                            ) as total_payment_transactions
+                        "),
+
+                DB::raw("
+                            COALESCE(
+                                MAX(ps.total_payment),
+                                0
+                            ) as total_payment
+                        ")
             )
             ->groupBy(
                 'u.id',
@@ -159,7 +198,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
             )
             ->get();
 
-            return $data;
+        return $data;
     }
 
     /*
@@ -169,7 +208,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
     */
     public function headings(): array
     {
-        return ['No', 'Consultant Name', 'Branch', 'Leads', 'Deal', 'NOK', 'Assigned Chat', 'Open Chat', 'Closed Chat', 'Incoming Message', 'Outgoing Message'];
+        return ['No', 'Consultant Name', 'Branch', 'Leads', 'Deal', 'NOK','Confirm','Omset', 'Assigned Chat', 'Open Chat', 'Closed Chat', 'Incoming Message', 'Outgoing Message'];
     }
 
     /*
@@ -182,11 +221,21 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
 
         static $no = 1;
 
-        return [$no++, $row->name ?? '-', $row->branch_name ?? '-', 
-        $row->total_leads ?? 0,
-        $row->total_deals ?? 0,
-        $row->total_nok ?? 0,
-        $row->assigned_chat ?? '', $row->open_chat ?? '', $row->closed_chat ?? '', $row->incoming_message ?? '', $row->outgoing_message ?? ''];
+        return [
+            $no++,
+            $row->name ?? '-',
+            $row->branch_name ?? '-',
+            $row->total_leads ?? 0,
+            $row->total_deals ?? 0,
+            $row->total_nok ?? 0,
+            $row->total_confirm ?? 0,
+            $row->total_payment ?? 0,
+            $row->assigned_chat ?? '',
+            $row->open_chat ?? '',
+            $row->closed_chat ?? '',
+            $row->incoming_message ?? '',
+            $row->outgoing_message ?? ''
+        ];
     }
 
     /*
@@ -268,15 +317,15 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 // $sheet->getStyle('Q:Q')->getAlignment()->setWrapText(true);
 
                 // COMPANY
-                $sheet->mergeCells('A1:K1');
+                $sheet->mergeCells('A1:M1');
                 $sheet->setCellValue('A1', $company_name);
 
                 // BRANCH
-                $sheet->mergeCells('A2:K2');
+                $sheet->mergeCells('A2:M2');
                 $sheet->setCellValue('A2', $address);
 
                 // REPORT TITLE
-                $sheet->mergeCells('A3:K3');
+                $sheet->mergeCells('A3:M3');
                 $sheet->setCellValue('A3', $reportTitle);
 
                 /*
@@ -285,7 +334,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 |--------------------------------------------------------------------------
                 */
 
-                $sheet->getStyle('A1:K3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle('A1:M3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
                 /*
                 |--------------------------------------------------------------------------
@@ -307,7 +356,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 $lastRow = $sheet->getHighestRow();
 
                 $sheet
-                    ->getStyle('A5:K' . $lastRow)
+                    ->getStyle('A5:M' . $lastRow)
                     ->getBorders()
                     ->getAllBorders()
                     ->setBorderStyle(Border::BORDER_THIN);
@@ -319,7 +368,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 */
 
                 $sheet
-                    ->getStyle('A5:K' . $lastRow)
+                    ->getStyle('A5:M' . $lastRow)
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER);
 
@@ -330,7 +379,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 */
 
                 $sheet
-                    ->getStyle('A5:K' . $lastRow)
+                    ->getStyle('A5:M' . $lastRow)
                     ->getAlignment()
 
                     ->setWrapText(true);
