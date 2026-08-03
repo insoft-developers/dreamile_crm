@@ -22,8 +22,10 @@
                         <!--start::card-->
                         <div class="card-header">
                             <h5 class="card-title mb-0"> Payments </h5>
+                            @if(Auth::user()->position === 'supervisor')
                             <button onclick="addData()" title="Add Data" class="me-0 btn  btn-success btn-sm"><i
                                     class="bi bi-plus"></i></button>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="card mb-3">

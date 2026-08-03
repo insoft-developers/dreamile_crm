@@ -196,6 +196,8 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 'u.branch_id',
                 'br.branch_name'
             )
+            ->orderByDesc('total_leads')
+            ->orderByDesc('total_deals')
             ->get();
 
         return $data;
@@ -208,7 +210,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
     */
     public function headings(): array
     {
-        return ['No', 'Consultant Name', 'Branch', 'Leads', 'Deal', 'NOK','Confirm','Omset', 'Assigned Chat', 'Open Chat', 'Closed Chat', 'Incoming Message', 'Outgoing Message'];
+        return ['No', 'Consultant Name', 'Branch', 'Leads', 'Deal', 'NOK', 'Confirm', 'Omset', 'Assigned Chat', 'Open Chat', 'Closed Chat', 'Incoming Message', 'Outgoing Message'];
     }
 
     /*

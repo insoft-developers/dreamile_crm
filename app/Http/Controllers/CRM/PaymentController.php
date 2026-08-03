@@ -75,8 +75,17 @@ class PaymentController extends Controller
                     $button = '';
                     $button .= '<center>';
 
-                    $button .= '<a href="' . route('payment.print', $row->id) . '" target="_blank"><button title="Print Data" class="me-0 btn btn-insoft btn-success"><i class="bi bi-printer"></i></button></a>';
-                    $button .= '<button onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
+                    $disabled = "";
+                    if(Auth::user()->position === 'supervisor') {
+                        $disabled="";
+                    } else {
+                        $disabled = "disabled";
+                    }
+
+                    $button .= '<a href="' . route('payment.print', $row->id) . '" target="_blank"><button '.$disabled.' title="Print Data" class="me-0 btn btn-insoft btn-success"><i class="bi bi-printer"></i></button></a>';
+
+
+                    $button .= '<button '.$disabled.' onclick="deleteData(' . $row->id . ')" style="margin-left:3px;" title="Delete Data" class="btn btn-insoft btn-danger"><i class="bi bi-trash3"></i></button>';
 
                     $button .= '</center>';
                     return $button;
