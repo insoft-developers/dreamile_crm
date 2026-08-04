@@ -92,6 +92,7 @@ class Performance extends Component
                 'branches.branch_name'
             )
 
+            ->orderByDesc('total_payment')
             ->orderByDesc('total_visit')
             ->get();
 

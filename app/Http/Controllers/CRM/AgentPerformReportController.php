@@ -398,8 +398,9 @@ class AgentPerformReportController extends Controller
                 'u.branch_id',
                 'br.branch_name'
             )
-             ->orderByDesc('total_leads')
-                ->orderByDesc('total_deals')
+            ->orderByDesc('total_payment')
+            ->orderByDesc('total_leads')
+            ->orderByDesc('total_deals')
             ->get();
 
         $pdf = Pdf::loadView('crm.reports.agent_perform.pdf', compact('data', 'company'));

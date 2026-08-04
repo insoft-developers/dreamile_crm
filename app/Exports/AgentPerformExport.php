@@ -196,6 +196,7 @@ class AgentPerformExport implements FromCollection, WithHeadings, WithMapping, S
                 'u.branch_id',
                 'br.branch_name'
             )
+            ->orderByDesc('total_payment')
             ->orderByDesc('total_leads')
             ->orderByDesc('total_deals')
             ->get();
