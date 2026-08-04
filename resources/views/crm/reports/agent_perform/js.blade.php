@@ -43,7 +43,7 @@
             }
         },
         order: [
-            [4, 'desc']
+            [8, 'desc']
         ],
         columns: [{
                 data: 'id',
