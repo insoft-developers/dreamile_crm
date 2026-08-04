@@ -26,7 +26,7 @@ class Performance extends Component
 
         $paymentSub = DB::table('payments as p')
             ->join('customers as c', 'c.id', '=', 'p.customer_id')
-            ->whereColumn('c.created_by', 'users.id')
+            ->whereColumn('c.consultant_id', 'users.id')
             ->whereBetween('p.payment_date', [
                 $startDate,
                 $endDate
