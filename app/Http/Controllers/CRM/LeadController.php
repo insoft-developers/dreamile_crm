@@ -270,9 +270,9 @@ class LeadController extends Controller
                         $deleteRole = '';
                         $convertRole = '';
                     } else {
-                        if (Auth::user()->id == $row->created_by) {
+                        if (Auth::user()->id == $row->consultant_id) {
                             $editRole = '';
-                            $deleteRole = '';
+                            $deleteRole = 'disabled';
                         } else {
                             $editRole = 'disabled';
                             $deleteRole = 'disabled';
