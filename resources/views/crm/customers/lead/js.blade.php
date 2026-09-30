@@ -1,13 +1,15 @@
 <script>
-    function exportExcel() {
-        let params = $('#filterForm').serialize();
-        window.open('/lead/export/excel?' + params, '_blank');
-    }
+    // function exportExcel() {
+    //     let params = $('#filterForm').serialize();
+    //     window.open('/lead/export/excel?' + params, '_blank');
+    // }
 
-    function exportPDF() {
-        let params = $('#filterForm').serialize();
-        window.open('/lead/export/pdf?' + params, '_blank');
-    }
+
+
+    // function exportPDF() {
+    //     let params = $('#filterForm').serialize();
+    //     window.open('/lead/export/pdf?' + params, '_blank');
+    // }
 
     function filterData() {
         $('#list-table').DataTable().ajax.reload(null, false);
@@ -165,6 +167,31 @@
 
         ]
     });
+
+
+    function exportExcel() {
+
+        let params = $('#filterForm').serialize();
+
+        // Ambil search dari DataTables
+        let search = table.search();
+
+        if (search) {
+            params += '&search=' + encodeURIComponent(search);
+        }
+
+        window.open('/lead/export/excel?' + params, '_blank');
+    }
+
+
+    function exportPDF() {
+        let params = $('#filterForm').serialize(); // Ambil search dari DataTables 
+        let search = table.search();
+        if (search) {
+            params += '&search=' + encodeURIComponent(search);
+        }
+        window.open('/lead/export/pdf?' + params, '_blank');
+    }
 
     function addData() {
         save_method = "add";
@@ -428,7 +455,7 @@
         const eventId = $(this).val();
         if (eventId === 'event') {
             var branchId = $("#branch_id").val();
-            fetch("{{ url('/api/event?branchId=') }}"+branchId)
+            fetch("{{ url('/api/event?branchId=') }}" + branchId)
                 .then(res => res.json())
                 .then(data => {
                     let optionData = '';
@@ -461,7 +488,7 @@
 
         } else if (eventId === 'presentation') {
             var branchId = $("#branch_id").val();
-            fetch("{{ url('/api/presentation?branchId=') }}"+branchId)
+            fetch("{{ url('/api/presentation?branchId=') }}" + branchId)
                 .then(res => res.json())
                 .then(data => {
                     let optionData = '';
@@ -499,7 +526,7 @@
 
     function showEventChoice(eventType, selectedEventId = null, selectedPresentationId = null, selectedBranchId) {
         if (eventType === 'event' || eventType === 'presentation') {
-            fetch("{{ url('/api/event?branchId=') }}"+selectedBranchId)
+            fetch("{{ url('/api/event?branchId=') }}" + selectedBranchId)
                 .then(res => res.json())
                 .then(data => {
 
@@ -923,7 +950,7 @@
 
     });
 
-    $("#branch_id").change(function(){
+    $("#branch_id").change(function() {
         $("#lead_source_id").val("");
         $("#event-container").html('');
     });

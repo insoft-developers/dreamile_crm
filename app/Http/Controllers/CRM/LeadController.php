@@ -31,8 +31,8 @@ class LeadController extends Controller
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            $data = Customer::with('presentation');
-            
+            $data = Customer::with(['presentation', 'consultant']);
+
             // 🔥 FILTER TANGGAL
             if ($request->start_date && $request->end_date) {
                 $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
@@ -63,10 +63,10 @@ class LeadController extends Controller
             }
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('address', function($row){
+                ->addColumn('address', function ($row) {
                     $rt = $row->rt ?? '-';
-                    $rw = $row->rw ??'';
-                    return '<div style="white-space:normal;width:160px;">'.$row->full_address.' RT '.$rt.'/ RW '.$rw.'</div>';
+                    $rw = $row->rw ?? '';
+                    return '<div style="white-space:normal;width:160px;">' . $row->full_address . ' RT ' . $rt . '/ RW ' . $rw . '</div>';
                 })
                 ->addColumn('prevent', function ($row) {
                     $html = '';
@@ -144,7 +144,7 @@ class LeadController extends Controller
                     }
                     return '<div style="white-space:normal;width:200px;">' . $html . '</div>';
                 })
-                ->addColumn('lead_source_id', function ($row) {
+                ->editColumn('lead_source_id', function ($row) {
                     if ($row->lead_source_id == 'facebook') {
                         return '<span style="color:blue;font-weight:bold;">Facebook</span>';
                     } elseif ($row->lead_source_id == 'tik-tok') {
@@ -171,10 +171,10 @@ class LeadController extends Controller
                 ->addColumn('created_at', function ($row) {
                     return date('d-m-Y H:i', strtotime($row->created_at));
                 })
-                ->addColumn('school_from', function ($row) {
+                ->editColumn('school_from', function ($row) {
                     return '<div style="white-space:normal;width:120px;">' . $row->school_from . '</div>';
                 })
-                ->addColumn('status', function ($row) {
+                ->editColumn('status', function ($row) {
                     $status = null;
                     if ($row->status === 'new-lead') {
                         $status = '<span class="badge rounded-pill bg-success">New</span>';
@@ -302,7 +302,47 @@ class LeadController extends Controller
                     $button .= '</center>';
                     return $button;
                 })
-                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup','address'])
+
+
+                ->filterColumn('address', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('full_address', 'like', "%{$keyword}%")
+                            ->orWhere('rt', 'like', "%{$keyword}%")
+                            ->orWhere('rw', 'like', "%{$keyword}%")
+                            ->orWhere('province_name', 'like', "%{$keyword}%")
+                            ->orWhere('regency_name', 'like', "%{$keyword}%")
+                            ->orWhere('district_name', 'like', "%{$keyword}%")
+                            ->orWhere('village_name', 'like', "%{$keyword}%");
+                    });
+                })
+
+
+                ->filterColumn('consultant_id', function ($query, $keyword) {
+                    $query->whereHas('consultant', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+
+                ->filterColumn('branch_id', function ($query, $keyword) {
+                    $query->whereHas('branch', function ($q) use ($keyword) {
+                        $q->where('branch_name', 'like', "%{$keyword}%");
+                    });
+                })
+
+                ->filterColumn('class', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->where('class', 'like', "%{$keyword}%")
+                            ->orWhere('major', 'like', "%{$keyword}%");
+                    });
+                })
+
+                ->filterColumn('created_by', function ($query, $keyword) {
+                    $query->whereHas('createdBy', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+
+                ->rawColumns(['action', 'photo', 'school_from', 'status', 'lead_source_id', 'prevent', 'visit', 'followup', 'address'])
                 ->make(true);
         }
     }
@@ -674,48 +714,140 @@ class LeadController extends Controller
         return Excel::download(new LeadExport($request, $company), 'Lead_data_report.xlsx');
     }
 
+
     public function exportPDF(Request $request)
     {
         $company = Company::first();
 
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'createdBy', 'presentation', 'events', 'followup']);
-            
+        $data = Customer::query()->with([
+            'leadsource',
+            'consultant',
+            'branch',
+            'createdBy',
+            'presentation',
+            'events',
+            'followup'
+        ]);
 
+        // ==========================================
+        // FILTER BRANCH USER
+        // ==========================================
         if (Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);
         }
 
+        // ==========================================
         // FILTER TANGGAL
+        // ==========================================
         if ($request->start_date && $request->end_date) {
-            $data->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+            $data->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
         }
 
+        // ==========================================
         // FILTER STATUS
+        // ==========================================
         if ($request->filter_status) {
             $data->where('status', $request->filter_status);
         }
 
+        // ==========================================
         // FILTER LEAD SOURCE
+        // ==========================================
         if ($request->filter_lead_source) {
-            $data->where('lead_source_id', $request->filter_lead_source);
+            $data->where(
+                'lead_source_id',
+                $request->filter_lead_source
+            );
         }
 
+        // ==========================================
         // FILTER CONSULTANT
+        // ==========================================
         if ($request->filter_consultant) {
-            $data->where('consultant_id', $request->filter_consultant);
+            $data->where(
+                'consultant_id',
+                $request->filter_consultant
+            );
         }
 
+        // ==========================================
         // FILTER BRANCH
+        // ==========================================
         if ($request->filter_branch) {
-            $data->where('branch_id', $request->filter_branch);
+            $data->where(
+                'branch_id',
+                $request->filter_branch
+            );
         }
 
-        $customers = $data->orderBy('id', 'desc')->get();
+        // ==========================================
+        // SEARCH DATATABLE
+        // ==========================================
+        if ($request->search) {
 
-        $pdf = Pdf::loadView('crm.customers.lead.pdf', compact('customers', 'company'));
+            $keyword = trim($request->search);
+
+            $data->where(function ($q) use ($keyword) {
+
+                // CUSTOMER
+                $q->where('fullname', 'like', "%{$keyword}%")
+                    ->orWhere('school_from', 'like', "%{$keyword}%")
+                    ->orWhere('phone_number', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%")
+                    ->orWhere('gender', 'like', "%{$keyword}%")
+                    ->orWhere('full_address', 'like', "%{$keyword}%")
+                    ->orWhere('rt', 'like', "%{$keyword}%")
+                    ->orWhere('rw', 'like', "%{$keyword}%")
+                    ->orWhere('class', 'like', "%{$keyword}%")
+                    ->orWhere('major', 'like', "%{$keyword}%")
+                    ->orWhere('province_name', 'like', "%{$keyword}%")
+                    ->orWhere('regency_name', 'like', "%{$keyword}%")
+                    ->orWhere('district_name', 'like', "%{$keyword}%")
+                    ->orWhere('village_name', 'like', "%{$keyword}%")
+                    ->orWhere('status', 'like', "%{$keyword}%")
+                    ->orWhere('lead_source_id', 'like', "%{$keyword}%")
+                    ->orWhere('note', 'like', "%{$keyword}%");
+
+                // CONSULTANT
+                $q->orWhereHas('consultant', function ($query) use ($keyword) {
+                    $query->where('name', 'like', "%{$keyword}%");
+                });
+
+                // BRANCH
+                $q->orWhereHas('branch', function ($query) use ($keyword) {
+                    $query->where('branch_name', 'like', "%{$keyword}%");
+                });
+
+                // CREATED BY
+                $q->orWhereHas('createdBy', function ($query) use ($keyword) {
+                    $query->where('name', 'like', "%{$keyword}%");
+                });
+            });
+        }
+
+        // ==========================================
+        // GET DATA
+        // ==========================================
+        $customers = $data
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // ==========================================
+        // GENERATE PDF
+        // ==========================================
+        $pdf = Pdf::loadView(
+            'crm.customers.lead.pdf',
+            compact('customers', 'company')
+        );
 
         // LANDSCAPE
-        $pdf->setPaper([0, 0, 900, 2000], 'landscape');
+        $pdf->setPaper(
+            [0, 0, 900, 2000],
+            'landscape'
+        );
 
         return $pdf->stream('Lead_Report.pdf');
     }

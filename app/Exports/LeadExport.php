@@ -47,44 +47,131 @@ class LeadExport implements FromCollection, WithHeadings, WithMapping, ShouldAut
     | DATA
     |--------------------------------------------------------------------------
     */
-    public function collection()
-    {
-        $data = Customer::query()->with(['leadsource', 'consultant', 'branch', 'followup', 'events', 'presentation']);
-        if ($this->isCustomer) {
-            $data->where('status', 'deal');
-        } 
+    
+   
+public function collection()
+{
+    $data = Customer::query()->with([
+        'leadsource',
+        'consultant',
+        'branch',
+        'followup',
+        'events',
+        'presentation',
+        'createdBy'
+    ]);
 
-        if (Auth::user()->branch_id) {
-            $data->where('branch_id', Auth::user()->branch_id);
-        }
-
-        // FILTER TANGGAL
-        if ($this->request->start_date && $this->request->end_date) {
-            $data->whereBetween('created_at', [$this->request->start_date . ' 00:00:00', $this->request->end_date . ' 23:59:59']);
-        }
-
-        // FILTER STATUS
-        if ($this->request->status) {
-            $data->where('status', $this->request->status);
-        }
-
-        // FILTER LEAD SOURCE
-        if ($this->request->filter_lead_source) {
-            $data->where('lead_source_id', $this->request->filter_lead_source);
-        }
-
-        // FILTER CONSULTANT
-        if ($this->request->filter_consultant) {
-            $data->where('consultant_id', $this->request->filter_consultant);
-        }
-
-        // FILTER BRANCH
-        if ($this->request->filter_branch) {
-            $data->where('branch_id', $this->request->filter_branch);
-        }
-
-        return $data->orderBy('id', 'desc')->get();
+    // ==========================================
+    // CUSTOMER ONLY
+    // ==========================================
+    if ($this->isCustomer) {
+        $data->where('status', 'deal');
     }
+
+    // ==========================================
+    // USER BRANCH
+    // ==========================================
+    if (Auth::user()->branch_id) {
+        $data->where('branch_id', Auth::user()->branch_id);
+    }
+
+    // ==========================================
+    // FILTER TANGGAL
+    // ==========================================
+    if ($this->request->start_date && $this->request->end_date) {
+        $data->whereBetween('created_at', [
+            $this->request->start_date . ' 00:00:00',
+            $this->request->end_date . ' 23:59:59'
+        ]);
+    }
+
+    // ==========================================
+    // FILTER STATUS
+    // ==========================================
+    if ($this->request->status) {
+        $data->where('status', $this->request->status);
+    }
+
+    // ==========================================
+    // FILTER LEAD SOURCE
+    // ==========================================
+    if ($this->request->filter_lead_source) {
+        $data->where(
+            'lead_source_id',
+            $this->request->filter_lead_source
+        );
+    }
+
+    // ==========================================
+    // FILTER CONSULTANT
+    // ==========================================
+    if ($this->request->filter_consultant) {
+        $data->where(
+            'consultant_id',
+            $this->request->filter_consultant
+        );
+    }
+
+    // ==========================================
+    // FILTER BRANCH
+    // ==========================================
+    if ($this->request->filter_branch) {
+        $data->where(
+            'branch_id',
+            $this->request->filter_branch
+        );
+    }
+
+    // ==========================================
+    // SEARCH DATATABLE
+    // ==========================================
+    if ($this->request->search) {
+
+        $keyword = trim($this->request->search);
+
+        $data->where(function ($q) use ($keyword) {
+
+            // CUSTOMER
+            $q->where('fullname', 'like', "%{$keyword}%")
+                ->orWhere('school_from', 'like', "%{$keyword}%")
+                ->orWhere('phone_number', 'like', "%{$keyword}%")
+                ->orWhere('email', 'like', "%{$keyword}%")
+                ->orWhere('gender', 'like', "%{$keyword}%")
+                ->orWhere('full_address', 'like', "%{$keyword}%")
+                ->orWhere('rt', 'like', "%{$keyword}%")
+                ->orWhere('rw', 'like', "%{$keyword}%")
+                ->orWhere('class', 'like', "%{$keyword}%")
+                ->orWhere('major', 'like', "%{$keyword}%")
+                ->orWhere('province_name', 'like', "%{$keyword}%")
+                ->orWhere('regency_name', 'like', "%{$keyword}%")
+                ->orWhere('district_name', 'like', "%{$keyword}%")
+                ->orWhere('village_name', 'like', "%{$keyword}%")
+                ->orWhere('status', 'like', "%{$keyword}%")
+                ->orWhere('lead_source_id', 'like', "%{$keyword}%")
+                ->orWhere('note', 'like', "%{$keyword}%");
+
+            // CONSULTANT NAME
+            $q->orWhereHas('consultant', function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            });
+
+            // BRANCH NAME
+            $q->orWhereHas('branch', function ($query) use ($keyword) {
+                $query->where('branch_name', 'like', "%{$keyword}%");
+            });
+
+            // CREATED BY
+            $q->orWhereHas('createdBy', function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            });
+        });
+    }
+
+    return $data
+        ->orderBy('id', 'desc')
+        ->get();
+}
+
 
     /*
     |--------------------------------------------------------------------------
