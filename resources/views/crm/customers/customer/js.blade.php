@@ -132,8 +132,16 @@
                 name: 'nama_ayah'
             },
             {
+                data: 'ttl_ayah',
+                name: 'ttl_ayah'
+            },
+            {
                 data: 'nama_ibu',
                 name: 'nama_ibu'
+            },
+            {
+                data: 'ttl_ibu',
+                name: 'ttl_ibu'
             },
             {
                 data: 'status',
@@ -222,7 +230,11 @@
                 $("#tanggal_lahir").val(data.tanggal_lahir);
                 $("#kode_pos").val(data.kode_pos);
                 $("#nama_ayah").val(data.nama_ayah);
+                $("#tempat_lahir_ayah").val(data.tempat_lahir_ayah);
+                $("#tanggal_lahir_ayah").val(data.tanggal_lahir_ayah);
                 $("#nama_ibu").val(data.nama_ibu);
+                $("#tempat_lahir_ibu").val(data.tempat_lahir_ibu);
+                $("#tanggal_lahir_ibu").val(data.tanggal_lahir_ibu);
                 $("#register_cost").val(data.register_cost);
                 getRegency(data.province_code, data.regency_code, data.district_code, data.village_code);
 

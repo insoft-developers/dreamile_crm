@@ -141,7 +141,9 @@
                                             <th>Class/Major</th>
                                             <th>Phone Number</th>
                                             <th>Ayah</th>
+                                            <th>TTL Ayah</th>
                                             <th>Ibu</th>
+                                            <th>TTL Ibu</th>
                                             <th>Status</th>
                                             <th>Consultant</th>
                                             <th>Lead Source</th>

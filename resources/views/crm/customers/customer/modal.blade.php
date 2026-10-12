@@ -236,6 +236,37 @@
 
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="tempat_lahir_ayah" class="form-label fw-semibold">
+                                                    Tempat Lahir Ayah
+                                                </label>
+
+                                                <input type="text" class="form-control" id="tempat_lahir_ayah" name="tempat_lahir_ayah"
+                                                    placeholder="masukkan tempat lahir ayah">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+
+
+                                            <div class="form-group mb-3">
+
+                                                <label for="tanggal_lahir_ayah" class="form-label fw-semibold">
+                                                    Tanggal Lahir Ayah
+                                                </label>
+
+                                                <input type="date" class="form-control" id="tanggal_lahir_ayah" name="tanggal_lahir_ayah"
+                                                    placeholder="tempat lahir ayah">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group mb-3">
 
                                         <label for="nama_ibu" class="form-label fw-semibold">
@@ -245,6 +276,36 @@
                                         <input type="text" class="form-control" id="nama_ibu" name="nama_ibu"
                                             placeholder="masukkan nama ibu" required>
 
+                                    </div>
+
+                                     <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group mb-3">
+
+                                                <label for="tempat_lahir_ibu" class="form-label fw-semibold">
+                                                    Tempat Lahir Ibu
+                                                </label>
+
+                                                <input type="text" class="form-control" id="tempat_lahir_ibu" name="tempat_lahir_ibu"
+                                                    placeholder="masukkan tempat lahir ibu">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+
+
+                                            <div class="form-group mb-3">
+
+                                                <label for="tanggal_lahir_ibu" class="form-label fw-semibold">
+                                                    Tanggal Lahir Ibu
+                                                </label>
+
+                                                <input type="date" class="form-control" id="tanggal_lahir_ibu" name="tanggal_lahir_ibu"
+                                                    placeholder="tempat lahir ayah">
+
+                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -318,9 +379,9 @@
                                             <option value="">- Select Source -</option>
 
                                             @foreach ($sources as $source)
-                                                <option value="{{ $source->slug }}">
-                                                    {{ $source->source_name }}
-                                                </option>
+                                            <option value="{{ $source->slug }}">
+                                                {{ $source->source_name }}
+                                            </option>
                                             @endforeach
 
                                             <option value="presentation">Presentation</option>
@@ -363,9 +424,9 @@
                                             <option value="">- Select Consultant -</option>
 
                                             @foreach ($consultants as $consult)
-                                                <option value="{{ $consult->id }}">
-                                                    {{ $consult->name }}
-                                                </option>
+                                            <option value="{{ $consult->id }}">
+                                                {{ $consult->name }}
+                                            </option>
                                             @endforeach
 
                                         </select>
@@ -444,9 +505,9 @@
                                             <option value="">- Select Branch -</option>
 
                                             @foreach ($branches as $branch)
-                                                <option value="{{ $branch->id }}">
-                                                    {{ $branch->branch_name }}
-                                                </option>
+                                            <option value="{{ $branch->id }}">
+                                                {{ $branch->branch_name }}
+                                            </option>
                                             @endforeach
 
                                         </select>

@@ -193,6 +193,26 @@ class CustomerController extends Controller
                 ->addColumn('created_by', function ($row) {
                     return $row->createdBy?->name ?? '';
                 })
+                ->addColumn('ttl_ayah', function($row){
+                    $ttl = '';
+                    if(! empty($row->tempat_lahir_ayah)) {
+                        $ttl .= $row->tempat_lahir_ayah;
+                    }
+                    if(!empty($row->tanggal_lahir_ayah)){
+                        $ttl .= ', '.date('d-m-Y', strtotime($row->tanggal_lahir_ayah));
+                    }
+                    return $ttl;
+                })
+                ->addColumn('ttl_ibu', function($row){
+                   $ttl = '';
+                    if(! empty($row->tempat_lahir_ibu)) {
+                        $ttl .= $row->tempat_lahir_ibu;
+                    }
+                    if(!empty($row->tanggal_lahir_ibu)){
+                        $ttl .= ', '.date('d-m-Y', strtotime($row->tanggal_lahir_ibu));
+                    }
+                    return $ttl;
+                })
                 ->addColumn('action', function ($row) {
 
                     $editRole = null;

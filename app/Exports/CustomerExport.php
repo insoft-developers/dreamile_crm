@@ -50,7 +50,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, Shoul
     public function collection()
     {
         $data = Customer::query()->with(['leadsource', 'consultant', 'branch'])->where('status', 'deal');
-         
+
 
         if (Auth::user()->branch_id) {
             $data->where('branch_id', Auth::user()->branch_id);
@@ -100,7 +100,9 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, Shoul
             'Class / Major',
             'Phone Number',
             'Ayah',
+            'TTL Ayah',
             'Ibu',
+            'TTL Ibu',
             'Email',
             'Gender',
             'Status',
@@ -141,9 +143,20 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, Shoul
         $rw = $row->rw ?? '';
         $kodepos = $row->kode_pos ?? '';
 
-        $alamat = $row->full_address.' RT '.$rt.'/RW '.$rw.' '.$kodepos; 
+        $alamat = $row->full_address . ' RT ' . $rt . '/RW ' . $rw . ' ' . $kodepos;
 
-        $lahir = $row->tempat_lahir && $row->tanggal_lahir ? $row->tempat_lahir.','.date('d-m-Y', strtotime($row->tanggal_lahir)) : '';
+        $lahir = $row->tempat_lahir && $row->tanggal_lahir ? $row->tempat_lahir . ',' . date('d-m-Y', strtotime($row->tanggal_lahir)) : '';
+
+
+        // TTL AYAH
+        $ttl_ayah = $row->tempat_lahir_ayah && $row->tanggal_lahir_ayah
+            ? $row->tempat_lahir_ayah . ', ' . date('d-m-Y', strtotime($row->tanggal_lahir_ayah))
+            : '';
+
+        // TTL IBU
+        $ttl_ibu = $row->tempat_lahir_ibu && $row->tanggal_lahir_ibu
+            ? $row->tempat_lahir_ibu . ', ' . date('d-m-Y', strtotime($row->tanggal_lahir_ibu))
+            : '';
 
 
         return [
@@ -155,7 +168,9 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $row->class . '/' . $row->major,
             $row->phone_number ?? '-',
             $row->nama_ayah ?? '',
+            $ttl_ayah,
             $row->nama_ibu ?? '',
+            $ttl_ibu,
             $row->email ?? '-',
             $row->gender ?? '-',
             $row->status ?? '-',

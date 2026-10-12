@@ -66,6 +66,7 @@
 <body>
 
     <div class="title">
+
         <div class="company">
             {{ $company->company_name ?? '' }}
         </div>
@@ -77,9 +78,10 @@
         <div class="report-title">
             CUSTOMER DATA REPORT
         </div>
+
     </div>
 
-   <table>
+    <table>
 
         <thead>
             <tr>
@@ -90,8 +92,13 @@
                 <th>School</th>
                 <th>Class/Major</th>
                 <th>Phone</th>
+
                 <th>Ayah</th>
+                <th>TTL Ayah</th>
+
                 <th>Ibu</th>
+                <th>TTL Ibu</th>
+
                 <th>Email</th>
                 <th>Gender</th>
                 <th>Status</th>
@@ -114,6 +121,7 @@
         <tbody>
 
             @foreach ($customers as $item)
+
                 @php
 
                     if ($item->lead_source_id == 'event') {
@@ -124,11 +132,26 @@
                         $lead_source = optional($item->leadsource)->source_name ?? '-';
                     }
 
-                   
-                
                     $rt = $item->rt ?? '';
                     $rw = $item->rw ?? '';
-                    $address = $item->full_address.' RT '.$rt.'/ RW '.$item->rw;
+
+                    $address = $item->full_address . ' RT ' . $rt . '/ RW ' . $rw;
+
+                    // TTL AYAH
+                    $ttl_ayah = '';
+
+                    if ($item->tempat_lahir_ayah && $item->tanggal_lahir_ayah) {
+                        $ttl_ayah = $item->tempat_lahir_ayah . ', ' .
+                            date('d-m-Y', strtotime($item->tanggal_lahir_ayah));
+                    }
+
+                    // TTL IBU
+                    $ttl_ibu = '';
+
+                    if ($item->tempat_lahir_ibu && $item->tanggal_lahir_ibu) {
+                        $ttl_ibu = $item->tempat_lahir_ibu . ', ' .
+                            date('d-m-Y', strtotime($item->tanggal_lahir_ibu));
+                    }
 
                 @endphp
 
@@ -141,8 +164,11 @@
                     <td>
                         {{ $item->fullname ?? '-' }}
                     </td>
+
                     <td>
-                        {{ $item->tempat_lahir && $item->tanggal_lahir ? $item->tempat_lahir.', '. date('d-m-Y', strtotime($item->tanggal_lahir)) : '' }}
+                        {{ $item->tempat_lahir && $item->tanggal_lahir
+                            ? $item->tempat_lahir . ', ' . date('d-m-Y', strtotime($item->tanggal_lahir))
+                            : '' }}
                     </td>
 
                     <td style="white-space: normal;width:180px;">
@@ -160,11 +186,25 @@
                     <td>
                         {{ $item->phone_number ?? '-' }}
                     </td>
+
+                    {{-- AYAH --}}
                     <td>
                         {{ $item->nama_ayah ?? '-' }}
                     </td>
+
+                    {{-- TTL AYAH --}}
+                    <td>
+                        {{ $ttl_ayah }}
+                    </td>
+
+                    {{-- IBU --}}
                     <td>
                         {{ $item->nama_ibu ?? '-' }}
+                    </td>
+
+                    {{-- TTL IBU --}}
+                    <td>
+                        {{ $ttl_ibu }}
                     </td>
 
                     <td>
@@ -186,17 +226,19 @@
                     <td>
                         {{ $lead_source }}
                     </td>
-                    
 
                     <td>
                         {{ optional($item->branch)->branch_name ?? '-' }}
                     </td>
+
                     <td>
                         {{ $item->register_cost ? number_format($item->register_cost) : '-' }}
                     </td>
+
                     <td>
                         {{ $item->payment ? number_format($item->payment) : '-' }}
                     </td>
+
                     <td>
                         {{ $item->out_payment ? number_format($item->out_payment) : '-' }}
                     </td>
@@ -226,10 +268,13 @@
                     </td>
 
                     <td>
-                        {{ date('d M Y H:i', strtotime($item->created_at)) }}
+                        {{ $item->created_at
+                            ? date('d M Y H:i', strtotime($item->created_at))
+                            : '-' }}
                     </td>
 
                 </tr>
+
             @endforeach
 
         </tbody>
