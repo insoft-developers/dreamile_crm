@@ -1,33 +1,39 @@
 @php
 
-    $whatsappMenu = request()->is('chat');
+$whatsappMenu = request()->is('chat');
 
-    $customerMenu =
-        request()->is('payment') ||request()->is('lead') || request()->is('lead/*') || request()->is('customer')  || request()->is('customer/*') || request()->is('lead_source') ;
+$customerMenu =
+request()->is('payment') ||request()->is('lead') || request()->is('lead/*') || request()->is('customer') || request()->is('customer/*') || request()->is('lead_source') ;
 
-    $broadcastMenu =
-        request()->is('broadcast') || request()->is('broadcast/*') || request()->is('contact_group') || request()->is('broadcast_template');
+$broadcastMenu =
+request()->is('broadcast') || request()->is('broadcast/*') || request()->is('contact_group') || request()->is('broadcast_template');
 
-    $settingMenu = request()->is('company') || request()->is('branch') || request()->is('level');
+$settingMenu = request()->is('company') || request()->is('branch') || request()->is('level');
 
-    $userMenu = request()->is('user');
+$userMenu = request()->is('user');
 
-    $presentationMenu = request()->is('presentation');
-    $eventMenu = request()->is('event');
+$presentationMenu = request()->is('presentation');
+$eventMenu = request()->is('event');
 
-    $reportMenu =
-        request()->is('lead_report') ||
-        request()->is('broadcast_report') ||
-        request()->is('broadcast_detail_report/*') ||
-        request()->is('followup_report') ||
-        request()->is('visit_report') ||
-        request()->is('admin_performance_report') ||
-        request()->is('agent_perform_report') ||
-        request()->is('first_response_time') ||
-        request()->is('first_response_time/*') ||
-        request()->is('message_report') || 
-        request()->is('message_detail_report/*');
-        
+$reportMenu =
+request()->is('lead_report') ||
+request()->is('broadcast_report') ||
+request()->is('broadcast_detail_report/*') ||
+request()->is('followup_report') ||
+request()->is('visit_report') ||
+request()->is('admin_performance_report') ||
+request()->is('agent_perform_report') ||
+request()->is('first_response_time') ||
+request()->is('first_response_time/*') ||
+request()->is('message_report') ||
+request()->is('message_detail_report/*');
+
+$partnershipMenu =
+request()->is('partner_type') ||
+request()->is('partner_type/*') ||
+request()->is('partnership') ||
+request()->is('partnership/*');
+
 
 @endphp
 
@@ -95,8 +101,13 @@
                         </li>
 
                         <li class="pe-slide-item">
-                            <a href="{{ url('chat') }}"
+                            <!-- <a href="{{ url('chat') }}"
                                 class="pe-nav-link {{ request()->is('chat') ? 'active' : '' }}">
+
+                                Inbox
+                            </a> -->
+                            <a href="#"
+                                class="pe-nav-link">
 
                                 Inbox
                             </a>
@@ -164,7 +175,56 @@
 
                 </li>
 
-                 <!-- Users -->
+                <!-- Partnership -->
+                <li class="pe-slide pe-has-sub">
+
+                    <a href="#collapsePartnership"
+                        class="pe-nav-link {{ $partnershipMenu ? 'active' : '' }}"
+                        data-bs-toggle="collapse">
+
+                        <i class="ri-shake-hands-line pe-nav-icon"></i>
+
+                        <span class="pe-nav-content">
+                            Partnership
+                        </span>
+
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+
+                    <ul class="pe-slide-menu collapse {{ $partnershipMenu ? 'show' : '' }}"
+                        id="collapsePartnership">
+
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">
+                                Partnership
+                            </a>
+                        </li>
+
+                        <!-- Jenis Partnership -->
+                        <li class="pe-slide-item">
+                            <a href="{{ url('partner_type') }}"
+                                class="pe-nav-link {{ request()->is('partner_type') || request()->is('partner_type/*') ? 'active' : '' }}">
+
+                                Jenis Partnership
+
+                            </a>
+                        </li>
+
+                        <!-- Partner List -->
+                        <li class="pe-slide-item">
+                            <a href="{{ url('partnership') }}"
+                                class="pe-nav-link {{ request()->is('partnership') || request()->is('partnership/*') ? 'active' : '' }}">
+
+                                Partnership List
+
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <!-- Users -->
                 <li class="pe-slide pe-has-sub">
 
                     <a href="#collapseEvent" class="pe-nav-link {{ $eventMenu ? 'active' : '' }}"
@@ -328,7 +388,7 @@
                                 Chat History Report
                             </a>
                         </li>
-                        
+
                         <li class="pe-slide-item">
                             <a href="{{ url('broadcast_report') }}"
                                 class="pe-nav-link {{ request()->is('broadcast_report') || request()->is('broadcast_detail_report/*') ? 'active' : '' }}">
@@ -347,7 +407,7 @@
                                 Visit Report
                             </a>
                         </li>
-                       
+
 
                     </ul>
 

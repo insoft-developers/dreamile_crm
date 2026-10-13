@@ -21,6 +21,8 @@ use App\Http\Controllers\CRM\GroupManageController;
 use App\Http\Controllers\CRM\LeadController;
 use App\Http\Controllers\CRM\LeadSourceController;
 use App\Http\Controllers\CRM\LevelController;
+use App\Http\Controllers\CRM\PartnershipController;
+use App\Http\Controllers\CRM\PartnerTypeController;
 use App\Http\Controllers\CRM\PaymentController;
 use App\Http\Controllers\CRM\PositionController;
 use App\Http\Controllers\CRM\PresentationController;
@@ -95,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/convert', [LeadController::class, 'convert']);
     Route::get('/presentation/attribute', [LeadController::class, 'presentationAttribute']);
     Route::get('lead_detail/pdf/{id}', [LeadController::class, 'exportDetailPdf']);
-    
+
 
 
 
@@ -181,14 +183,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/broadcast_report_table', [BroadcastReportController::class, 'table'])->name('broadcast.report.table');
     Route::get('/broadcast_report/export/excel', [BroadcastReportController::class, 'exportExcel']);
     Route::get('/broadcast_report/export/pdf', [BroadcastReportController::class, 'exportPDF']);
-    
+
     Route::get('/broadcast_detail_report/{id}', [BroadcastDetailController::class, 'index']);
     Route::get('/broadcast_detail_report_table', [BroadcastDetailController::class, 'table'])->name('broadcast.detail.report.table');
     Route::get('/broadcast_detail_report/export/excel', [BroadcastDetailController::class, 'exportExcel']);
     Route::get('/broadcast_detail_report/export/pdf', [BroadcastDetailController::class, 'exportPDF']);
 
     Route::get('/followup_report', [FollowupReportController::class, 'index']);
-    Route::get('/followup_report_table', [FollowupReportController::class, 'table'] )->name('followup.report.table');
+    Route::get('/followup_report_table', [FollowupReportController::class, 'table'])->name('followup.report.table');
     Route::get('/followup_report/export/excel', [FollowupReportController::class, 'exportExcel']);
     Route::get('/followup_report/export/pdf', [FollowupReportController::class, 'exportPDF']);
 
@@ -204,10 +206,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment_table', [PaymentController::class, 'table'])->name('payment.table');
     Route::get('/select_student', [PaymentController::class, 'selectStudent']);
     Route::get('/payment/{id}/print', [PaymentController::class, 'printData'])
-    ->name('payment.print');
+        ->name('payment.print');
     Route::get('/payment/export/excel', [PaymentController::class, 'exportExcel']);
     Route::get('/payment/export/pdf', [PaymentController::class, 'exportPDF']);
 
+    Route::resource('/partner_type', PartnerTypeController::class);
+    Route::get('/partner_type_table', [PartnerTypeController::class, 'table'])->name('partner.type.table');
+
+    Route::resource('/partnership', PartnershipController::class);
+    Route::get('/partnership_table', [PartnershipController::class, 'table'])->name('partnership.table');
+
+    Route::get(
+        '/partnership/export/excel',
+        [PartnershipController::class, 'exportExcel']
+    )->name('partnership.export.excel');
+
+    Route::get(
+        '/partnership/export/pdf',
+        [PartnershipController::class, 'exportPdf']
+    )->name('partnership.export.pdf');
 });
 
 // Route::middleware('auth')->group(function () {
