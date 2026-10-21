@@ -61,7 +61,15 @@ class PartnershipController extends Controller
                 ->addColumn('file', function ($row) {
                     $html = '';
                     if (!empty($row->image)) {
-                        $html .= '<a target="_blank" href="' . asset('/storage/' . $row->image) . '">Lihat File</a>';
+                        $html .= '<a target="_blank" href="' . asset('/storage/' . $row->image) . '">Lihat Foto</a>';
+                    }
+
+                    return $html;
+                })
+                ->addColumn('mou_file', function ($row) {
+                    $html = '';
+                    if (!empty($row->mou_file)) {
+                        $html .= '<a target="_blank" href="' . asset('/storage/' . $row->mou_file) . '">File Mou</a>';
                     }
 
                     return $html;
@@ -87,6 +95,14 @@ class PartnershipController extends Controller
                     });
                 })
 
+
+                ->addColumn('start_date', function ($row) {
+                    if (!$row->start_date) {
+                        return '-';
+                    }
+
+                    return date('d-m-Y', strtotime($row->start_date));
+                })
 
                 ->addColumn('expired_date', function ($row) {
                     if (!$row->expired_date) {
@@ -129,7 +145,8 @@ class PartnershipController extends Controller
 
                 ->rawColumns([
                     'action',
-                    'file'
+                    'file',
+                    'mou_file'
                 ])
 
                 ->make(true);
@@ -172,10 +189,11 @@ class PartnershipController extends Controller
             'whatsapp'              => 'nullable|string|max:255',
             'email'                 => 'nullable|email|max:255',
             'pic_dreamile'          => 'nullable|integer',
-            'partnership_type_name'  => 'nullable|string|max:255',
+            'partnership_type_name' => 'nullable|string|max:255',
+            'start_date'            => 'nullable|date',
             'expired_date'          => 'nullable|date',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp,pdf,doc,docx|max:10240',
-
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
+            'mou_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
             'province_name'         => 'nullable|string',
             'city_name'             => 'nullable|string'
 
@@ -188,6 +206,15 @@ class PartnershipController extends Controller
         }
 
         $validated['image'] = $path;
+
+
+        $path2 = null;
+
+        if ($request->hasFile('mou_file')) {
+            $path2 = $request->file('mou_file')->store('perjanjian', 'public');
+        }
+
+        $validated['mou_file'] = $path2;
 
         Partnership::create($validated);
 
@@ -241,11 +268,13 @@ class PartnershipController extends Controller
             'email'                  => 'nullable|email|max:255',
             'pic_dreamile'           => 'nullable|integer',
             'partnership_type_name'  => 'nullable|string|max:255',
+            'start_date'             => 'nullable|date',
             'expired_date'           => 'nullable|date',
             'province_name'          => 'nullable|string',
             'city_name'              => 'nullable|string',
 
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp,pdf,doc,docx|max:10240',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
+            'mou_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
         ]);
 
 
@@ -263,6 +292,23 @@ class PartnershipController extends Controller
         } else {
 
             $validated['image'] = $data->image;
+        }
+
+
+        if ($request->hasFile('mou_file')) {
+
+
+            if ($data->mou_file && Storage::disk('public')->exists($data->mou_file)) {
+                Storage::disk('public')->delete($data->mou_file);
+            }
+
+
+            $path = $request->file('mou_file')->store('perjanjian', 'public');
+
+            $validated['mou_file'] = $path;
+        } else {
+
+            $validated['mou_file'] = $data->mou_file;
         }
 
 

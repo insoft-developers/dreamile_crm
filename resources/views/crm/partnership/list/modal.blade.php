@@ -267,8 +267,24 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
 
+                                <label for="start_date" class="form-label">
+                                    Mou Start Date
+                                </label>
+
+                                <input type="date"
+                                    class="form-control"
+                                    id="start_date"
+                                    name="start_date">
+
+                            </div>
+                        </div>
+
+                         {{-- Expired Date --}}
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+
                                 <label for="expired_date" class="form-label">
-                                    Expired Date
+                                    Mou Expired Date
                                 </label>
 
                                 <input type="date"
@@ -285,13 +301,31 @@
                             <div class="form-group mb-3">
 
                                 <label for="image" class="form-label">
-                                    Image
+                                    Foto Kerja Sama 
+                                    <small>(png, jpg, jpeg, Max 1 MB)</small>
+
                                 </label>
 
                                 <input type="file"
                                     class="form-control"
                                     id="image"
-                                    name="image">
+                                    name="image" accept=".jpeg,.png,.jpg,.jpeg">
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+
+                                <label for="mou_file" class="form-label">
+                                    File Mou <small>(pdf, png, jpg, jpeg, docx, Max 5 MB)</small>
+                                </label>
+
+                                <input type="file"
+                                    class="form-control"
+                                    id="mou_file"
+                                    name="mou_file" accept=".jpeg,.png,.jpg,.jpeg, .pdf, .doc, .docx">
 
                             </div>
                         </div>

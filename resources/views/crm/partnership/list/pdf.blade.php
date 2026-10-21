@@ -93,6 +93,7 @@
                 <th>Email</th>
                 <th>PIC Dreamile</th>
                 <th>Partnership Type Name</th>
+                <th>Start Date</th>
                 <th>Expired Date</th>
             </tr>
         </thead>
@@ -153,6 +154,11 @@
                         {{ $row->partnership_type_name ?? '-' }}
                     </td>
 
+                    <td class="nowrap">
+                        {{ $row->start_date
+                            ? date('d-m-Y', strtotime($row->start_date))
+                            : '-' }}
+                    </td>
                     <td class="nowrap">
                         {{ $row->expired_date
                             ? date('d-m-Y', strtotime($row->expired_date))

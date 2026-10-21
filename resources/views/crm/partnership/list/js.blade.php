@@ -52,6 +52,10 @@
                 name: 'file'
             },
             {
+                data: 'mou_file',
+                name: 'mou_file'
+            },
+            {
                 data: 'created_at',
                 name: 'created_at'
             },
@@ -94,6 +98,10 @@
             {
                 data: 'partnership_type_name',
                 name: 'partnership_type_name'
+            },
+            {
+                data: 'start_date',
+                name: 'start_date'
             },
             {
                 data: 'expired_date',
@@ -183,9 +191,13 @@
 
                 $('#partnership_type_name').val(data.partnership_type_name);
 
+                $('#start_date').val(data.start_date);
+
                 $('#expired_date').val(data.expired_date);
 
                 $('#image').val(null);
+
+                 $('#mou_file').val(null);
             }
         });
     }

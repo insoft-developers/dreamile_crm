@@ -96,6 +96,7 @@ class PartnershipExport implements FromCollection, WithHeadings, WithMapping, Sh
             'Email',
             'PIC Dreamile',
             'Partnership Type Name',
+            'Start Date',
             'Expired Date',
         ];
     }
@@ -132,7 +133,11 @@ class PartnershipExport implements FromCollection, WithHeadings, WithMapping, Sh
 
             $row->partnership_type_name ?? '-',
 
-            $row->expired_date
+            $row->start_date
+                ? date('d-m-Y', strtotime($row->start_date))
+                : '-',
+
+             $row->expired_date
                 ? date('d-m-Y', strtotime($row->expired_date))
                 : '-',
         ];

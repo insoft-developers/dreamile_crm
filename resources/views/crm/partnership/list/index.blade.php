@@ -180,7 +180,8 @@
                                             width="8%">
                                             Aksi
                                         </th>
-                                        <th>File</th>
+                                        <th>Foto</th>
+                                        <th>File Mou</th>
                                         <th>Tanggal</th>
                                         <th>
                                             Nama Instansi
@@ -220,6 +221,9 @@
                                             Jenis Kerjasama
                                         </th>
 
+                                        <th>
+                                            Mou Start Date
+                                        </th>
                                         <th>
                                             Mou Expired Date
                                         </th>
